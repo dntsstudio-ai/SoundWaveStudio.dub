@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DUB SQUAD | Команда Озвучки</title>
+    <style>
+        /* --- Цветовая палитра и Базовые настройки --- */
+        :root {
+            --bg-color: #0f0f11;
+            --surface-color: #1a1a1d;
+            --primary-color: #e63946; /* Красный */
+            --text-main: #f1faee;
+            --text-muted: #8d99ae;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- Навигация --- */
+        header {
+            background-color: rgba(26, 26, 29, 0.95);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary-color);
+            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.2);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(230, 57, 70, 0.5);
+        }
+
+        /* --- Секции --- */
+        .section {
+            display: none;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2.section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .center-wrap {
+            text-align: center;
+        }
+
+        /* --- Поиск --- */
+        .search-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-container input {
+            padding: 15px 20px;
+            width: 50%;
+            max-width: 600px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            border-radius: 30px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-container input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.3);
+        }
+
+        /* --- Сетка Тайтлов и Актеров --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(230, 57, 70, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .card-info {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-stats {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- Плеер (Имитация страницы тайтла) --- */
+        .player-wrapper {
+            background-color: var(--surface-color);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .iframe-container {
+            position: relative;
+            padding-bottom: 56.25%; /* Пропорция 16:9 */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            margin-bottom: 20px;
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background-color: #b71c1c;
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.6);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">DUB<span>SQUAD</span></div>
+        <nav>
+            <ul>
+                <li><a class="nav-link active" onclick="switchTab('home')">Тайтлы</a></li>
+                <li><a class="nav-link" onclick="switchTab('team')">Команда</a></li>
+                <li><a class="nav-link" onclick="switchTab('profile')">Профиль / Админка</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="home" class="section active">
+        <div class="center-wrap">
+            <h2 class="section-title">Наши Релизы</h2>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Поиск аниме, сериалов, фильмов..." onkeyup="filterTitles()">
+        </div>
+
+        <div class="grid" id="titlesGrid">
+            <div class="card" onclick="openTitlePlayer('Атака Титанов')">
+                <img src="https://via.placeholder.com/300x450/1a1a1d/e63946?text=Attack+on+Titan" alt="Обложка">
+                <div class="card-info">
+                    <div class="card-title">Атака Титанов: Финал</div>
+                    <div class="card-stats">👁 1.2M просмотров | Серия 12/12</div>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openTitlePlayer('Магическая Битва')">
+                <img src="https://via.placeholder.com/300x450/1a1a1d/e63946?text=Jujutsu+Kaisen" alt="Обложка">
+                <div class="card-info">
+                    <div class="card-title">Магическая Битва (2 сезон)</div>
+                    <div class="card-stats">👁 850K просмотров | Серия 23/24</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="player" class="section">
+        <div class="center-wrap">
+            <h2 class="section-title" id="currentPlayerTitle">Название Тайтла</h2>
+        </div>
+        
+        <div class="player-wrapper">
+            <div class="iframe-container">
+                <iframe src="//kodik.info/video/35017/0a9310cae7807b5391d171cc43c4c9b3/720p" frameborder="0" allowfullscreen allow="autoplay *; fullscreen *"></iframe>
+            </div>
+            <button class="btn">Скачать Торрент</button>
+            <button class="btn" style="background-color: #333; margin-left: 10px;" onclick="switchTab('home')">Назад к списку</button>
+        </div>
+    </main>
+
+    <main id="team" class="section">
+        <div class="center-wrap">
+            <h2 class="section-title">Наши Голоса</h2>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/300x300/1a1a1d/8d99ae?text=Voice+Actor" alt="Актер" style="height: 300px;">
+                <div class="card-info">
+                    <div class="card-title">Алексей "Shadow"</div>
+                    <div class="card-stats">Роли: Леви, Годжо | 🏆 50+ релизов</div>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/300x300/1a1a1d/8d99ae?text=Voice+Actress" alt="Актриса" style="height: 300px;">
+                <div class="card-info">
+                    <div class="card-title">Мария "Crimson"</div>
+                    <div class="card-stats">Роли: Микаса, Нобара | 🏆 Лучший женский голос '23</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="profile" class="section">
+        <div class="center-wrap">
+            <h2 class="section-title">Личный Кабинет</h2>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 20px;">
+                Так как сайт размещен на GitHub Pages (статический хостинг), для работы системы авторизации, загрузки тайтлов и выдачи ролей потребуется подключить базу данных (например, Firebase).
+            </p>
+        </div>
+        <div class="player-wrapper" style="max-width: 500px; margin: 0 auto;">
+            <h3>Вход в систему</h3>
+            <br>
+            <input type="text" placeholder="Логин (Email)" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #121212; border: 1px solid #333; color: white;">
+            <input type="password" placeholder="Пароль" style="width: 100%; padding: 10px; margin-bottom: 20px; background: #121212; border: 1px solid #333; color: white;">
+            <button class="btn" style="width: 100%;">Войти</button>
+        </div>
+    </main>
+
+    <script>
+        // Логика переключения вкладок
+        function switchTab(tabId) {
+            // Скрываем все секции
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            // Убираем активный класс у всех ссылок
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            // Показываем нужную секцию
+            document.getElementById(tabId).classList.add('active');
+            
+            // Если клик был по меню, подсвечиваем кнопку (пропускаем для скрытых разделов вроде player)
+            const activeLink = document.querySelector(`.nav-link[onclick="switchTab('${tabId}')"]`);
+            if(activeLink) activeLink.classList.add('active');
+        }
+
+        // Открытие плеера при клике на карточку
+        function openTitlePlayer(titleName) {
+            document.getElementById('currentPlayerTitle').innerText = titleName;
+            switchTab('player');
+            // В реальном проекте здесь бы JS менял src у iframe в зависимости от выбранного тайтла
+        }
+
+        // Простой поиск по карточкам на главной
+        function filterTitles() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementById('titlesGrid').getElementsByClassName('card');
+
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].querySelector('.card-title').innerText.toLowerCase();
+                if (title.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
