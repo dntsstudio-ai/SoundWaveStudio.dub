@@ -6,171 +6,189 @@
     <title>SWS | Sound Wave Studio</title>
     <style>
         :root {
-            --bg-color: #0d0d0f;
-            --surface-color: #16161a;
-            --primary-color: #ff3c3c; /* Яркий красный */
-            --text-main: #ffffff;
-            --text-muted: #a0a0a5;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg: #0b0b0d;
+            --card-bg: #141417;
+            --accent: #ff2e2e; /* Фирменный красный SWS */
+            --text: #ffffff;
+            --text-dim: #9ca3af;
+            --nav-bg: rgba(11, 11, 13, 0.9);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
 
-        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
+        body { background-color: var(--bg); color: var(--text); }
 
-        /* --- Навигация --- */
+        /* --- ШАПКА --- */
         header {
-            background-color: rgba(13, 13, 15, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 1rem 5%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
             border-bottom: 1px solid #222;
         }
 
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; color: var(--text-main); text-decoration: none; }
-        .logo span { color: var(--primary-color); }
-
-        nav ul { list-style: none; display: flex; gap: 25px; }
-        nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            transition: var(--transition);
+        .logo { 
+            font-size: 1.4rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
             cursor: pointer;
         }
-        nav a:hover, nav a.active { color: var(--primary-color); }
+        .logo span { color: var(--accent); }
 
-        /* --- Секции --- */
-        .section { display: none; padding: 4rem 5%; animation: fadeIn 0.4s ease; }
+        nav ul { display: flex; list-style: none; gap: 20px; }
+        nav a { 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 14px; 
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        nav a:hover, nav a.active { color: var(--accent); }
+
+        /* --- СЕКЦИИ --- */
+        .section { display: none; padding: 50px 5%; min-height: 80vh; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .center-wrap { text-align: center; margin-bottom: 3rem; }
-        h2.section-title { font-size: 2rem; text-transform: uppercase; letter-spacing: 2px; }
-        h2.section-title::after { content: ''; display: block; width: 50px; height: 3px; background: var(--primary-color); margin: 10px auto; }
+        .title-row { text-align: center; margin-bottom: 40px; }
+        .title-row h2 { font-size: 2.2rem; text-transform: uppercase; }
+        .title-row span { color: var(--accent); }
 
-        /* --- Сетка --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
-        .card {
-            background: var(--surface-color);
-            border-radius: 12px;
-            overflow: hidden;
+        /* --- КАРТОЧКИ --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            overflow: hidden; 
             border: 1px solid #222;
-            transition: var(--transition);
+            transition: 0.3s;
             cursor: pointer;
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary-color); box-shadow: 0 10px 30px rgba(255, 60, 60, 0.1); }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
         .card img { width: 100%; height: 320px; object-fit: cover; }
-        .card-info { padding: 15px; }
+        .card-content { padding: 15px; }
 
-        /* --- Формы --- */
-        .auth-container {
-            background: var(--surface-color);
-            padding: 2.5rem;
-            border-radius: 15px;
+        /* --- ФОРМЫ (АВТОРИЗАЦИЯ) --- */
+        .auth-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
             max-width: 400px;
             margin: 0 auto;
             border: 1px solid #222;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
+        
+        .auth-card h3 { margin-bottom: 25px; text-align: center; font-size: 1.5rem; }
+
         input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 16px;
             margin-bottom: 15px;
-            background: #0d0d0f;
+            background: #000;
             border: 1px solid #333;
             color: white;
             border-radius: 8px;
             outline: none;
         }
-        input:focus { border-color: var(--primary-color); }
+        input:focus { border-color: var(--accent); }
 
         .btn {
-            background: var(--primary-color);
-            color: white;
+            width: 100%;
             padding: 12px;
             border: none;
             border-radius: 8px;
-            width: 100%;
-            font-weight: bold;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
-            transition: var(--transition);
             margin-bottom: 10px;
+            transition: 0.3s;
         }
-        .btn:hover { filter: brightness(1.2); }
-        .btn-alt { background: transparent; border: 1px solid #444; color: var(--text-muted); }
-        .btn-alt:hover { border-color: var(--text-main); color: var(--text-main); }
+        .btn:hover { background: #e02828; }
+        .btn-ghost { background: transparent; border: 1px solid #444; color: var(--text-dim); }
+        .btn-ghost:hover { border-color: white; color: white; }
 
-        .error-msg { color: var(--primary-color); font-size: 0.8rem; margin-bottom: 15px; display: none; text-align: center; }
+        .error-label { color: var(--accent); font-size: 13px; text-align: center; margin-bottom: 15px; display: none; }
 
-        /* Плеер */
-        .player-box { background: #000; aspect-ratio: 16/9; width: 100%; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        /* ПЛЕЕР */
+        .video-container { width: 100%; max-width: 1000px; margin: 0 auto; background: #000; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; }
         iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
 
     <header>
-        <a class="logo" onclick="switchTab('home')">SOUND<span>WAVE</span> STUDIO</a>
+        <div class="logo" onclick="showTab('home')">SOUND<span>WAVE</span> STUDIO</div>
         <nav>
             <ul>
-                <li><a id="nav-home" class="nav-link active" onclick="switchTab('home')">Тайтлы</a></li>
-                <li><a id="nav-team" class="nav-link" onclick="switchTab('team')">Актеры</a></li>
-                <li><a id="nav-profile" class="nav-link" onclick="switchTab('profile')">Профиль</a></li>
+                <li><a id="nav-home" class="nav-link active" onclick="showTab('home')">Релизы</a></li>
+                <li><a id="nav-team" class="nav-link" onclick="showTab('team')">Состав</a></li>
+                <li><a id="nav-profile" class="nav-link" onclick="showTab('profile')">Аккаунт</a></li>
             </ul>
         </nav>
     </header>
 
     <main id="home" class="section active">
-        <div class="center-wrap"><h2 class="section-title">Каталог Релизов</h2></div>
+        <div class="title-row"><h2>Наши <span>Тайтлы</span></h2></div>
         <div class="grid">
-            <div class="card" onclick="openPlayer('Магическая Битва')">
-                <img src="https://m.media-amazon.com/images/M/MV5BNGY4MTg3NzgtMmFkZi00NTg5LWExYjMtNmYwMzNlYWNlYzE1XkEyXkFqcGdeQXVyMjQwMDg0Ng@@._V1_.jpg" alt="Anime">
-                <div class="card-info"><b>Магическая Битва</b><br><small>Sound Wave Studio Dub</small></div>
+            <div class="card" onclick="openAnime('Магическая Битва')">
+                <img src="https://m.media-amazon.com/images/M/MV5BNGY4MTg3NzgtMmFkZi00NTg5LWExYjMtNmYwMzNlYWNlYzE1XkEyXkFqcGdeQXVyMjQwMDg0Ng@@._V1_.jpg" alt="Title">
+                <div class="card-content"><b>Магическая Битва</b><br><small>SWS Dub</small></div>
             </div>
         </div>
     </main>
 
     <main id="player" class="section">
-        <div class="center-wrap"><h2 class="section-title" id="titleName">Просмотр</h2></div>
-        <div class="auth-container" style="max-width: 900px;">
-            <div class="player-box">
-                <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+        <div class="title-row"><h2 id="video-title">Название</h2></div>
+        <div class="video-container">
+            <iframe id="main-frame" src="" allowfullscreen></iframe>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn btn-ghost" style="width: auto;" onclick="showTab('home')">Вернуться назад</button>
+        </div>
+    </main>
+
+    <main id="team" class="section">
+        <div class="title-row"><h2>Наши <span>Голоса</span></h2></div>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/250x320/141417/ffffff?text=Actor" alt="Voice">
+                <div class="card-content"><b>SWS Actor</b><br><small>Дабер / Таймер</small></div>
             </div>
-            <button class="btn btn-alt" onclick="switchTab('home')">Закрыть плеер</button>
         </div>
     </main>
 
     <main id="profile" class="section">
-        <div id="auth-ui" class="auth-container">
-            <h3 id="auth-title" style="margin-bottom: 20px; text-align: center;">Вход в SWS</h3>
-            <p id="auth-error" class="error-msg"></p>
+        <div id="auth-ui" class="auth-card">
+            <h3 id="form-label">Вход в SWS</h3>
+            <p id="auth-err" class="error-label"></p>
             
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Пароль">
+            <input type="email" id="user-email" placeholder="Email адрес">
+            <input type="password" id="user-pass" placeholder="Пароль">
             
-            <button id="btn-login" class="btn">Войти</button>
-            <button id="btn-register" class="btn btn-alt">Создать аккаунт</button>
+            <button id="do-login" class="btn">Войти в аккаунт</button>
+            <button id="do-reg" class="btn btn-ghost">Зарегистрироваться</button>
         </div>
 
-        <div id="user-ui" class="auth-container" style="display: none; text-align: center;">
-            <h3 id="welcome-user">Добро пожаловать!</h3>
-            <p id="role-tag" style="margin: 10px 0; color: var(--primary-color); font-weight: bold;"></p>
-            <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+        <div id="user-ui" class="auth-card" style="display: none; text-align: center;">
+            <h3 id="user-name">Кабинет</h3>
+            <p id="user-status" style="color: var(--accent); margin-bottom: 20px; font-weight: 700;"></p>
             
-            <div id="admin-tools" style="display: none;">
-                <p>Панель управления SWS</p><br>
-                <button class="btn" onclick="alert('Функция в разработке: Firestore integration')">Добавить Тайтл</button>
+            <div id="admin-panel" style="display: none; border-top: 1px solid #333; padding-top: 20px;">
+                <p style="margin-bottom: 15px;">Панель управления SWS</p>
+                <button class="btn" onclick="alert('Управление тайтлами будет в Firestore')">Добавить релиз</button>
             </div>
-            
-            <button id="btn-logout" class="btn btn-alt" style="margin-top: 20px;">Выйти</button>
+
+            <button id="do-logout" class="btn btn-ghost" style="margin-top: 20px;">Выйти</button>
         </div>
     </main>
 
@@ -179,6 +197,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // ТВОИ ДАННЫЕ FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDVKjnhK6i6Y7iT-OA24ccRbLKp7EY22Ug",
             authDomain: "my-dub-site.firebaseapp.com",
@@ -192,84 +211,94 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // UI Элементы
-        const btnLogin = document.getElementById('btn-login');
-        const btnReg = document.getElementById('btn-register');
-        const btnLogout = document.getElementById('btn-logout');
-        const authError = document.getElementById('auth-error');
-
-        // Функция переключения вкладок
-        window.switchTab = (id) => {
+        // Переключение страниц
+        window.showTab = (tabId) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(document.getElementById('nav-'+id)) document.getElementById('nav-'+id).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            if(document.getElementById('nav-'+tabId)) document.getElementById('nav-'+tabId).classList.add('active');
         };
 
-        window.openPlayer = (name) => {
-            document.getElementById('titleName').innerText = name;
-            document.getElementById('videoPlayer').src = "https://kodik.info/serial/32686/353406214f4949f506240294e07a688d/720p"; 
-            switchTab('player');
+        // Открытие плеера
+        window.openAnime = (name) => {
+            document.getElementById('video-title').innerText = name;
+            // Ссылка на плеер Kodik (пример)
+            document.getElementById('main-frame').src = "https://kodik.info/serial/32686/353406214f4949f506240294e07a688d/720p"; 
+            showTab('player');
         };
 
-        // РЕГИСТРАЦИЯ
+        // ЛОГИКА АВТОРИЗАЦИИ
+        const btnLogin = document.getElementById('do-login');
+        const btnReg = document.getElementById('do-reg');
+        const btnLogout = document.getElementById('do-logout');
+        const errBox = document.getElementById('auth-err');
+
+        // Регистрация
         btnReg.addEventListener('click', async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            authError.style.display = 'none';
+            const email = document.getElementById('user-email').value;
+            const pass = document.getElementById('user-pass').value;
+            errBox.style.display = 'none';
+
+            if(pass.length < 6) {
+                errBox.innerText = "Пароль должен быть от 6 символов!";
+                errBox.style.display = 'block';
+                return;
+            }
 
             try {
-                const res = await createUserWithEmailAndPassword(auth, email, pass);
-                // Создаем запись в базе данных для роли
-                await setDoc(doc(db, "users", res.user.uid), {
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", cred.user.uid), {
                     email: email,
-                    role: "user" // По умолчанию все - обычные юзеры
+                    role: "user"
                 });
-                alert("Аккаунт создан!");
-            } catch (err) {
-                authError.innerText = "Ошибка регистрации: " + err.message;
-                authError.style.display = 'block';
+                alert("Аккаунт успешно создан!");
+            } catch (e) {
+                errBox.innerText = "Ошибка: " + e.message;
+                errBox.style.display = 'block';
             }
         });
 
-        // ВХОД
+        // Вход
         btnLogin.addEventListener('click', async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            authError.style.display = 'none';
+            const email = document.getElementById('user-email').value;
+            const pass = document.getElementById('user-pass').value;
+            errBox.style.display = 'none';
 
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                authError.innerText = "Ошибка: " + err.message;
-                authError.style.display = 'block';
+            } catch (e) {
+                errBox.innerText = "Неверный логин или пароль!";
+                errBox.style.display = 'block';
             }
         });
 
-        // ВЫХОД
+        // Выход
         btnLogout.addEventListener('click', () => signOut(auth));
 
-        // СЛЕЖКА ЗА СОСТОЯНИЕМ
+        // Слушатель пользователя
         onAuthStateChanged(auth, async (user) => {
             const authUI = document.getElementById('auth-ui');
             const userUI = document.getElementById('user-ui');
-            
+            const adminPnl = document.getElementById('admin-panel');
+
             if (user) {
                 authUI.style.display = 'none';
                 userUI.style.display = 'block';
-                document.getElementById('welcome-user').innerText = `Профиль: ${user.email}`;
+                document.getElementById('user-name').innerText = user.email;
                 
-                // Проверяем роль
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if (snap.exists()) {
-                    const role = snap.data().role;
-                    document.getElementById('role-tag').innerText = role === 'admin' ? "АДМИНИСТРАТОР SWS" : "ЗРИТЕЛЬ";
-                    if(role === 'admin') document.getElementById('admin-tools').style.display = 'block';
-                }
+                // Проверка роли в базе
+                try {
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    if (snap.exists()) {
+                        const role = snap.data().role;
+                        document.getElementById('user-status').innerText = role === 'admin' ? "АДМИНИСТРАТОР SWS" : "ЗРИТЕЛЬ SWS";
+                        if(role === 'admin') adminPnl.style.display = 'block';
+                    }
+                } catch(e) { console.log("Роль не найдена"); }
             } else {
                 authUI.style.display = 'block';
                 userUI.style.display = 'none';
-                document.getElementById('admin-tools').style.display = 'none';
+                adminPnl.style.display = 'none';
             }
         });
     </script>
