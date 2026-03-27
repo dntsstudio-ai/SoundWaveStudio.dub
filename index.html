@@ -6,21 +6,14 @@
     <title>SWS | Sound Wave Studio</title>
     <style>
         :root {
-            --bg: #0b0b0d;
-            --card-bg: #141417;
-            --input-bg: #050506;
-            --accent: #ff2e2e;
-            --text: #ffffff;
-            --text-dim: #9ca3af;
-            --border: #252529;
-            --gold: #ffca28;
-            --admin: #3897f0;
-            --ts: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg: #0b0b0d; --card-bg: #141417; --input-bg: #050506;
+            --accent: #ff2e2e; --text: #ffffff; --text-dim: #9ca3af;
+            --border: #252529; --gold: #ffca28; --admin: #3897f0;
+            --ts: all 0.3s ease;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); line-height: 1.5; }
-
+        body { background-color: var(--bg); color: var(--text); }
         .container { max-width: 1100px; margin: 0 auto; width: 100%; }
 
         header {
@@ -28,79 +21,56 @@
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
         }
-
-        .logo { font-size: 1.4rem; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
+        .logo { font-size: 1.4rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .logo span { color: var(--accent); }
 
         nav ul { display: flex; list-style: none; gap: 20px; }
-        nav a { color: var(--text-dim); text-decoration: none; font-weight: 600; font-size: 13px; text-transform: uppercase; transition: var(--ts); cursor: pointer;}
-        nav a:hover, nav a.active { color: var(--accent); }
+        nav a { color: var(--text-dim); text-decoration: none; font-weight: 600; font-size: 13px; cursor: pointer; }
+        nav a.active { color: var(--accent); }
 
         .section { display: none; padding: 40px 5%; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- СЕТКА ТАЙТЛОВ --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); cursor: pointer; }
+        /* Верификация */
+        #verify-notice { background: var(--accent); color: white; padding: 10px; text-align: center; font-size: 14px; display: none; }
+
+        /* Сетки */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); cursor: pointer; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card img { width: 100%; height: 340px; object-fit: cover; }
+        .card img { width: 100%; height: 320px; object-fit: cover; }
         .card-content { padding: 15px; }
 
-        /* --- ПРОФИЛЬ --- */
-        .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
+        /* Профиль */
+        .profile-layout { display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
+        .sidebar { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border); text-align: center; height: fit-content; }
+        .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border); margin-bottom: 15px; }
         
-        .profile-sidebar { background: var(--card-bg); padding: 35px; border-radius: 20px; border: 1px solid var(--border); text-align: center; height: fit-content; }
-        .avatar { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--border); margin-bottom: 20px; background: #000; }
-        
-        .user-nick { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .admin-badge { color: var(--admin); font-size: 1rem; }
-        .user-email-display { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 25px; word-break: break-all; }
+        .info-block { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
+        .block-title { font-size: 1rem; font-weight: 700; margin-bottom: 15px; color: var(--accent); text-transform: uppercase; }
 
-        .profile-main { display: flex; flex-direction: column; gap: 25px; }
-        .info-block { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
-        .block-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        /* Админ-панель */
+        .admin-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 10px; }
+        label { font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 5px; }
 
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--input-bg); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-        .stat-num { display: block; font-size: 1.6rem; font-weight: 800; color: var(--accent); }
-        .stat-text { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
-
-        .ach-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-        .ach-item { background: #1a1a1f; border: 1px solid var(--border); padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;}
-        .ach-item.gold { border-color: var(--gold); color: var(--gold); background: rgba(255,202,40,0.05); }
-
-        /* Настройки */
-        .setting-field { margin-bottom: 20px; }
-        .setting-field label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; }
-
-        /* --- ОБЩИЕ ЭЛЕМЕНТЫ --- */
-        .auth-screen { max-width: 380px; margin: 60px auto; background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--border); text-align: center;}
-        input { width: 100%; padding: 12px 16px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 10px; transition: var(--ts); outline: none; margin-bottom: 12px;}
-        input:focus { border-color: var(--accent); }
-
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: var(--ts); font-size: 0.85rem; }
-        .btn:hover { opacity: 0.8; transform: translateY(-2px); }
-        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
-        .btn-secondary:hover { border-color: white; color: white; }
-        .btn-sm { width: auto; padding: 8px 18px; font-size: 0.75rem; }
-
-        .status-msg { font-size: 0.8rem; margin-bottom: 10px; display: none; text-align: center; }
-
-        /* Плеер */
-        .player-wrap { max-width: 900px; margin: 0 auto; width: 100%; }
-        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
-        iframe { width: 100%; height: 100%; border: none; }
+        input { width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; transition: var(--ts); }
+        .btn-sec { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+        .btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
+
+    <div id="verify-notice">Ваш Email не подтвержден! Проверьте почту. <button class="btn btn-sec" style="color:white; padding:2px 10px" id="resend-email">Переотправить</button></div>
 
     <header>
         <div class="logo" onclick="nav('home')">SOUND<span>WAVE</span> STUDIO</div>
         <nav>
             <ul>
                 <li><a id="n-home" class="nav-link active" onclick="nav('home')">Релизы</a></li>
-                <li><a id="n-team" class="nav-link" onclick="nav('team')">Состав</a></li>
+                <li><a id="n-team" class="nav-link" onclick="nav('team')">Команда</a></li>
                 <li><a id="n-profile" class="nav-link" onclick="nav('profile')">Профиль</a></li>
             </ul>
         </nav>
@@ -108,99 +78,81 @@
 
     <main id="home" class="section active">
         <div class="container">
-            <h2 style="margin-bottom: 30px;">Свежие <span>релизы</span></h2>
-            <div class="grid">
-                <div class="card" onclick="openVideo('Магическая Битва 2')">
-                    <img src="https://m.media-amazon.com/images/M/MV5BNGY4MTg3NzgtMmFkZi00NTg5LWExYjMtNmYwMzNlYWNlYzE1XkEyXkFqcGdeQXVyMjQwMDg0Ng@@._V1_.jpg" alt="poster">
-                    <div class="card-content"><b>Магическая Битва (2 сезон)</b><br><small>SWS Dub</small></div>
-                </div>
-            </div>
+            <h2 style="margin-bottom: 30px;">Свежие <span>тайтлы</span></h2>
+            <div class="grid" id="titles-list"></div>
         </div>
     </main>
 
     <main id="player" class="section">
-        <div class="player-wrap">
+        <div class="container" style="max-width: 900px;">
             <h2 id="pl-name" style="margin-bottom: 20px;">Загрузка...</h2>
-            <div class="video-box">
-                <iframe id="pl-frame" src="" allowfullscreen></iframe>
+            <div style="width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 16px; overflow: hidden;">
+                <iframe id="pl-frame" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
             </div>
-            <button class="btn btn-secondary btn-sm" style="margin-top: 20px;" onclick="nav('home')">← К списку</button>
+            <button class="btn btn-sec" style="margin-top:20px" onclick="nav('home')">Назад</button>
         </div>
     </main>
 
     <main id="team" class="section">
         <div class="container">
-            <h2 style="margin-bottom: 30px;">Наша <span>команда</span></h2>
-            <div class="grid">
-                <div class="card">
-                    <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Admin" alt="Voice">
-                    <div class="card-content"><b>SWS Founder</b><br><small>Глава проекта</small></div>
-                </div>
-            </div>
+            <h2 style="margin-bottom: 30px;">Голоса <span>SWS</span></h2>
+            <div class="grid" id="team-list"></div>
         </div>
     </main>
 
     <main id="profile" class="section">
         <div class="container">
             
-            <div id="auth-ui" class="auth-screen">
+            <div id="auth-ui" style="max-width: 400px; margin: 0 auto; text-align: center;">
                 <h3>SWS ID</h3><br>
-                <p id="a-err" class="status-msg" style="color:var(--accent)"></p>
                 <input type="email" id="a-email" placeholder="Email">
                 <input type="password" id="a-pass" placeholder="Пароль">
-                <button class="btn" id="btn-login">Войти</button>
-                <button class="btn btn-secondary" style="margin-top:10px" id="btn-reg">Регистрация</button>
+                <button class="btn" style="width:100%" id="btn-login">Войти</button>
+                <button class="btn btn-sec" style="width:100%; margin-top:10px" id="btn-reg">Регистрация</button>
             </div>
 
             <div id="user-ui" class="profile-layout" style="display: none;">
-                
-                <aside class="profile-sidebar">
-                    <img src="" id="u-avatar" class="avatar">
-                    <div class="user-nick">
-                        <span id="u-nick">...</span>
-                        <span id="u-admin" class="admin-badge" style="display: none;">✔</span>
-                    </div>
-                    <p id="u-mail" class="user-email-display">...</p>
-                    <button class="btn btn-secondary" id="btn-logout">Выйти</button>
+                <aside class="sidebar">
+                    <img src="" id="u-ava" class="avatar">
+                    <h3 id="u-nick">...</h3>
+                    <p id="u-role" style="color:var(--accent); font-size: 12px; font-weight: bold;"></p>
+                    <button class="btn btn-sec" style="margin-top:20px; width:100%" id="btn-logout">Выйти</button>
                 </aside>
 
-                <section class="profile-main">
+                <div class="main-content">
                     <div class="info-block">
-                        <h3 class="block-title">Твоя статистика</h3>
-                        <div class="stats-row">
-                            <div class="stat-card">
-                                <span class="stat-num" id="s-views">0</span>
-                                <span class="stat-text">Просмотрено</span>
-                            </div>
-                            <div class="stat-card">
-                                <span class="stat-num" id="s-date">--.--</span>
-                                <span class="stat-text">Регистрация</span>
-                            </div>
-                        </div>
-                        <div class="ach-grid" id="u-ach"></div>
+                        <h3 class="block-title">Настройки</h3>
+                        <label>Никнейм</label>
+                        <input type="text" id="set-nick">
+                        <label>URL аватара</label>
+                        <input type="text" id="set-ava">
+                        <button class="btn" id="save-profile">Сохранить</button>
                     </div>
 
-                    <div class="info-block">
-                        <h3 class="block-title">Настройки аккаунта</h3>
-                        <p id="s-msg" class="status-msg" style="color: #4caf50;"></p>
+                    <div id="admin-console" class="info-block" style="display: none; border-color: var(--admin);">
+                        <h3 class="block-title" style="color: var(--admin);">Консоль Управления</h3>
                         
-                        <div class="setting-field">
-                            <label>Никнейм</label>
-                            <input type="text" id="set-nick" placeholder="Как тебя называть?">
-                            <button class="btn btn-sm" id="save-nick">Сменить ник</button>
-                        </div>
-
-                        <div class="setting-field">
-                            <label>Ссылка на аватарку (URL)</label>
-                            <input type="text" id="set-ava" placeholder="https://ссылка-на-картинку.jpg">
-                            <button class="btn btn-sm" id="save-ava">Обновить аватарку</button>
+                        <div style="margin-bottom: 30px;">
+                            <h4 style="margin-bottom:10px">Добавить Тайтл</h4>
+                            <div class="admin-form">
+                                <input type="text" id="t-name" placeholder="Название">
+                                <input type="text" id="t-img" placeholder="Ссылка на постер">
+                                <input type="text" id="t-link" placeholder="Ссылка на Kodik/Player" style="grid-column: span 2;">
+                            </div>
+                            <button class="btn" id="add-title">Опубликовать тайтл</button>
                         </div>
 
                         <div style="border-top: 1px solid #222; padding-top: 20px;">
-                            <button class="btn btn-secondary btn-sm" id="reset-pass">Сбросить пароль по Email</button>
+                            <h4 style="margin-bottom:10px">Добавить в Команду</h4>
+                            <div class="admin-form">
+                                <input type="text" id="m-name" placeholder="Никнейм">
+                                <input type="text" id="m-role" placeholder="Роль (Дабер, Техник...)">
+                                <input type="text" id="m-img" placeholder="Ссылка на фото" style="grid-column: span 2;">
+                            </div>
+                            <button class="btn" id="add-member">Добавить в состав</button>
                         </div>
                     </div>
-                </section>
+                </div>
             </div>
 
         </div>
@@ -208,8 +160,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDVKjnhK6i6Y7iT-OA24ccRbLKp7EY22Ug",
@@ -227,89 +179,131 @@
         // Навигация
         window.nav = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(document.getElementById('n-'+id)) document.getElementById('n-'+id).classList.add('active');
-            window.scrollTo(0,0);
+            if(id === 'home') loadTitles();
+            if(id === 'team') loadTeam();
         };
 
-        window.openVideo = (title) => {
-            document.getElementById('pl-name').innerText = title;
-            document.getElementById('pl-frame').src = "https://kodik.info/serial/32686/353406214f4949f506240294e07a688d/720p";
+        window.openPlayer = (name, link) => {
+            document.getElementById('pl-name').innerText = name;
+            document.getElementById('pl-frame').src = link;
             nav('player');
         };
 
-        // Авторизация
+        // --- AUTH ---
         document.getElementById('btn-reg').addEventListener('click', async () => {
             const email = document.getElementById('a-email').value;
             const pass = document.getElementById('a-pass').value;
             try {
                 const r = await createUserWithEmailAndPassword(auth, email, pass);
+                await sendEmailVerification(r.user); // Отправка верификации
                 await setDoc(doc(db, "users", r.user.uid), {
-                    email: email, nickname: email.split('@')[0],
-                    role: "user", regDate: new Date().toLocaleDateString('ru-RU'),
-                    views: 0, avatar: "", achievements: ["🚀 SWS ID"]
+                    nickname: email.split('@')[0], role: "user", avatar: ""
                 });
-            } catch (e) { alert("Ошибка: " + e.message); }
+                alert("Письмо с подтверждением отправлено на почту!");
+            } catch (e) { alert(e.message); }
         });
 
         document.getElementById('btn-login').addEventListener('click', () => {
             signInWithEmailAndPassword(auth, document.getElementById('a-email').value, document.getElementById('a-pass').value)
-                .catch(e => { document.getElementById('a-err').innerText = "Ошибка входа!"; document.getElementById('a-err').style.display='block'; });
+                .catch(e => alert("Ошибка входа"));
         });
 
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+        document.getElementById('resend-email').addEventListener('click', () => sendEmailVerification(auth.currentUser));
 
-        // Работа с профилем
+        // --- ПРОФИЛЬ И АДМИНКА ---
         onAuthStateChanged(auth, async (user) => {
+            const uiAuth = document.getElementById('auth-ui');
+            const uiUser = document.getElementById('user-ui');
+            const vNotice = document.getElementById('verify-notice');
+
             if (user) {
-                document.getElementById('auth-ui').style.display = 'none';
-                document.getElementById('user-ui').style.display = 'grid';
+                uiAuth.style.display = 'none';
+                uiUser.style.display = 'flex';
+                vNotice.style.display = user.emailVerified ? 'none' : 'block';
                 
                 const snap = await getDoc(doc(db, "users", user.uid));
                 if (snap.exists()) {
                     const d = snap.data();
                     document.getElementById('u-nick').innerText = d.nickname;
-                    document.getElementById('u-mail').innerText = user.email;
-                    document.getElementById('s-views').innerText = d.views || 0;
-                    document.getElementById('s-date').innerText = d.regDate || "2024";
+                    document.getElementById('u-ava').src = d.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${d.nickname}`;
                     document.getElementById('set-nick').value = d.nickname;
                     document.getElementById('set-ava').value = d.avatar || "";
-
-                    // Аватарка: если ссылки нет — берем авто-генерацию по нику
-                    document.getElementById('u-avatar').src = d.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${d.nickname}`;
-
-                    // Достижения и Админка
-                    const ach = document.getElementById('u-ach'); ach.innerHTML = '';
-                    if(d.role === 'admin') {
-                        document.getElementById('u-admin').style.display = 'inline';
-                        const b = document.createElement('div'); b.className='ach-item gold'; b.innerText='🛡️ Founder'; ach.appendChild(b);
-                    }
-                    d.achievements?.forEach(t => { const b = document.createElement('div'); b.className='ach-item'; b.innerText=t; ach.appendChild(b); });
+                    document.getElementById('u-role').innerText = d.role === 'admin' ? "АДМИНИСТРАТОР" : "ЗРИТЕЛЬ SWS";
+                    
+                    if(d.role === 'admin') document.getElementById('admin-console').style.display = 'block';
                 }
             } else {
-                document.getElementById('auth-ui').style.display = 'block';
-                document.getElementById('user-ui').style.display = 'none';
+                uiAuth.style.display = 'block';
+                uiUser.style.display = 'none';
+                vNotice.style.display = 'none';
             }
         });
 
-        // Сохранение настроек
-        document.getElementById('save-nick').addEventListener('click', async () => {
-            const n = document.getElementById('set-nick').value;
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: n });
-            location.reload(); 
-        });
-
-        document.getElementById('save-ava').addEventListener('click', async () => {
-            const url = document.getElementById('set-ava').value;
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { avatar: url });
+        // Сохранение профиля
+        document.getElementById('save-profile').addEventListener('click', async () => {
+            await updateDoc(doc(db, "users", auth.currentUser.uid), {
+                nickname: document.getElementById('set-nick').value,
+                avatar: document.getElementById('set-ava').value
+            });
             location.reload();
         });
 
-        document.getElementById('reset-pass').addEventListener('click', () => {
-            sendPasswordResetEmail(auth, auth.currentUser.email).then(() => alert("Письмо отправлено!"));
+        // --- ЛОГИКА АДМИНКИ (Firestore Write) ---
+        document.getElementById('add-title').addEventListener('click', async () => {
+            await addDoc(collection(db, "titles"), {
+                name: document.getElementById('t-name').value,
+                img: document.getElementById('t-img').value,
+                link: document.getElementById('t-link').value,
+                date: Date.now()
+            });
+            alert("Тайтл добавлен!");
         });
 
+        document.getElementById('add-member').addEventListener('click', async () => {
+            await addDoc(collection(db, "team"), {
+                name: document.getElementById('m-name').value,
+                role: document.getElementById('m-role').value,
+                img: document.getElementById('m-img').value
+            });
+            alert("Участник добавлен!");
+        });
+
+        // --- ЗАГРУЗКА ДАННЫХ (Firestore Read) ---
+        async function loadTitles() {
+            const list = document.getElementById('titles-list');
+            list.innerHTML = 'Загрузка...';
+            const q = query(collection(db, "titles"), orderBy("date", "desc"));
+            const snap = await getDocs(q);
+            list.innerHTML = '';
+            snap.forEach(doc => {
+                const d = doc.data();
+                list.innerHTML += `
+                    <div class="card" onclick="openPlayer('${d.name}', '${d.link}')">
+                        <img src="${d.img}">
+                        <div class="card-content"><b>${d.name}</b><br><small>Sound Wave Studio</small></div>
+                    </div>`;
+            });
+        }
+
+        async function loadTeam() {
+            const list = document.getElementById('team-list');
+            list.innerHTML = 'Загрузка...';
+            const snap = await getDocs(collection(db, "team"));
+            list.innerHTML = '';
+            snap.forEach(doc => {
+                const d = doc.data();
+                list.innerHTML += `
+                    <div class="card">
+                        <img src="${d.img}">
+                        <div class="card-content"><b>${d.name}</b><br><small>${d.role}</small></div>
+                    </div>`;
+            });
+        }
+
+        // Первичная загрузка
+        loadTitles();
     </script>
 </body>
 </html>
