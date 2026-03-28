@@ -8,12 +8,12 @@
         :root {
             --bg: #0b0b0d; --card-bg: #141417; --input-bg: #050506;
             --accent: #ff2e2e; --text: #ffffff; --text-dim: #9ca3af;
-            --border: #252529; --admin: #3897f0;
+            --border: #252529; --admin: #3897f0; --gold: #ffca28;
             --ts: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
         .container { max-width: 1100px; margin: 0 auto; width: 100%; padding: 0 20px; }
 
         header { 
@@ -21,7 +21,7 @@
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
             border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; 
         }
-        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 1.2rem;}
         .logo span { color: var(--accent); }
         
         nav ul { display: flex; list-style: none; gap: 5px; }
@@ -36,48 +36,50 @@
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Поиск */
-        .search-box { margin-bottom: 30px; position: relative; max-width: 400px; }
-        .search-box input { 
-            width: 100%; padding: 12px 12px 12px 40px; background: var(--input-bg); 
-            border: 1px solid var(--border); color: white; border-radius: 12px; outline: none;
-        }
-        .search-box::before { content: "🔍"; position: absolute; left: 15px; top: 12px; opacity: 0.5; }
-
-        /* Карточки */
+        /* Стили карточек и удаления */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
         .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); position: relative; cursor: pointer; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
         .card img { width: 100%; height: 280px; object-fit: cover; display: block; }
         .card-content { padding: 15px; }
-        .card-year { position: absolute; bottom: 10px; right: 10px; font-size: 10px; color: var(--text-dim); }
-        .card-quality { position: absolute; top: 10px; left: 10px; background: var(--accent); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        
+        .del-btn { 
+            position: absolute; top: 10px; right: 10px; background: var(--accent); 
+            color: white; border: none; padding: 5px 10px; border-radius: 6px; 
+            font-size: 10px; font-weight: bold; cursor: pointer; z-index: 20; display: none;
+        }
+
+        /* Профиль */
+        .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
+        @media (max-width: 800px) { .profile-layout { grid-template-columns: 1fr; } }
+        .sidebar { background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border); text-align: center; }
+        .avatar { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--border); margin-bottom: 15px; object-fit: cover; }
+        .badge { background: #1a1a1f; border: 1px solid var(--border); padding: 4px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-block; }
+        .badge.gold { border-color: var(--gold); color: var(--gold); }
+
+        /* Описание проекта */
+        .v-description { line-height: 1.8; color: #ccc; font-size: 15px; margin-top: 15px; white-space: pre-line; }
 
         /* Плеер */
-        .sws-player { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); margin-top: 20px; }
-        video { width: 100%; height: 100%; }
-        .player-ui { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 20px; display: flex; align-items: center; gap: 15px; opacity: 0; transition: 0.3s; }
-        .sws-player:hover .player-ui { opacity: 1; }
-        .skip-btn { position: absolute; bottom: 80px; right: 20px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent); color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; display: none; z-index: 10; font-size: 12px; }
+        .video-container { position: relative; width: 100%; background: #000; border-radius: 16px; overflow: hidden; margin-top: 20px; border: 1px solid var(--border); }
+        video { width: 100%; aspect-ratio: 16/9; display: block; }
+        .player-overlay-btn { position: absolute; bottom: 70px; right: 20px; padding: 10px 20px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent); color: white; border-radius: 8px; cursor: pointer; display: none; }
 
-        /* Профиль и Админка */
         input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 10px; outline: none; }
         .btn { padding: 12px 24px; border: none; border-radius: 10px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; transition: var(--ts); text-transform: uppercase; font-size: 12px; }
-        .admin-panel { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--admin); margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-
-        footer { padding: 40px; text-align: center; border-top: 1px solid var(--border); margin-top: auto; color: var(--text-dim); font-size: 13px; }
-        footer span { color: var(--accent); }
+        
+        footer { padding: 40px; text-align: center; border-top: 1px solid var(--border); margin-top: auto; color: var(--text-dim); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo" id="logo-btn">SOUND<span>WAVE</span> STUDIO</div>
+        <div class="logo" onclick="showSection('home')">SOUND<span>WAVE</span> STUDIO</div>
         <nav>
             <ul>
-                <li><a id="n-home" class="nav-link active">Релизы</a></li>
-                <li><a id="n-team" class="nav-link">Состав</a></li>
-                <li><a id="n-profile" class="nav-link">Профиль</a></li>
+                <li><a id="n-home" class="nav-link active" onclick="showSection('home')">Релизы</a></li>
+                <li><a id="n-team" class="nav-link" onclick="showSection('team')">Состав</a></li>
+                <li><a id="n-profile" class="nav-link" onclick="showSection('profile')">Профиль</a></li>
             </ul>
         </nav>
     </header>
@@ -85,67 +87,86 @@
     <main class="container">
         <section id="home" class="section active">
             <h2 style="margin-bottom: 20px;">Свежие <span>релизы</span></h2>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Поиск по названию...">
-            </div>
             <div class="grid" id="main-grid"></div>
         </section>
 
         <section id="team" class="section">
-            <h2 style="margin-bottom: 30px;">Наша <span>команда</span></h2>
+            <h2 style="margin-bottom: 30px;">Команда <span>SWS</span></h2>
             <div class="grid" id="team-grid"></div>
         </section>
 
         <section id="view" class="section">
-            <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 20px;">
-                <img id="v-img" style="width: 200px; border-radius: 12px;">
+            <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                <img id="v-img" style="width: 240px; border-radius: 16px; border: 1px solid var(--border);">
                 <div style="flex: 1; min-width: 300px;">
-                    <h1 id="v-title"></h1>
-                    <p id="v-meta" style="color: var(--text-dim); margin: 10px 0;"></p>
-                    <p id="v-desc"></p>
+                    <h1 id="v-title" style="font-size: 2.5rem; letter-spacing: -1px;"></h1>
+                    <div id="v-meta" style="margin: 10px 0; font-weight: bold; color: var(--accent);"></div>
+                    <div id="v-desc" class="v-description"></div>
                 </div>
             </div>
-            <div class="sws-player">
-                <video id="v-video"></video>
-                <button id="skip-intro" class="skip-btn">ПРОПУСТИТЬ ИНТРО</button>
-                <div class="player-ui">
-                    <button class="btn" id="p-play">PLAY/PAUSE</button>
-                    <button class="btn" id="p-fs">FULLSCREEN</button>
-                </div>
+
+            <div class="video-container">
+                <video id="main-v" controls></video>
+                <button id="skip-i" class="player-overlay-btn">ПРОПУСТИТЬ ИНТРО</button>
             </div>
-            <div id="v-nav" style="margin-top: 20px; display: flex; gap: 10px;"></div>
-            <button class="btn" style="margin-top: 20px; background: #222;" onclick="showSection('home')">← НАЗАД</button>
+            
+            <div id="v-episodes" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+            <button class="btn" style="margin-top: 30px; background: #222;" onclick="showSection('home')">← НАЗАД К СПИСКУ</button>
         </section>
 
         <section id="profile" class="section">
-            <div id="auth-ui" style="max-width: 400px; margin: 0 auto; text-align: center;">
-                <h2 style="margin-bottom: 20px;">Вход в SWS ID</h2>
-                <input type="email" id="log-email" placeholder="Email">
-                <input type="password" id="log-pass" placeholder="Пароль">
-                <button class="btn" style="width: 100%;" id="btn-do-login">Войти</button>
+            <div id="auth-ui" style="max-width: 380px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 20px;">SWS ID</h2>
+                <input type="email" id="email" placeholder="Email">
+                <input type="password" id="pass" placeholder="Пароль">
+                <button class="btn" style="width: 100%;" id="btn-login">Войти</button>
+                <button class="btn" style="width: 100%; margin-top: 10px; background: #222;" id="btn-reg">Создать аккаунт</button>
             </div>
 
-            <div id="user-ui" style="display: none;">
-                <h1>Добро пожаловать, <span id="user-name" style="color: var(--accent);"></span></h1>
-                <button class="btn" style="background: #222; margin-top: 10px;" id="btn-logout">Выйти из аккаунта</button>
+            <div id="user-ui" class="profile-layout" style="display: none;">
+                <aside class="sidebar">
+                    <img id="u-ava" class="avatar">
+                    <h2 id="u-nick">...</h2>
+                    <div id="u-role-tag" style="font-size: 10px; font-weight: 800; color: var(--accent); margin-bottom: 15px;"></div>
+                    <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                        <div><b id="u-views" style="color: var(--accent);">0</b><br><small>Проектов</small></div>
+                        <div><b id="u-reg" style="color: var(--accent);">--</b><br><small>В SWS</small></div>
+                    </div>
+                    <div id="u-ach"></div>
+                    <button class="btn" style="width: 100%; margin-top: 20px; background: #222;" id="btn-logout">Выйти</button>
+                </aside>
 
-                <div id="admin-zone" class="admin-panel" style="display: none;">
-                    <h2 style="grid-column: 1/-1; color: var(--admin);">Панель Администратора</h2>
-                    <input type="text" id="a-title" placeholder="Название">
-                    <select id="a-type">
-                        <option value="Аниме">Аниме</option>
-                        <option value="Фильм">Фильм</option>
-                        <option value="Сериал">Сериал</option>
-                    </select>
-                    <input type="text" id="a-year" placeholder="Год">
-                    <input type="text" id="a-quality" placeholder="Качество (1080p)">
-                    <input type="text" id="a-authors" placeholder="Авторы">
-                    <input type="number" id="a-ep" placeholder="Серия №">
-                    <input type="text" id="a-img" class="full" placeholder="Ссылка на постер (URL)">
-                    <input type="text" id="a-video" class="full" placeholder="Ссылка на видео (Drive URL)">
-                    <textarea id="a-desc" style="grid-column: 1/-1;" placeholder="Описание"></textarea>
-                    <input type="number" id="a-intro" placeholder="Интро до (сек)">
-                    <button class="btn" style="grid-column: 1/-1;" id="btn-publish">ОПУБЛИКОВАТЬ РЕЛИЗ</button>
+                <div class="main-content">
+                    <div style="background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
+                        <h3>Настройки профиля</h3>
+                        <label style="font-size: 12px; color: var(--text-dim);">Никнейм:</label>
+                        <input type="text" id="set-nick">
+                        <label style="font-size: 12px; color: var(--text-dim);">URL аватара:</label>
+                        <input type="text" id="set-ava">
+                        <button class="btn" id="btn-save-p">Сохранить</button>
+                    </div>
+
+                    <div id="admin-panel" style="display: none; margin-top: 20px; border: 1px solid var(--admin); padding: 25px; border-radius: 20px;">
+                        <h3 style="color: var(--admin); margin-bottom: 15px;">Панель управления</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <h4>+ Новый релиз</h4>
+                                <input type="text" id="ad-title" placeholder="Название">
+                                <select id="ad-type"><option>Аниме</option><option>Фильм</option><option>Сериал</option></select>
+                                <input type="text" id="ad-img" placeholder="URL постера">
+                                <input type="text" id="ad-video" placeholder="URL видео (Drive)">
+                                <textarea id="ad-desc" placeholder="Описание"></textarea>
+                                <button class="btn" style="background: var(--admin); width: 100%;" id="btn-add-rel">Опубликовать</button>
+                            </div>
+                            <div>
+                                <h4>+ В команду</h4>
+                                <input type="text" id="ad-m-name" placeholder="Никнейм">
+                                <input type="text" id="ad-m-role" placeholder="Роль">
+                                <input type="text" id="ad-m-img" placeholder="URL фото">
+                                <button class="btn" style="background: var(--admin); width: 100%;" id="btn-add-mem">Добавить</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -155,8 +176,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
@@ -171,9 +192,8 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let allProjects = [];
+        let isAdmin = false;
 
-        // --- НАВИГАЦИЯ ---
         window.showSection = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -183,108 +203,85 @@
             if(id === 'team') renderTeam();
         };
 
-        document.getElementById('n-home').onclick = () => showSection('home');
-        document.getElementById('n-team').onclick = () => showSection('team');
-        document.getElementById('n-profile').onclick = () => showSection('profile');
-        document.getElementById('logo-btn').onclick = () => showSection('home');
-
-        // --- ПЛЕЕР ФУНКЦИИ ---
-        const video = document.getElementById('v-video');
-        document.getElementById('p-play').onclick = () => video.paused ? video.play() : video.pause();
-        document.getElementById('p-fs').onclick = () => {
-            if (video.requestFullscreen) video.requestFullscreen();
-            else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-        };
-
-        // --- ЛОГИКА ГЛАВНОЙ ---
+        // --- ГЛАВНАЯ ---
         async function renderHome() {
             const grid = document.getElementById('main-grid');
             grid.innerHTML = 'Загрузка...';
             const snap = await getDocs(query(collection(db, "projects"), orderBy("time", "desc")));
-            allProjects = snap.docs.map(d => d.data());
-            drawGrid(allProjects);
-        }
-
-        function drawGrid(list) {
-            const grid = document.getElementById('main-grid');
             grid.innerHTML = '';
-            list.forEach(p => {
+            snap.forEach(d => {
+                const p = d.data();
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.innerHTML = `<div class="card-quality">${p.quality}</div><img src="${p.img}"><div class="card-content"><b>${p.title}</b><div class="card-year">${p.year}</div></div>`;
-                card.onclick = () => openProject(p);
+                card.innerHTML = `
+                    <button class="del-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
+                    <img src="${p.img}">
+                    <div class="card-content"><b>${p.title}</b></div>
+                `;
+                card.querySelector('img').onclick = () => openProject(p);
+                if(isAdmin) card.querySelector('.del-btn').onclick = (e) => { e.stopPropagation(); deleteItem('projects', d.id); };
                 grid.appendChild(card);
             });
         }
 
-        document.getElementById('search-input').oninput = (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = allProjects.filter(p => p.title.toLowerCase().includes(val));
-            drawGrid(filtered);
-        };
-
-        // --- ПРОСМОТР ---
         async function openProject(p) {
             showSection('view');
+            const video = document.getElementById('main-v');
             document.getElementById('v-img').src = p.img;
             document.getElementById('v-title').innerText = p.title;
+            document.getElementById('v-meta').innerText = `${p.type} | SWS Dub`;
             document.getElementById('v-desc').innerText = p.desc;
-            document.getElementById('v-meta').innerText = `${p.type} | ${p.year} | Авторы: ${p.authors}`;
-            
             video.src = p.video;
-            video.load();
-
-            const skip = document.getElementById('skip-intro');
-            video.ontimeupdate = () => {
-                if(video.currentTime > 2 && video.currentTime < 10) skip.style.display = 'block';
-                else skip.style.display = 'none';
-            };
-            skip.onclick = () => video.currentTime = p.intro;
-
-            // Серии
-            const nav = document.getElementById('v-nav');
-            nav.innerHTML = '';
-            if(p.type !== 'Фильм') {
-                const q = query(collection(db, "projects"), where("title", "==", p.title), orderBy("ep", "asc"));
-                const s = await getDocs(q);
-                s.forEach(d => {
-                    const ep = d.data();
-                    const b = document.createElement('button');
-                    b.className = 'btn';
-                    b.innerText = `Серия ${ep.ep}`;
-                    if(ep.ep === p.ep) b.style.background = 'var(--accent)';
-                    else b.style.background = '#333';
-                    b.onclick = () => openProject(ep);
-                    nav.appendChild(b);
-                });
-            }
+            video.play().catch(() => console.log("Автовоспроизведение заблокировано"));
         }
 
         // --- КОМАНДА ---
         async function renderTeam() {
             const grid = document.getElementById('team-grid');
-            grid.innerHTML = 'Загрузка...';
-            const snap = await getDocs(collection(db, "team"));
             grid.innerHTML = '';
+            const snap = await getDocs(collection(db, "team"));
             snap.forEach(d => {
                 const m = d.data();
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.innerHTML = `<img src="${m.img}"><div class="card-content"><b>${m.name}</b><br><small>${m.role}</small></div>`;
+                card.innerHTML = `
+                    <button class="del-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
+                    <img src="${m.img}">
+                    <div class="card-content"><b>${m.name}</b><br><small>${m.role}</small></div>
+                `;
+                if(isAdmin) card.querySelector('.del-btn').onclick = () => deleteItem('team', d.id);
                 grid.appendChild(card);
             });
         }
 
-        // --- АВТОРИЗАЦИЯ ---
+        async function deleteItem(coll, id) {
+            if(confirm("Удалить безвозвратно?")) {
+                await deleteDoc(doc(db, coll, id));
+                location.reload();
+            }
+        }
+
+        // --- AUTH & PROFILE ---
         onAuthStateChanged(auth, async (user) => {
             if(user) {
                 document.getElementById('auth-ui').style.display = 'none';
-                document.getElementById('user-ui').style.display = 'block';
+                document.getElementById('user-ui').style.display = 'grid';
                 const snap = await getDoc(doc(db, "users", user.uid));
                 if(snap.exists()) {
-                    const userData = snap.data();
-                    document.getElementById('user-name').innerText = userData.nickname || user.email;
-                    if(userData.role === 'admin') document.getElementById('admin-zone').style.display = 'grid';
+                    const u = snap.data();
+                    isAdmin = u.role === 'admin';
+                    document.getElementById('u-nick').innerText = u.nickname;
+                    document.getElementById('u-ava').src = u.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${u.nickname}`;
+                    document.getElementById('u-views').innerText = u.views || 0;
+                    document.getElementById('u-reg').innerText = u.regDate || "--";
+                    document.getElementById('u-role-tag').innerText = isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК SWS";
+                    document.getElementById('set-nick').value = u.nickname;
+                    document.getElementById('set-ava').value = u.avatar || "";
+                    if(isAdmin) document.getElementById('admin-panel').style.display = 'block';
+                    
+                    const ach = document.getElementById('u-ach'); ach.innerHTML = '';
+                    if(isAdmin) ach.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
+                    u.achievements?.forEach(a => ach.innerHTML += `<span class="badge">${a}</span>`);
                 }
             } else {
                 document.getElementById('auth-ui').style.display = 'block';
@@ -293,31 +290,54 @@
             renderHome();
         });
 
-        document.getElementById('btn-do-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('log-email').value, document.getElementById('log-pass').value)
-                .catch(e => alert("Ошибка: " + e.message));
+        document.getElementById('btn-login').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e => alert("Ошибка входа"));
+        };
+
+        document.getElementById('btn-reg').onclick = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            try {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", res.user.uid), {
+                    nickname: email.split('@')[0], avatar: "", role: "user",
+                    views: 0, regDate: new Date().toLocaleDateString('ru-RU'),
+                    achievements: ["🚀 Новичок"]
+                });
+                alert("Успешная регистрация!");
+            } catch (e) { alert(e.message); }
         };
 
         document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
 
-        // --- АДМИН ПУБЛИКАЦИЯ ---
-        document.getElementById('btn-publish').onclick = async () => {
-            const data = {
-                title: document.getElementById('a-title').value,
-                type: document.getElementById('a-type').value,
-                year: document.getElementById('a-year').value,
-                quality: document.getElementById('a-quality').value,
-                authors: document.getElementById('a-authors').value,
-                ep: Number(document.getElementById('a-ep').value) || 1,
-                img: document.getElementById('a-img').value,
-                video: document.getElementById('a-video').value,
-                desc: document.getElementById('a-desc').value,
-                intro: Number(document.getElementById('a-intro').value) || 0,
+        document.getElementById('btn-save-p').onclick = async () => {
+            await updateDoc(doc(db, "users", auth.currentUser.uid), {
+                nickname: document.getElementById('set-nick').value,
+                avatar: document.getElementById('set-ava').value
+            });
+            alert("Данные обновлены!");
+        };
+
+        // --- ADMIN ACTIONS ---
+        document.getElementById('btn-add-rel').onclick = async () => {
+            await addDoc(collection(db, "projects"), {
+                title: document.getElementById('ad-title').value,
+                type: document.getElementById('ad-type').value,
+                img: document.getElementById('ad-img').value,
+                video: document.getElementById('ad-video').value,
+                desc: document.getElementById('ad-desc').value,
                 time: Date.now()
-            };
-            await addDoc(collection(db, "projects"), data);
-            alert("Опубликовано!");
-            renderHome();
+            });
+            alert("Релиз добавлен!"); renderHome();
+        };
+
+        document.getElementById('btn-add-mem').onclick = async () => {
+            await addDoc(collection(db, "team"), {
+                name: document.getElementById('ad-m-name').value,
+                role: document.getElementById('ad-m-role').value,
+                img: document.getElementById('ad-m-img').value
+            });
+            alert("Участник добавлен!"); renderTeam();
         };
 
     </script>
