@@ -33,17 +33,17 @@
         .nav-link:hover { color: var(--text); }
         .nav-link.active { color: var(--accent); background: rgba(255, 46, 46, 0.1); }
 
-        #verify-notice { background: var(--accent); color: white; padding: 12px; text-align: center; font-size: 13px; display: none; }
-        .btn-verify { background: white; color: black; border: none; padding: 4px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 10px; }
-
         .section { display: none; padding: 40px 0; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Поиск */
-        .search-container { margin-bottom: 30px; position: relative; max-width: 400px; }
-        .search-container input { padding-left: 40px; margin-bottom: 0; border-radius: 12px; }
-        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
+        .search-box { margin-bottom: 30px; position: relative; max-width: 400px; }
+        .search-box input { 
+            width: 100%; padding: 12px 12px 12px 40px; background: var(--input-bg); 
+            border: 1px solid var(--border); color: white; border-radius: 12px; outline: none;
+        }
+        .search-box::before { content: "🔍"; position: absolute; left: 15px; top: 12px; opacity: 0.5; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
         .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); position: relative; }
@@ -72,27 +72,23 @@
         .badge.gold { border-color: var(--gold); color: var(--gold); }
 
         .info-block { background: var(--card-bg); padding: 25px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 25px; }
-        input, select { 
+        input { 
             width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); 
-            color: white; border-radius: 10px; margin-bottom: 15px; outline: none; transition: 0.2s;
+            color: white; border-radius: 10px; margin-bottom: 15px; outline: none;
         }
-        input:focus { border-color: var(--accent); }
 
         .btn { 
             padding: 12px 24px; border: none; border-radius: 10px; background: var(--accent); 
             color: white; font-weight: 700; cursor: pointer; transition: var(--ts); text-transform: uppercase; font-size: 12px;
         }
-        .btn:hover { opacity: 0.9; }
-        .btn:active { transform: scale(0.95); }
         .btn-admin { background: var(--admin); width: 100%; margin-top: 10px; }
+        
+        #verify-notice { background: var(--accent); color: white; padding: 12px; text-align: center; font-size: 13px; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="verify-notice">
-        📧 Подтвердите Email для доступа к функциям. 
-        <button class="btn-verify" id="check-verify">Я подтвердил!</button>
-    </div>
+    <div id="verify-notice">📧 Подтвердите Email для доступа к функциям.</div>
 
     <header>
         <div class="logo" id="logo-btn">SOUND<span>WAVE</span> STUDIO</div>
@@ -108,12 +104,9 @@
     <main id="home" class="section active">
         <div class="container">
             <h2 style="margin-bottom: 20px;">Свежие <span>релизы</span></h2>
-            
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
+            <div class="search-box">
                 <input type="text" id="search-input" placeholder="Поиск по названию...">
             </div>
-
             <div class="grid" id="titles-grid"></div>
         </div>
     </main>
@@ -199,15 +192,8 @@
         if (window.top !== window.self) window.top.location = window.self.location;
         const ALLOWED = "dntsstudio-ai.github.io";
         if (window.location.hostname !== ALLOWED && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-            document.body.innerHTML = "<div style='color:red; text-align:center; margin-top:20%; font-family:sans-serif;'><h1>ACCESS DENIED</h1></div>";
-            throw new Error();
+            document.body.innerHTML = "ACCESS DENIED"; throw new Error();
         }
-
-        const clean = (str) => {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        };
 
         const firebaseConfig = {
             apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
@@ -223,8 +209,14 @@
         const db = getFirestore(app);
 
         let isAdmin = false;
-        let allTitles = []; // Память для поиска
+        let allTitles = []; 
 
+        const clean = (str) => {
+            const div = document.createElement('div');
+            div.textContent = str; return div.innerHTML;
+        };
+
+        // --- НАВИГАЦИЯ ---
         const nav = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -235,19 +227,20 @@
             if (id === 'team') renderTeam();
         };
 
+        // Слушатели кнопок навигации
+        document.getElementById('logo-btn').onclick = () => nav('home');
+        document.getElementById('n-home').onclick = () => nav('home');
+        document.getElementById('n-team').onclick = () => nav('team');
+        document.getElementById('n-profile').onclick = () => nav('profile');
+        document.getElementById('back-to-home').onclick = () => nav('home');
+
         const watch = (name, link) => {
             document.getElementById('pl-name').innerText = name;
             document.getElementById('pl-frame').src = link;
             nav('player');
         };
 
-        // --- ЛОГИКА ПОИСКА ---
-        document.getElementById('search-input').oninput = (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = allTitles.filter(t => t.data.name.toLowerCase().includes(term));
-            drawTitles(filtered);
-        };
-
+        // --- РЕНДЕРИНГ ТАЙТЛОВ ---
         function drawTitles(list) {
             const grid = document.getElementById('titles-grid');
             grid.innerHTML = '';
@@ -267,19 +260,22 @@
         }
 
         async function renderTitles() {
-            if (allTitles.length > 0 && document.getElementById('search-input').value === '') {
-                drawTitles(allTitles);
-                return;
-            }
             const grid = document.getElementById('titles-grid');
-            grid.innerHTML = 'Загрузка...';
-            try {
+            if (allTitles.length === 0) {
+                grid.innerHTML = 'Загрузка...';
                 const snap = await getDocs(query(collection(db, "titles"), orderBy("date", "desc")));
                 allTitles = snap.docs.map(d => ({ id: d.id, data: d.data() }));
-                drawTitles(allTitles);
-            } catch (e) { grid.innerHTML = 'Ошибка загрузки'; }
+            }
+            drawTitles(allTitles);
         }
 
+        document.getElementById('search-input').oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allTitles.filter(t => t.data.name.toLowerCase().includes(term));
+            drawTitles(filtered);
+        };
+
+        // --- РЕНДЕРИНГ КОМАНДЫ ---
         async function renderTeam() {
             const grid = document.getElementById('team-grid');
             grid.innerHTML = 'Загрузка...';
@@ -302,7 +298,8 @@
         async function deleteItem(coll, id) {
             if (!confirm("Удалить?")) return;
             await deleteDoc(doc(db, coll, id));
-            if(coll === 'titles') { allTitles = []; renderTitles(); } else { renderTeam(); }
+            if(coll === 'titles') allTitles = [];
+            coll === 'titles' ? renderTitles() : renderTeam();
         }
 
         // --- AUTH ---
@@ -321,19 +318,25 @@
                     document.getElementById('s-date').innerText = d.regDate || "--";
                     document.getElementById('u-role-text').innerText = isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА";
                     const box = document.getElementById('u-ach-box'); box.innerHTML = '';
-                    if(isAdmin) box.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
-                    d.achievements?.forEach(a => box.innerHTML += `<span class="badge">${clean(a)}</span>`);
                     if(isAdmin) {
+                        box.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
                         document.getElementById('admin-panel').style.display = 'block';
-                        renderTitles();
                     }
+                    d.achievements?.forEach(a => box.innerHTML += `<span class="badge">${clean(a)}</span>`);
                 }
             } else {
                 document.getElementById('auth-ui').style.display = 'block';
                 document.getElementById('user-ui').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'none';
                 isAdmin = false;
             }
+            renderTitles(); // Всегда грузим тайтлы при запуске
         });
+
+        document.getElementById('btn-login').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('a-email').value, document.getElementById('a-pass').value)
+                .catch(() => alert("Ошибка входа"));
+        };
 
         document.getElementById('btn-reg').onclick = async () => {
             const email = document.getElementById('a-email').value;
@@ -346,19 +349,11 @@
                     role: "user", regDate: new Date().toLocaleDateString('ru-RU'),
                     views: 0, avatar: "", achievements: ["🚀 Первооткрыватель"]
                 });
-                alert("Подтвердите Email!");
+                alert("Подтвердите почту!");
             } catch (e) { alert(e.message); }
         };
 
-        document.getElementById('btn-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('a-email').value, document.getElementById('a-pass').value)
-                .catch(() => alert("Ошибка входа"));
-        };
-
-        // Исправленный выход с обновлением страницы
-        document.getElementById('btn-logout').onclick = () => {
-            signOut(auth).then(() => location.reload());
-        };
+        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
 
         document.getElementById('save-profile').onclick = async () => {
             await updateDoc(doc(db, "users", auth.currentUser.uid), {
@@ -368,7 +363,7 @@
             alert("Сохранено!"); location.reload();
         };
 
-        // --- ADMIN ---
+        // --- ADMIN ACTIONS ---
         document.getElementById('add-title').onclick = async () => {
             await addDoc(collection(db, "titles"), {
                 name: document.getElementById('t-name').value,
@@ -380,3 +375,14 @@
         };
 
         document.getElementById('add-member').onclick = async () => {
+            await addDoc(collection(db, "team"), {
+                name: document.getElementById('m-name').value,
+                role: document.getElementById('m-role').value,
+                img: document.getElementById('m-img').value
+            });
+            alert("Добавлено!"); renderTeam();
+        };
+
+    </script>
+</body>
+</html>
