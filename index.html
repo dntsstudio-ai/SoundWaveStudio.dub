@@ -36,6 +36,7 @@
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* CARDS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
         .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); position: relative; cursor: pointer; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
@@ -50,25 +51,28 @@
             font-size: 10px; font-weight: bold; cursor: pointer; z-index: 20; display: none;
         }
 
+        /* VIEW */
         .view-layout { display: grid; grid-template-columns: 280px 1fr; gap: 30px; margin-bottom: 30px; }
         @media (max-width: 800px) { .view-layout { grid-template-columns: 1fr; text-align: center; } .view-layout img { margin: 0 auto; } }
         .v-poster { width: 100%; border-radius: 20px; border: 1px solid var(--border); }
         .v-title { font-size: 2.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 15px; }
-        .v-info-row { margin-bottom: 8px; font-size: 14px; color: var(--text-dim); }
-        .v-info-row b { color: var(--text); }
         .v-desc { line-height: 1.8; color: #ccc; margin-top: 20px; white-space: pre-line; border-top: 1px solid var(--border); padding-top: 20px; }
 
         .video-box { position: relative; width: 100%; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); margin-top: 20px; aspect-ratio: 16/9; }
         iframe { width: 100%; height: 100%; border: none; }
 
+        /* PROFILE */
         .profile-grid { display: grid; grid-template-columns: 320px 1fr; gap: 30px; }
         @media (max-width: 850px) { .profile-grid { grid-template-columns: 1fr; } }
         .profile-card { background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--border); text-align: center; height: fit-content; }
         .u-avatar { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--border); margin-bottom: 20px; object-fit: cover; }
-        .badge { background: #1a1a1f; border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; font-size: 11px; margin: 3px; display: inline-block; font-weight: 600; }
+        .badge { background: #1a1a1f; border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; font-size: 11px; margin: 3px; display: inline-block; font-weight: 600; color: #fff; }
         .badge.gold { border-color: var(--gold); color: var(--gold); }
 
+        /* ADMIN */
         .admin-section { background: rgba(56, 151, 240, 0.05); border: 1px solid var(--admin); padding: 25px; border-radius: 20px; margin-top: 30px; }
+        .admin-block { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        
         input, select, textarea { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 12px; margin-bottom: 12px; outline: none; }
         .btn { padding: 14px 28px; border: none; border-radius: 12px; background: var(--accent); color: white; font-weight: 800; cursor: pointer; transition: var(--ts); text-transform: uppercase; font-size: 12px; }
 
@@ -104,18 +108,14 @@
                 <img id="v-img" class="v-poster">
                 <div class="v-details">
                     <h1 id="v-title" class="v-title"></h1>
-                    <div class="v-info-row">Тип: <b id="v-type"></b></div>
-                    <div class="v-info-row">Год: <b id="v-year"></b></div>
-                    <div class="v-info-row">Качество: <b id="v-quality"></b></div>
-                    <div class="v-info-row">Авторы: <b id="v-authors"></b></div>
+                    <div class="v-info-row">Тип: <b id="v-type"></b> | Год: <b id="v-year"></b></div>
+                    <div class="v-info-row">Качество: <b id="v-quality"></b> | Авторы: <b id="v-authors"></b></div>
                     <p id="v-desc" class="v-desc"></p>
                 </div>
             </div>
-
             <div class="video-box">
                 <iframe id="v-iframe" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
-
             <div id="v-episodes" style="margin-top: 25px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
             <button class="btn" style="margin-top: 40px; background: #1a1a1f;" onclick="showSection('home')">← Назад</button>
         </section>
@@ -133,45 +133,47 @@
                 <aside class="profile-card">
                     <img id="u-ava" class="u-avatar">
                     <h2 id="u-nick">...</h2>
-                    <div id="u-role-tag" style="font-size: 11px; font-weight: 800; color: var(--accent); margin-bottom: 20px;"></div>
-                    <div style="display: flex; justify-content: space-around; margin: 20px 0;">
-                        <div><b id="u-views" style="color: var(--accent);">0</b><br><small>Проектов</small></div>
-                        <div><b id="u-regdate" style="color: var(--accent);">--</b><br><small>Дата рег.</small></div>
-                    </div>
-                    <div id="u-achievements"></div>
-                    <button class="btn" style="width: 100%; margin-top: 20px; background: #1a1a1f;" id="btn-logout">Выход</button>
+                    <div id="u-role-tag" style="font-size: 11px; font-weight: 800; color: var(--accent); margin-bottom: 20px; text-transform: uppercase;"></div>
+                    <div id="u-achievements" style="margin-bottom: 20px;"></div>
+                    <button class="btn" style="width: 100%; background: #1a1a1f;" id="btn-logout">Выход</button>
                 </aside>
 
                 <div class="profile-main">
                     <div style="background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 30px;">
-                        <h3>Настройки</h3>
-                        <input type="text" id="set-nick" placeholder="Никнейм">
-                        <input type="text" id="set-ava" placeholder="Ссылка на аватар">
-                        <button class="btn" id="btn-save-profile">Сохранить</button>
+                        <h3>Настройки профиля</h3>
+                        <input type="text" id="set-nick" placeholder="Новый ник">
+                        <input type="text" id="set-ava" placeholder="URL новой аватарки">
+                        <button class="btn" id="btn-save-profile">Сохранить данные</button>
                     </div>
 
                     <div id="admin-panel" class="admin-section" style="display: none;">
                         <h3 style="color: var(--admin); margin-bottom: 20px;">Панель Администратора</h3>
-                        <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-                            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px;">
-                                <h4>+ Новый релиз</h4>
-                                <input type="text" id="ad-title" placeholder="Название">
-                                <select id="ad-type" onchange="toggleAdminFields()">
-                                    <option value="Фильм">Фильм</option>
-                                    <option value="Аниме">Аниме</option>
-                                    <option value="Сериал">Сериал</option>
-                                </select>
-                                <input type="text" id="ad-year" placeholder="Год">
-                                <input type="text" id="ad-quality" placeholder="Качество">
-                                <input type="text" id="ad-authors" placeholder="Авторы">
-                                <div id="ad-serial-box" style="display: none; border-left: 2px solid var(--accent); padding-left: 15px;">
-                                    <input type="number" id="ad-ep" placeholder="Серия №">
-                                </div>
-                                <input type="text" id="ad-img" placeholder="URL постера">
-                                <input type="text" id="ad-video" placeholder="Ссылка на Google Drive">
-                                <textarea id="ad-desc" placeholder="Описание..."></textarea>
-                                <button class="btn" style="background: var(--admin); width: 100%;" id="btn-pub-rel">ОПУБЛИКОВАТЬ</button>
+                        
+                        <div class="admin-block">
+                            <h4>🏆 Выдать достижение</h4>
+                            <input type="email" id="ad-ach-email" placeholder="Email пользователя">
+                            <input type="text" id="ad-ach-name" placeholder="Название (напр. Олдфаг)">
+                            <button class="btn" style="background: var(--admin); width:100%" id="btn-give-ach">ВЫДАТЬ</button>
+                        </div>
+
+                        <div class="admin-block">
+                            <h4>+ Новый релиз</h4>
+                            <input type="text" id="ad-title" placeholder="Название">
+                            <select id="ad-type" onchange="toggleAdminFields()">
+                                <option value="Фильм">Фильм</option>
+                                <option value="Аниме">Аниме</option>
+                                <option value="Сериал">Сериал</option>
+                            </select>
+                            <input type="text" id="ad-year" placeholder="Год">
+                            <input type="text" id="ad-quality" placeholder="Качество">
+                            <input type="text" id="ad-authors" placeholder="Авторы">
+                            <div id="ad-serial-box" style="display: none;">
+                                <input type="number" id="ad-ep" placeholder="Серия №">
                             </div>
+                            <input type="text" id="ad-img" placeholder="URL постера">
+                            <input type="text" id="ad-video" placeholder="Ссылка Google Drive">
+                            <textarea id="ad-desc" placeholder="Описание..."></textarea>
+                            <button class="btn" style="background: var(--admin); width: 100%;" id="btn-pub-rel">ОПУБЛИКОВАТЬ</button>
                         </div>
                     </div>
                 </div>
@@ -200,7 +202,6 @@
         const auth = getAuth(app);
         let isAdmin = false;
 
-        // Конвертер для IFRAME
         function driveIframe(url) {
             if (!url.includes('drive.google.com')) return url;
             let id = "";
@@ -225,7 +226,7 @@
 
         async function renderHome() {
             const grid = document.getElementById('main-grid');
-            grid.innerHTML = 'Загрузка...';
+            grid.innerHTML = 'Синхронизация...';
             const snap = await getDocs(query(collection(db, "projects"), orderBy("time", "desc")));
             grid.innerHTML = '';
             snap.forEach(d => {
@@ -249,22 +250,6 @@
             document.getElementById('v-quality').innerText = p.quality;
             document.getElementById('v-authors').innerText = p.authors;
             document.getElementById('v-desc').innerText = p.desc;
-
-            const nav = document.getElementById('v-episodes');
-            nav.innerHTML = '';
-            if(p.type !== 'Фильм') {
-                const q = query(collection(db, "projects"), where("title", "==", p.title), orderBy("ep", "asc"));
-                const s = await getDocs(q);
-                s.forEach(d => {
-                    const ep = d.data();
-                    const btn = document.createElement('button');
-                    btn.className = 'btn';
-                    btn.style.background = (ep.ep === p.ep) ? 'var(--accent)' : '#1a1a1f';
-                    btn.innerText = `Серия ${ep.ep}`;
-                    btn.onclick = () => openProject(ep);
-                    nav.appendChild(btn);
-                });
-            }
         }
 
         async function renderTeam() {
@@ -285,21 +270,32 @@
             if(confirm("Удалить?")) { await deleteDoc(doc(db, coll, id)); location.reload(); }
         }
 
-        onAuthStateChanged(auth, async (user) => {
+        // ЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ
+        async function loadUserData(user) {
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if(snap.exists()) {
+                const u = snap.data();
+                isAdmin = u.role === 'admin';
+                document.getElementById('u-nick').innerText = u.nickname;
+                document.getElementById('u-ava').src = u.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${u.nickname}`;
+                document.getElementById('u-role-tag').innerText = isAdmin ? "АДМИНИСТРАТОР SWS" : "Участник Сообщества";
+                document.getElementById('set-nick').value = u.nickname;
+                document.getElementById('set-ava').value = u.avatar || "";
+                
+                const achBox = document.getElementById('u-achievements');
+                achBox.innerHTML = '';
+                if(isAdmin) achBox.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
+                u.achievements?.forEach(a => { achBox.innerHTML += `<span class="badge">${a}</span>`; });
+
+                if(isAdmin) document.getElementById('admin-panel').style.display = 'block';
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
             if(user) {
                 document.getElementById('auth-ui').style.display = 'none';
                 document.getElementById('user-ui').style.display = 'grid';
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if(snap.exists()) {
-                    const u = snap.data();
-                    isAdmin = u.role === 'admin';
-                    document.getElementById('u-nick').innerText = u.nickname;
-                    document.getElementById('u-ava').src = u.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${u.nickname}`;
-                    document.getElementById('u-views').innerText = u.views || 0;
-                    document.getElementById('u-regdate').innerText = u.regDate || "2024";
-                    document.getElementById('u-role-tag').innerText = isAdmin ? "АДМИНИСТРАТОР" : "ЗРИТЕЛЬ";
-                    if(isAdmin) document.getElementById('admin-panel').style.display = 'block';
-                }
+                loadUserData(user);
             } else {
                 document.getElementById('auth-ui').style.display = 'block';
                 document.getElementById('user-ui').style.display = 'none';
@@ -308,12 +304,47 @@
             renderHome();
         });
 
-        document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e => alert("Ошибка"));
+        // СОХРАНЕНИЕ ПРОФИЛЯ
+        document.getElementById('btn-save-profile').onclick = async () => {
+            const user = auth.currentUser;
+            const newNick = document.getElementById('set-nick').value;
+            const newAva = document.getElementById('set-ava').value;
+            await updateDoc(doc(db, "users", user.uid), { nickname: newNick, avatar: newAva });
+            alert("Данные обновлены!");
+            loadUserData(user); // Перезагружаем интерфейс
+        };
+
+        // ВЫДАЧА ДОСТИЖЕНИЙ (ПО EMAIL)
+        document.getElementById('btn-give-ach').onclick = async () => {
+            const targetEmail = document.getElementById('ad-ach-email').value;
+            const achName = document.getElementById('ad-ach-name').value;
+            
+            // Ищем пользователя по email в базе
+            const q = query(collection(db, "users"), where("email", "==", targetEmail));
+            const snap = await getDocs(q);
+            
+            if(snap.empty) return alert("Пользователь с таким Email не найден!");
+            
+            snap.forEach(async (userDoc) => {
+                const currentAch = userDoc.data().achievements || [];
+                currentAch.push(achName);
+                await updateDoc(doc(db, "users", userDoc.id), { achievements: currentAch });
+                alert(`Достижение "${achName}" выдано пользователю ${targetEmail}`);
+            });
+        };
+
+        document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e => alert("Ошибка входа"));
         document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
         document.getElementById('btn-reg').onclick = async () => {
             const email = document.getElementById('email').value;
             const res = await createUserWithEmailAndPassword(auth, email, document.getElementById('pass').value);
-            await setDoc(doc(db, "users", res.user.uid), { nickname: email.split('@')[0], role: "user", regDate: new Date().toLocaleDateString('ru-RU') });
+            await setDoc(doc(db, "users", res.user.uid), { 
+                email: email, // Сохраняем email для поиска админом
+                nickname: email.split('@')[0], 
+                role: "user", 
+                achievements: ["🚀 Новичок"],
+                regDate: new Date().toLocaleDateString('ru-RU') 
+            });
             location.reload();
         };
 
@@ -330,7 +361,7 @@
                 ep: Number(document.getElementById('ad-ep').value) || 1,
                 time: Date.now()
             });
-            alert("Готово!"); renderHome();
+            alert("Релиз опубликован!"); renderHome();
         };
     </script>
 </body>
