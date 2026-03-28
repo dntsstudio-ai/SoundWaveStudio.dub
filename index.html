@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWS | Sound Wave Studio</title>
+    <title>SWS | Sound Wave Studio Official</title>
     <style>
         :root {
             --bg: #0b0b0d; --card-bg: #141417; --input-bg: #050506;
@@ -13,9 +13,10 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         .container { max-width: 1100px; margin: 0 auto; width: 100%; padding: 0 20px; }
 
+        /* HEADER */
         header { 
             background: rgba(11, 11, 13, 0.95); backdrop-filter: blur(12px);
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
@@ -32,43 +33,60 @@
         .nav-link:hover { color: var(--text); }
         .nav-link.active { color: var(--accent); background: rgba(255, 46, 46, 0.1); }
 
-        .section { display: none; padding: 40px 0; animation: fadeIn 0.3s ease; }
+        /* SECTIONS */
+        .section { display: none; padding: 30px 0; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Стили карточек и удаления */
+        /* CARDS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
         .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); position: relative; cursor: pointer; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
         .card img { width: 100%; height: 280px; object-fit: cover; display: block; }
         .card-content { padding: 15px; }
-        
+        .card-title { font-weight: 700; font-size: 14px; margin-bottom: 5px; display: block; }
+        .card-meta { font-size: 11px; color: var(--text-dim); }
+
         .del-btn { 
             position: absolute; top: 10px; right: 10px; background: var(--accent); 
-            color: white; border: none; padding: 5px 10px; border-radius: 6px; 
+            color: white; border: none; padding: 6px 10px; border-radius: 6px; 
             font-size: 10px; font-weight: bold; cursor: pointer; z-index: 20; display: none;
         }
 
-        /* Профиль */
-        .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
-        @media (max-width: 800px) { .profile-layout { grid-template-columns: 1fr; } }
-        .sidebar { background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border); text-align: center; }
-        .avatar { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--border); margin-bottom: 15px; object-fit: cover; }
-        .badge { background: #1a1a1f; border: 1px solid var(--border); padding: 4px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-block; }
+        /* PLAYER & VIEW PAGE */
+        .view-layout { display: grid; grid-template-columns: 280px 1fr; gap: 30px; margin-bottom: 30px; }
+        @media (max-width: 800px) { .view-layout { grid-template-columns: 1fr; text-align: center; } .view-layout img { margin: 0 auto; } }
+        .v-poster { width: 100%; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .v-title { font-size: 2.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 15px; }
+        .v-info-row { margin-bottom: 8px; font-size: 14px; color: var(--text-dim); }
+        .v-info-row b { color: var(--text); }
+        .v-desc { line-height: 1.8; color: #ccc; margin-top: 20px; white-space: pre-line; border-top: 1px solid var(--border); padding-top: 20px; }
+
+        .video-box { position: relative; width: 100%; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); margin-top: 20px; }
+        video { width: 100%; aspect-ratio: 16/9; display: block; }
+        .skip-btn { position: absolute; bottom: 80px; right: 20px; padding: 12px 24px; background: rgba(0,0,0,0.9); border: 1px solid var(--accent); color: white; border-radius: 8px; cursor: pointer; display: none; font-weight: bold; z-index: 100; }
+
+        /* PROFILE */
+        .profile-grid { display: grid; grid-template-columns: 320px 1fr; gap: 30px; }
+        @media (max-width: 850px) { .profile-grid { grid-template-columns: 1fr; } }
+        .profile-card { background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--border); text-align: center; height: fit-content; }
+        .u-avatar { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--border); margin-bottom: 20px; object-fit: cover; background: #000; }
+        .badge { background: #1a1a1f; border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; font-size: 11px; margin: 3px; display: inline-block; font-weight: 600; }
         .badge.gold { border-color: var(--gold); color: var(--gold); }
 
-        /* Описание проекта */
-        .v-description { line-height: 1.8; color: #ccc; font-size: 15px; margin-top: 15px; white-space: pre-line; }
+        /* ADMIN PANEL */
+        .admin-section { background: rgba(56, 151, 240, 0.05); border: 1px solid var(--admin); padding: 25px; border-radius: 20px; margin-top: 30px; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 700px) { .admin-grid { grid-template-columns: 1fr; } }
 
-        /* Плеер */
-        .video-container { position: relative; width: 100%; background: #000; border-radius: 16px; overflow: hidden; margin-top: 20px; border: 1px solid var(--border); }
-        video { width: 100%; aspect-ratio: 16/9; display: block; }
-        .player-overlay-btn { position: absolute; bottom: 70px; right: 20px; padding: 10px 20px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent); color: white; border-radius: 8px; cursor: pointer; display: none; }
+        /* FORMS */
+        input, select, textarea { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 12px; margin-bottom: 12px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--accent); }
+        .btn { padding: 14px 28px; border: none; border-radius: 12px; background: var(--accent); color: white; font-weight: 800; cursor: pointer; transition: var(--ts); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .btn:hover { opacity: 0.8; transform: scale(1.02); }
 
-        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 10px; outline: none; }
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; transition: var(--ts); text-transform: uppercase; font-size: 12px; }
-        
-        footer { padding: 40px; text-align: center; border-top: 1px solid var(--border); margin-top: auto; color: var(--text-dim); }
+        footer { padding: 50px; text-align: center; border-top: 1px solid var(--border); margin-top: auto; color: var(--text-dim); font-size: 12px; }
+        footer span { color: var(--accent); }
     </style>
 </head>
 <body>
@@ -86,7 +104,7 @@
 
     <main class="container">
         <section id="home" class="section active">
-            <h2 style="margin-bottom: 20px;">Свежие <span>релизы</span></h2>
+            <h2 style="margin-bottom: 25px; font-size: 2rem;">Свежие <span>релизы</span></h2>
             <div class="grid" id="main-grid"></div>
         </section>
 
@@ -96,74 +114,95 @@
         </section>
 
         <section id="view" class="section">
-            <div style="display: flex; gap: 30px; flex-wrap: wrap;">
-                <img id="v-img" style="width: 240px; border-radius: 16px; border: 1px solid var(--border);">
-                <div style="flex: 1; min-width: 300px;">
-                    <h1 id="v-title" style="font-size: 2.5rem; letter-spacing: -1px;"></h1>
-                    <div id="v-meta" style="margin: 10px 0; font-weight: bold; color: var(--accent);"></div>
-                    <div id="v-desc" class="v-description"></div>
+            <div class="view-layout">
+                <img id="v-img" class="v-poster">
+                <div class="v-details">
+                    <h1 id="v-title" class="v-title"></h1>
+                    <div class="v-info-row">Тип: <b id="v-type"></b></div>
+                    <div class="v-info-row">Год: <b id="v-year"></b></div>
+                    <div class="v-info-row">Качество: <b id="v-quality"></b></div>
+                    <div class="v-info-row">Авторы: <b id="v-authors"></b></div>
+                    <p id="v-desc" class="v-desc"></p>
                 </div>
             </div>
 
-            <div class="video-container">
-                <video id="main-v" controls></video>
-                <button id="skip-i" class="player-overlay-btn">ПРОПУСТИТЬ ИНТРО</button>
+            <div class="video-box">
+                <video id="main-video" controls poster=""></video>
+                <button id="skip-intro" class="skip-btn">ПРОПУСТИТЬ ИНТРО</button>
             </div>
-            
-            <div id="v-episodes" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
-            <button class="btn" style="margin-top: 30px; background: #222;" onclick="showSection('home')">← НАЗАД К СПИСКУ</button>
+
+            <div id="v-episodes" style="margin-top: 25px; display: flex; gap: 10px; flex-wrap: wrap;"></div>
+            <button class="btn" style="margin-top: 40px; background: #1a1a1f; border: 1px solid var(--border);" onclick="showSection('home')">← Назад к списку</button>
         </section>
 
         <section id="profile" class="section">
-            <div id="auth-ui" style="max-width: 380px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: 20px;">SWS ID</h2>
+            <div id="auth-ui" style="max-width: 400px; margin: 60px auto; background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--border);">
+                <h2 style="text-align: center; margin-bottom: 25px;">SWS ID Login</h2>
                 <input type="email" id="email" placeholder="Email">
                 <input type="password" id="pass" placeholder="Пароль">
                 <button class="btn" style="width: 100%;" id="btn-login">Войти</button>
-                <button class="btn" style="width: 100%; margin-top: 10px; background: #222;" id="btn-reg">Создать аккаунт</button>
+                <button class="btn" style="width: 100%; margin-top: 12px; background: #1a1a1f; border: 1px solid var(--border);" id="btn-reg">Создать аккаунт</button>
             </div>
 
-            <div id="user-ui" class="profile-layout" style="display: none;">
-                <aside class="sidebar">
-                    <img id="u-ava" class="avatar">
-                    <h2 id="u-nick">...</h2>
-                    <div id="u-role-tag" style="font-size: 10px; font-weight: 800; color: var(--accent); margin-bottom: 15px;"></div>
-                    <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
-                        <div><b id="u-views" style="color: var(--accent);">0</b><br><small>Проектов</small></div>
-                        <div><b id="u-reg" style="color: var(--accent);">--</b><br><small>В SWS</small></div>
+            <div id="user-ui" class="profile-grid" style="display: none;">
+                <aside class="profile-card">
+                    <img id="u-ava" class="u-avatar" src="">
+                    <h2 id="u-nick">Загрузка...</h2>
+                    <div id="u-role-tag" style="font-size: 11px; font-weight: 800; color: var(--accent); margin-bottom: 20px; text-transform: uppercase;"></div>
+                    
+                    <div style="display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid var(--border); padding-top: 20px;">
+                        <div><b id="u-views" style="color: var(--accent); font-size: 1.2rem;">0</b><br><small style="color:var(--text-dim)">Проектов</small></div>
+                        <div><b id="u-regdate" style="color: var(--accent); font-size: 1.2rem;">--</b><br><small style="color:var(--text-dim)">В SWS с</small></div>
                     </div>
-                    <div id="u-ach"></div>
-                    <button class="btn" style="width: 100%; margin-top: 20px; background: #222;" id="btn-logout">Выйти</button>
+
+                    <div id="u-achievements" style="margin-bottom: 20px;"></div>
+                    <button class="btn" style="width: 100%; background: #1a1a1f;" id="btn-logout">Выйти из профиля</button>
                 </aside>
 
-                <div class="main-content">
-                    <div style="background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
-                        <h3>Настройки профиля</h3>
-                        <label style="font-size: 12px; color: var(--text-dim);">Никнейм:</label>
+                <div class="profile-main">
+                    <div style="background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 20px;">Редактировать профиль</h3>
+                        <label style="font-size: 12px; color: var(--text-dim); margin-left: 5px;">Ваш никнейм</label>
                         <input type="text" id="set-nick">
-                        <label style="font-size: 12px; color: var(--text-dim);">URL аватара:</label>
-                        <input type="text" id="set-ava">
-                        <button class="btn" id="btn-save-p">Сохранить</button>
+                        <label style="font-size: 12px; color: var(--text-dim); margin-left: 5px;">Ссылка на аватар (URL)</label>
+                        <input type="text" id="set-ava" placeholder="Напр. https://img.com/my.jpg">
+                        <button class="btn" id="btn-save-profile">Сохранить изменения</button>
                     </div>
 
-                    <div id="admin-panel" style="display: none; margin-top: 20px; border: 1px solid var(--admin); padding: 25px; border-radius: 20px;">
-                        <h3 style="color: var(--admin); margin-bottom: 15px;">Панель управления</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <h4>+ Новый релиз</h4>
+                    <div id="admin-panel" class="admin-section" style="display: none;">
+                        <h3 style="color: var(--admin); margin-bottom: 20px;">⚙️ Панель Администратора</h3>
+                        <div class="admin-grid">
+                            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px;">
+                                <h4 style="margin-bottom: 15px;">+ Опубликовать релиз</h4>
                                 <input type="text" id="ad-title" placeholder="Название">
-                                <select id="ad-type"><option>Аниме</option><option>Фильм</option><option>Сериал</option></select>
-                                <input type="text" id="ad-img" placeholder="URL постера">
-                                <input type="text" id="ad-video" placeholder="URL видео (Drive)">
-                                <textarea id="ad-desc" placeholder="Описание"></textarea>
-                                <button class="btn" style="background: var(--admin); width: 100%;" id="btn-add-rel">Опубликовать</button>
+                                <select id="ad-type" onchange="toggleAdminFields()">
+                                    <option value="Фильм">Фильм</option>
+                                    <option value="Аниме">Аниме</option>
+                                    <option value="Сериал">Сериал</option>
+                                    <option value="Мультфильм">Мультфильм</option>
+                                </select>
+                                <input type="text" id="ad-year" placeholder="Год">
+                                <input type="text" id="ad-quality" placeholder="Качество (1080p)">
+                                <input type="text" id="ad-authors" placeholder="Авторы">
+                                
+                                <div id="ad-serial-box" style="display: none; border-left: 2px solid var(--accent); padding-left: 15px; margin-bottom: 15px;">
+                                    <input type="number" id="ad-ep" placeholder="Серия №">
+                                    <input type="number" id="ad-intro" placeholder="Скип интро (сек)">
+                                    <input type="number" id="ad-outro" placeholder="Скип эндинга (сек)">
+                                </div>
+
+                                <input type="text" id="ad-img" placeholder="Прямая ссылка на постер">
+                                <input type="text" id="ad-video" placeholder="Ссылка на Google Drive">
+                                <textarea id="ad-desc" placeholder="Полное описание проекта..." style="height: 120px;"></textarea>
+                                <button class="btn" style="background: var(--admin); width: 100%;" id="btn-pub-rel">ОПУБЛИКОВАТЬ</button>
                             </div>
-                            <div>
-                                <h4>+ В команду</h4>
+
+                            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px;">
+                                <h4 style="margin-bottom: 15px;">+ Добавить участника</h4>
                                 <input type="text" id="ad-m-name" placeholder="Никнейм">
                                 <input type="text" id="ad-m-role" placeholder="Роль">
                                 <input type="text" id="ad-m-img" placeholder="URL фото">
-                                <button class="btn" style="background: var(--admin); width: 100%;" id="btn-add-mem">Добавить</button>
+                                <button class="btn" style="background: #333; width: 100%;" id="btn-pub-mem">ДОБАВИТЬ В СОСТАВ</button>
                             </div>
                         </div>
                     </div>
@@ -172,13 +211,14 @@
         </section>
     </main>
 
-    <footer>© 2026 <span>SoundWaveStudio.dub</span></footer>
+    <footer>© 2026 <span>SoundWaveStudio.dub</span>. Своя база контента.</footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
+        // ТВОИ КЛЮЧИ (ПРОВЕРЬ ИХ)
         const firebaseConfig = {
             apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
             authDomain: "my-dub-site.firebaseapp.com",
@@ -194,6 +234,20 @@
 
         let isAdmin = false;
 
+        // --- УТИЛИТЫ ---
+        function driveFix(url) {
+            if (!url.includes('drive.google.com')) return url;
+            let id = "";
+            if (url.includes('/d/')) id = url.split('/d/')[1].split('/')[0];
+            else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
+            return `https://drive.google.com/uc?export=download&id=${id}`;
+        }
+
+        window.toggleAdminFields = () => {
+            const type = document.getElementById('ad-type').value;
+            document.getElementById('ad-serial-box').style.display = (type === 'Аниме' || type === 'Сериал') ? 'block' : 'none';
+        };
+
         window.showSection = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -203,10 +257,10 @@
             if(id === 'team') renderTeam();
         };
 
-        // --- ГЛАВНАЯ ---
+        // --- ЛОГИКА ГЛАВНОЙ ---
         async function renderHome() {
             const grid = document.getElementById('main-grid');
-            grid.innerHTML = 'Загрузка...';
+            grid.innerHTML = '<p>Синхронизация с базой...</p>';
             const snap = await getDocs(query(collection(db, "projects"), orderBy("time", "desc")));
             grid.innerHTML = '';
             snap.forEach(d => {
@@ -215,8 +269,11 @@
                 card.className = 'card';
                 card.innerHTML = `
                     <button class="del-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
-                    <img src="${p.img}">
-                    <div class="card-content"><b>${p.title}</b></div>
+                    <img src="${p.img}" loading="lazy">
+                    <div class="card-content">
+                        <span class="card-title">${p.title}</span>
+                        <span class="card-meta">${p.type} • ${p.year}</span>
+                    </div>
                 `;
                 card.querySelector('img').onclick = () => openProject(p);
                 if(isAdmin) card.querySelector('.del-btn').onclick = (e) => { e.stopPropagation(); deleteItem('projects', d.id); };
@@ -226,16 +283,48 @@
 
         async function openProject(p) {
             showSection('view');
-            const video = document.getElementById('main-v');
+            const video = document.getElementById('main-video');
+            video.pause();
+            video.src = ""; // Сброс
+            
             document.getElementById('v-img').src = p.img;
             document.getElementById('v-title').innerText = p.title;
-            document.getElementById('v-meta').innerText = `${p.type} | SWS Dub`;
+            document.getElementById('v-type').innerText = p.type;
+            document.getElementById('v-year').innerText = p.year;
+            document.getElementById('v-quality').innerText = p.quality;
+            document.getElementById('v-authors').innerText = p.authors;
             document.getElementById('v-desc').innerText = p.desc;
-            video.src = p.video;
-            video.play().catch(() => console.log("Автовоспроизведение заблокировано"));
+            
+            video.src = driveFix(p.video);
+            video.load();
+
+            const skipBtn = document.getElementById('skip-intro');
+            video.ontimeupdate = () => {
+                if(video.currentTime > 2 && video.currentTime < 15 && p.intro > 0) {
+                    skipBtn.style.display = 'block';
+                    skipBtn.onclick = () => { video.currentTime = p.intro; skipBtn.style.display = 'none'; };
+                } else { skipBtn.style.display = 'none'; }
+            };
+
+            // Генерация серий
+            const nav = document.getElementById('v-episodes');
+            nav.innerHTML = '';
+            if(p.type !== 'Фильм') {
+                const q = query(collection(db, "projects"), where("title", "==", p.title), orderBy("ep", "asc"));
+                const s = await getDocs(q);
+                s.forEach(d => {
+                    const ep = d.data();
+                    const btn = document.createElement('button');
+                    btn.className = 'btn';
+                    btn.style.background = (ep.ep === p.ep) ? 'var(--accent)' : '#1a1a1f';
+                    btn.innerText = `Серия ${ep.ep}`;
+                    btn.onclick = () => openProject(ep);
+                    nav.appendChild(btn);
+                });
+            }
         }
 
-        // --- КОМАНДА ---
+        // --- ЛОГИКА КОМАНДЫ ---
         async function renderTeam() {
             const grid = document.getElementById('team-grid');
             grid.innerHTML = '';
@@ -255,13 +344,13 @@
         }
 
         async function deleteItem(coll, id) {
-            if(confirm("Удалить безвозвратно?")) {
+            if(confirm("Внимание! Удаление необратимо. Продолжить?")) {
                 await deleteDoc(doc(db, coll, id));
                 location.reload();
             }
         }
 
-        // --- AUTH & PROFILE ---
+        // --- ПРОФИЛЬ И АУТЕНТИФИКАЦИЯ ---
         onAuthStateChanged(auth, async (user) => {
             if(user) {
                 document.getElementById('auth-ui').style.display = 'none';
@@ -273,65 +362,76 @@
                     document.getElementById('u-nick').innerText = u.nickname;
                     document.getElementById('u-ava').src = u.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${u.nickname}`;
                     document.getElementById('u-views').innerText = u.views || 0;
-                    document.getElementById('u-reg').innerText = u.regDate || "--";
-                    document.getElementById('u-role-tag').innerText = isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК SWS";
+                    document.getElementById('u-regdate').innerText = u.regDate || "2024";
+                    document.getElementById('u-role-tag').innerText = isAdmin ? "Владелец SWS" : "Зритель";
                     document.getElementById('set-nick').value = u.nickname;
                     document.getElementById('set-ava').value = u.avatar || "";
                     if(isAdmin) document.getElementById('admin-panel').style.display = 'block';
                     
-                    const ach = document.getElementById('u-ach'); ach.innerHTML = '';
-                    if(isAdmin) ach.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
-                    u.achievements?.forEach(a => ach.innerHTML += `<span class="badge">${a}</span>`);
+                    const achBox = document.getElementById('u-achievements'); achBox.innerHTML = '';
+                    if(isAdmin) achBox.innerHTML += `<span class="badge gold">🛡️ Администрация</span>`;
+                    u.achievements?.forEach(a => achBox.innerHTML += `<span class="badge">${a}</span>`);
                 }
             } else {
                 document.getElementById('auth-ui').style.display = 'block';
                 document.getElementById('user-ui').style.display = 'none';
+                isAdmin = false;
             }
             renderHome();
         });
 
         document.getElementById('btn-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e => alert("Ошибка входа"));
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value)
+                .catch(e => alert("Ошибка доступа: проверьте данные"));
         };
 
         document.getElementById('btn-reg').onclick = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
+            if(pass.length < 6) return alert("Пароль должен быть от 6 символов");
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await setDoc(doc(db, "users", res.user.uid), {
                     nickname: email.split('@')[0], avatar: "", role: "user",
                     views: 0, regDate: new Date().toLocaleDateString('ru-RU'),
-                    achievements: ["🚀 Новичок"]
+                    achievements: ["🎉 Первооткрыватель"]
                 });
-                alert("Успешная регистрация!");
-            } catch (e) { alert(e.message); }
+                alert("Аккаунт создан!");
+            } catch (e) { alert("Ошибка: " + e.message); }
         };
 
         document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
 
-        document.getElementById('btn-save-p').onclick = async () => {
+        document.getElementById('btn-save-profile').onclick = async () => {
             await updateDoc(doc(db, "users", auth.currentUser.uid), {
                 nickname: document.getElementById('set-nick').value,
                 avatar: document.getElementById('set-ava').value
             });
-            alert("Данные обновлены!");
+            alert("Профиль обновлен!");
         };
 
-        // --- ADMIN ACTIONS ---
-        document.getElementById('btn-add-rel').onclick = async () => {
-            await addDoc(collection(db, "projects"), {
+        // --- АДМИН-ФУНКЦИИ ---
+        document.getElementById('btn-pub-rel').onclick = async () => {
+            const data = {
                 title: document.getElementById('ad-title').value,
                 type: document.getElementById('ad-type').value,
+                year: document.getElementById('ad-year').value,
+                quality: document.getElementById('ad-quality').value,
+                authors: document.getElementById('ad-authors').value,
                 img: document.getElementById('ad-img').value,
-                video: document.getElementById('ad-video').value,
+                video: document.getElementById('ad-video').value, // Фикс применится при открытии
                 desc: document.getElementById('ad-desc').value,
+                ep: Number(document.getElementById('ad-ep').value) || 1,
+                intro: Number(document.getElementById('ad-intro').value) || 0,
+                outro: Number(document.getElementById('ad-outro').value) || 0,
                 time: Date.now()
-            });
-            alert("Релиз добавлен!"); renderHome();
+            };
+            if(!data.title || !data.video) return alert("Заполните название и ссылку!");
+            await addDoc(collection(db, "projects"), data);
+            alert("Релиз опубликован!"); renderHome();
         };
 
-        document.getElementById('btn-add-mem').onclick = async () => {
+        document.getElementById('btn-pub-mem').onclick = async () => {
             await addDoc(collection(db, "team"), {
                 name: document.getElementById('ad-m-name').value,
                 role: document.getElementById('ad-m-role').value,
