@@ -3,398 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWS | Sound Wave Studio</title>
-    <meta name="robots" content="noindex, nofollow">
+    <title>SWS | Google Drive Player</title>
     <style>
         :root {
             --bg: #0b0b0d; --card-bg: #141417; --input-bg: #050506;
             --accent: #ff2e2e; --text: #ffffff; --text-dim: #9ca3af;
-            --border: #252529; --gold: #ffca28; --admin: #3897f0;
-            --ts: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --border: #252529; --admin: #3897f0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { 
-            background-color: var(--bg); color: var(--text); line-height: 1.5; 
-            overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column;
-        }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
         .container { max-width: 1100px; margin: 0 auto; width: 100%; padding: 0 20px; }
 
-        header {
-            background: rgba(11, 11, 13, 0.95); backdrop-filter: blur(12px);
-            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
-        }
-        .logo { font-size: 1.3rem; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        header { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+        .logo { font-weight: 900; cursor: pointer; color: var(--text); text-decoration: none; font-size: 1.2rem; }
         .logo span { color: var(--accent); }
+        .nav-link { color: var(--text-dim); text-decoration: none; margin-left: 20px; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .nav-link.active { color: var(--accent); }
 
-        nav ul { display: flex; list-style: none; gap: 10px; }
-        .nav-link { 
-            color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 13px; 
-            padding: 8px 16px; border-radius: 8px; transition: var(--ts); cursor: pointer;
-        }
-        .nav-link:hover { color: var(--text); }
-        .nav-link.active { color: var(--accent); background: rgba(255, 46, 46, 0.1); }
-
-        /* Основной контент */
-        main { flex: 1; }
-        .section { display: none; padding: 40px 0; animation: fadeIn 0.3s ease; }
+        .section { display: none; padding: 30px 0; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Поиск */
-        .search-box { margin-bottom: 30px; position: relative; max-width: 400px; }
-        .search-box input { 
-            width: 100%; padding: 12px 12px 12px 40px; background: var(--input-bg); 
-            border: 1px solid var(--border); color: white; border-radius: 12px; outline: none;
-        }
-        .search-box::before { content: "🔍"; position: absolute; left: 15px; top: 12px; opacity: 0.5; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); position: relative; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; position: relative; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .card img { width: 100%; height: 320px; object-fit: cover; cursor: pointer; display: block; }
-        .card-content { padding: 15px; }
+        .card img { width: 100%; height: 280px; object-fit: cover; }
+        .card-info { padding: 12px; }
+        .card-year { position: absolute; bottom: 10px; right: 10px; font-size: 11px; color: var(--text-dim); font-weight: bold; }
+        .card-quality { position: absolute; top: 10px; left: 10px; background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900; }
+
+        /* PLAYER PAGE */
+        .proj-content { display: flex; gap: 30px; margin-bottom: 30px; flex-wrap: wrap; }
+        .proj-poster { width: 250px; border-radius: 15px; border: 1px solid var(--border); }
+        .proj-details { flex: 1; min-width: 300px; }
+        .proj-details h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .meta-item { color: var(--text-dim); margin-bottom: 5px; font-size: 14px; }
+        .meta-item b { color: var(--text); }
+
+        /* SWS PLAYER */
+        .sws-player { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); margin-top: 20px; }
+        video { width: 100%; height: 100%; }
         
-        .delete-btn { 
-            position: absolute; top: 10px; right: 10px; background: rgba(255,0,0,0.9); 
-            color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; 
-            font-size: 10px; font-weight: bold; z-index: 10; display: none;
-        }
-
-        /* Профиль и прочее */
-        .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
-        @media (max-width: 800px) { .profile-layout { grid-template-columns: 1fr; } }
-        .sidebar { background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border); text-align: center; }
-        .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--border); margin-bottom: 15px; background: #000; }
+        .controls { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 20px; display: flex; align-items: center; gap: 15px; opacity: 0; transition: 0.3s; }
+        .sws-player:hover .controls { opacity: 1; }
         
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: var(--input-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border); }
-        .stat-val { display: block; font-size: 1.2rem; font-weight: 800; color: var(--accent); }
-        .stat-lab { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+        .skip-btn { position: absolute; bottom: 80px; right: 20px; background: rgba(0,0,0,0.85); border: 1px solid var(--accent); color: white; padding: 12px 24px; border-radius: 5px; cursor: pointer; display: none; font-weight: bold; z-index: 10; }
+        
+        .ep-nav { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        .btn-ep { background: var(--card-bg); border: 1px solid var(--border); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-ep:hover { border-color: var(--accent); color: var(--accent); }
 
-        .badge { background: #1a1a1f; border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; margin: 2px; display: inline-block; }
-        .badge.gold { border-color: var(--gold); color: var(--gold); }
+        /* ADMIN */
+        .admin-box { background: var(--card-bg); padding: 25px; border-radius: 15px; border: 1px solid var(--admin); display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full { grid-column: 1 / -1; }
+        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; outline: none; }
+        .btn-pub { background: var(--accent); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
 
-        .info-block { background: var(--card-bg); padding: 25px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 25px; }
-        input { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; outline: none; }
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; transition: var(--ts); text-transform: uppercase; font-size: 12px; }
-        .btn-admin { background: var(--admin); width: 100%; margin-top: 10px; }
-
-        /* Футер */
-        footer {
-            padding: 40px 0;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 13px;
-            margin-top: 50px;
-        }
-        footer span { color: var(--accent); font-weight: bold; }
-
-        #verify-notice { background: var(--accent); color: white; padding: 12px; text-align: center; font-size: 13px; display: none; }
+        footer { padding: 30px; text-align: center; border-top: 1px solid var(--border); margin-top: auto; font-size: 12px; color: var(--text-dim); }
+        footer span { color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <div id="verify-notice">📧 Подтвердите Email для доступа к функциям.</div>
+<header>
+    <div class="logo" onclick="showSection('home')">SOUND<span>WAVE</span> STUDIO</div>
+    <nav>
+        <a onclick="showSection('home')" class="nav-link active" id="n-home">Релизы</a>
+        <a onclick="showSection('profile')" class="nav-link" id="n-profile">Админка</a>
+    </nav>
+</header>
 
-    <header>
-        <div class="logo" id="logo-btn">SOUND<span>WAVE</span> STUDIO</div>
-        <nav>
-            <ul>
-                <li><a id="n-home" class="nav-link active">Релизы</a></li>
-                <li><a id="n-team" class="nav-link">Команда</a></li>
-                <li><a id="n-profile" class="nav-link">Профиль</a></li>
-            </ul>
-        </nav>
-    </header>
+<main class="container">
+    <section id="home" class="section active">
+        <h2 style="margin-bottom: 25px;">Новинки <span>SWS</span></h2>
+        <div class="grid" id="main-grid"></div>
+    </section>
 
-    <main>
-        <div id="home" class="section active">
-            <div class="container">
-                <h2 style="margin-bottom: 20px;">Свежие <span>релизы</span></h2>
-                <div class="search-box">
-                    <input type="text" id="search-input" placeholder="Поиск по названию...">
-                </div>
-                <div class="grid" id="titles-grid"></div>
+    <section id="view" class="section">
+        <div class="proj-content">
+            <img id="v-img" class="proj-poster">
+            <div class="proj-details">
+                <h1 id="v-title"></h1>
+                <div class="meta-item">Тип: <b id="v-type"></b></div>
+                <div class="meta-item">Год: <b id="v-year"></b></div>
+                <div class="meta-item">Авторы: <b id="v-authors"></b></div>
+                <p id="v-desc" style="margin-top:15px;"></p>
             </div>
         </div>
 
-        <div id="player" class="section">
-            <div class="container" style="max-width: 900px;">
-                <h2 id="pl-name" style="margin-bottom: 20px;">Название</h2>
-                <div style="width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid var(--border);">
-                    <iframe id="pl-frame" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
-                </div>
-                <button class="btn" style="margin-top:20px; background: #222;" id="back-to-home">← Назад</button>
+        <div class="sws-player">
+            <video id="v-video" controlsList="nodownload"></video>
+            <button id="skip-intro" class="skip-btn">ПРОПУСТИТЬ ИНТРО</button>
+            <div class="controls">
+                <button onclick="document.getElementById('v-video').play()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">▶</button>
+                <div style="flex:1; height:4px; background:#333; border-radius:2px;"></div>
+                <button onclick="document.getElementById('v-video').requestFullscreen()" style="background:none; border:none; color:white; cursor:pointer;">⛶ Fullscreen</button>
             </div>
         </div>
 
-        <div id="team" class="section">
-            <div class="container">
-                <h2 style="margin-bottom: 30px;">Состав <span>SWS</span></h2>
-                <div class="grid" id="team-grid"></div>
+        <div class="ep-nav" id="v-nav"></div>
+    </section>
+
+    <section id="profile" class="section">
+        <div id="admin-ui" style="display:none;">
+            <h2 style="margin-bottom:20px; color:var(--admin)">Публикация (Google Drive Mode)</h2>
+            <div class="admin-box">
+                <input type="text" id="a-title" placeholder="Название проекта">
+                <select id="a-type">
+                    <option value="Аниме">Аниме</option>
+                    <option value="Фильм">Фильм</option>
+                    <option value="Сериал">Сериал</option>
+                </select>
+                <input type="text" id="a-year" placeholder="Год">
+                <input type="text" id="a-authors" placeholder="Авторы">
+                <input type="text" id="a-quality" placeholder="Качество (1080p)">
+                <input type="number" id="a-ep" placeholder="Номер серии">
+                
+                <input type="text" class="full" id="a-link-img" placeholder="Прямая ссылка на обложку (.jpg)">
+                <input type="text" class="full" id="a-link-video" placeholder="Ссылка на Google Диск (видео)">
+                
+                <textarea id="a-desc" class="full" placeholder="Описание"></textarea>
+                
+                <input type="number" id="a-intro" placeholder="Интро до (сек)">
+                <input type="number" id="a-outro" placeholder="Аутро с (сек)">
+                
+                <button class="btn-pub full" id="btn-save">ОПУБЛИКОВАТЬ</button>
             </div>
         </div>
+        <div id="auth-msg" style="text-align:center; padding:50px;">Войдите как админ, чтобы видеть эту панель.</div>
+    </section>
+</main>
 
-        <div id="profile" class="section">
-            <div class="container">
-                <div id="auth-ui" style="max-width: 380px; margin: 40px auto; text-align: center;">
-                    <h2 style="margin-bottom:20px">SWS ID</h2>
-                    <input type="email" id="a-email" placeholder="Email">
-                    <input type="password" id="a-pass" placeholder="Пароль">
-                    <button class="btn" style="width:100%" id="btn-login">Войти</button>
-                    <button class="btn" style="width:100%; margin-top:10px; background:#222" id="btn-reg">Регистрация</button>
+<footer>© 2026 <span>SoundWaveStudio.dub</span>. Все права защищены.</footer>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
+        authDomain: "my-dub-site.firebaseapp.com",
+        projectId: "my-dub-site",
+        storageBucket: "my-dub-site.firebasestorage.app",
+        messagingSenderId: "302896869866",
+        appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // --- ФУНКЦИЯ ДЛЯ ГУГЛ ДИСКА ---
+    function getDriveDirectLink(url) {
+        if (!url.includes('drive.google.com')) return url;
+        const id = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0];
+        return `https://docs.google.com/get_video_info?docid=${id}&direct=1`; 
+        // Примечание: Google часто блокирует прямые запросы, если видео тяжелое. 
+        // Альтернативный надежный метод — https://drive.google.com/uc?export=download&id=${id}
+        return `https://drive.google.com/uc?export=download&id=${id}`;
+    }
+
+    window.showSection = (id) => {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'home') loadAll();
+    };
+
+    // --- ПУБЛИКАЦИЯ ---
+    document.getElementById('btn-save').onclick = async () => {
+        const data = {
+            title: document.getElementById('a-title').value,
+            type: document.getElementById('a-type').value,
+            year: document.getElementById('a-year').value,
+            authors: document.getElementById('a-authors').value,
+            quality: document.getElementById('a-quality').value,
+            ep: Number(document.getElementById('a-ep').value) || 1,
+            img: document.getElementById('a-link-img').value,
+            video: getDriveDirectLink(document.getElementById('a-link-video').value),
+            desc: document.getElementById('a-desc').value,
+            intro: Number(document.getElementById('a-intro').value) || 0,
+            outro: Number(document.getElementById('a-outro').value) || 0,
+            time: Date.now()
+        };
+        await addDoc(collection(db, "projects"), data);
+        alert("Готово!"); location.reload();
+    };
+
+    // --- ЗАГРУЗКА СПИСКА ---
+    async function loadAll() {
+        const grid = document.getElementById('main-grid');
+        grid.innerHTML = '';
+        const snap = await getDocs(query(collection(db, "projects"), orderBy("time", "desc")));
+        snap.forEach(d => {
+            const p = d.data();
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-quality">${p.quality}</div>
+                <img src="${p.img}">
+                <div class="card-info">
+                    <b>${p.title}</b> ${p.type === 'Аниме' ? '(Серия '+p.ep+')' : ''}
+                    <div class="card-year">${p.year}</div>
                 </div>
-
-                <div id="user-ui" class="profile-layout" style="display: none;">
-                    <aside class="sidebar">
-                        <img src="" id="u-ava" class="avatar">
-                        <h2 id="u-nick">...</h2>
-                        <p id="u-role-text" style="color:var(--accent); font-size:11px; font-weight:800; margin-bottom:20px"></p>
-                        <div class="stat-grid">
-                            <div class="stat-card"><span class="stat-val" id="s-views">0</span><span class="stat-lab">Проектов</span></div>
-                            <div class="stat-card"><span class="stat-val" id="s-date">--</span><span class="stat-lab">Рег.</span></div>
-                        </div>
-                        <div class="ach-list" id="u-ach-box"></div>
-                        <button class="btn" style="width:100%; margin-top:30px; background:#222" id="btn-logout">Выход</button>
-                    </aside>
-                    <div class="main-content">
-                        <div class="info-block">
-                            <h3 style="margin-bottom:20px">Настройки профиля</h3>
-                            <input type="text" id="set-nick" placeholder="Никнейм">
-                            <input type="text" id="set-ava" placeholder="URL аватара">
-                            <button class="btn" id="save-profile">Сохранить изменения</button>
-                        </div>
-                        <div id="admin-panel" class="info-block" style="display: none; border-color: var(--admin);">
-                            <h3 style="color: var(--admin); margin-bottom: 20px;">Консоль Администратора</h3>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                                <div>
-                                    <h4>+ Тайтл</h4>
-                                    <input type="text" id="t-name" placeholder="Название">
-                                    <input type="text" id="t-img" placeholder="URL обложки">
-                                    <input type="text" id="t-link" placeholder="Ссылка">
-                                    <button class="btn btn-admin" id="add-title">Добавить</button>
-                                </div>
-                                <div>
-                                    <h4>+ В команду</h4>
-                                    <input type="text" id="m-name" placeholder="Никнейм">
-                                    <input type="text" id="m-role" placeholder="Роль">
-                                    <input type="text" id="m-img" placeholder="URL фото">
-                                    <button class="btn btn-admin" id="add-member">Добавить</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>© 2026 <span>SoundWaveStudio.dub</span>. Все права защищены.</p>
-        </div>
-    </footer>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        // --- ЗАЩИТА ---
-        if (window.top !== window.self) window.top.location = window.self.location;
-        const ALLOWED = "dntsstudio-ai.github.io";
-        if (window.location.hostname !== ALLOWED && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-            document.body.innerHTML = "ACCESS DENIED"; throw new Error();
-        }
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
-            authDomain: "my-dub-site.firebaseapp.com",
-            projectId: "my-dub-site",
-            storageBucket: "my-dub-site.firebasestorage.app",
-            messagingSenderId: "302896869866",
-            appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let isAdmin = false;
-        let allTitles = []; 
-
-        const clean = (str) => {
-            const div = document.createElement('div');
-            div.textContent = str; return div.innerHTML;
-        };
-
-        // --- НАВИГАЦИЯ ---
-        const nav = (id) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            const link = document.getElementById('n-' + id);
-            if (link) link.classList.add('active');
-            if (id === 'home') renderTitles();
-            if (id === 'team') renderTeam();
-            window.scrollTo(0, 0); // Прокрутка вверх при смене вкладки
-        };
-
-        document.getElementById('logo-btn').onclick = () => nav('home');
-        document.getElementById('n-home').onclick = () => nav('home');
-        document.getElementById('n-team').onclick = () => nav('team');
-        document.getElementById('n-profile').onclick = () => nav('profile');
-        document.getElementById('back-to-home').onclick = () => nav('home');
-
-        const watch = (name, link) => {
-            document.getElementById('pl-name').innerText = name;
-            document.getElementById('pl-frame').src = link;
-            nav('player');
-        };
-
-        // --- ТАЙТЛЫ ---
-        function drawTitles(list) {
-            const grid = document.getElementById('titles-grid');
-            grid.innerHTML = '';
-            list.forEach(itemDoc => {
-                const item = itemDoc.data;
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <button class="delete-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
-                    <img src="${clean(item.img)}">
-                    <div class="card-content"><b>${clean(item.name)}</b><br><small>SWS Dub</small></div>
-                `;
-                card.querySelector('img').onclick = () => watch(item.name, item.link);
-                if(isAdmin) card.querySelector('.delete-btn').onclick = () => deleteItem('titles', itemDoc.id);
-                grid.appendChild(card);
-            });
-        }
-
-        async function renderTitles() {
-            if (allTitles.length === 0) {
-                const snap = await getDocs(query(collection(db, "titles"), orderBy("date", "desc")));
-                allTitles = snap.docs.map(d => ({ id: d.id, data: d.data() }));
-            }
-            drawTitles(allTitles);
-        }
-
-        document.getElementById('search-input').oninput = (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = allTitles.filter(t => t.data.name.toLowerCase().includes(term));
-            drawTitles(filtered);
-        };
-
-        // --- КОМАНДА ---
-        async function renderTeam() {
-            const grid = document.getElementById('team-grid');
-            grid.innerHTML = 'Загрузка...';
-            const snap = await getDocs(collection(db, "team"));
-            grid.innerHTML = '';
-            snap.forEach(d => {
-                const item = d.data();
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <button class="delete-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
-                    <img src="${clean(item.img)}">
-                    <div class="card-content"><b>${clean(item.name)}</b><br><small>${clean(item.role)}</small></div>
-                `;
-                if(isAdmin) card.querySelector('.delete-btn').onclick = () => deleteItem('team', d.id);
-                grid.appendChild(card);
-            });
-        }
-
-        async function deleteItem(coll, id) {
-            if (!confirm("Удалить?")) return;
-            await deleteDoc(doc(db, coll, id));
-            if(coll === 'titles') allTitles = [];
-            coll === 'titles' ? renderTitles() : renderTeam();
-        }
-
-        // --- AUTH ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById('auth-ui').style.display = 'none';
-                document.getElementById('user-ui').style.display = 'grid';
-                document.getElementById('verify-notice').style.display = user.emailVerified ? 'none' : 'block';
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if (snap.exists()) {
-                    const d = snap.data();
-                    isAdmin = d.role === 'admin';
-                    document.getElementById('u-nick').innerText = d.nickname;
-                    document.getElementById('u-ava').src = d.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${d.nickname}`;
-                    document.getElementById('s-views').innerText = d.views || 0;
-                    document.getElementById('s-date').innerText = d.regDate || "--";
-                    document.getElementById('u-role-text').innerText = isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА";
-                    const box = document.getElementById('u-ach-box'); box.innerHTML = '';
-                    if(isAdmin) {
-                        box.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
-                        document.getElementById('admin-panel').style.display = 'block';
-                    }
-                    d.achievements?.forEach(a => box.innerHTML += `<span class="badge">${clean(a)}</span>`);
-                }
-            } else {
-                document.getElementById('auth-ui').style.display = 'block';
-                document.getElementById('user-ui').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'none';
-                isAdmin = false;
-            }
-            renderTitles();
+            `;
+            card.onclick = () => openProject(p);
+            grid.appendChild(card);
         });
+    }
 
-        document.getElementById('btn-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('a-email').value, document.getElementById('a-pass').value)
-                .catch(() => alert("Ошибка входа"));
+    // --- ОТКРЫТИЕ ПЛЕЕРА ---
+    async function openProject(p) {
+        showSection('view');
+        document.getElementById('v-img').src = p.img;
+        document.getElementById('v-title').innerText = p.title;
+        document.getElementById('v-type').innerText = p.type;
+        document.getElementById('v-year').innerText = p.year;
+        document.getElementById('v-authors').innerText = p.authors;
+        document.getElementById('v-desc').innerText = p.desc;
+        
+        const video = document.getElementById('v-video');
+        video.src = p.video;
+
+        // Кнопка интро
+        const skip = document.getElementById('skip-intro');
+        video.ontimeupdate = () => {
+            if (video.currentTime > 2 && video.currentTime < 10) skip.style.display = 'block';
+            else skip.style.display = 'none';
         };
+        skip.onclick = () => video.currentTime = p.intro;
 
-        document.getElementById('btn-reg').onclick = async () => {
-            const email = document.getElementById('a-email').value;
-            const pass = document.getElementById('a-pass').value;
-            try {
-                const r = await createUserWithEmailAndPassword(auth, email, pass);
-                await sendEmailVerification(r.user);
-                await setDoc(doc(db, "users", r.user.uid), {
-                    email: email, nickname: email.split('@')[0],
-                    role: "user", regDate: new Date().toLocaleDateString('ru-RU'),
-                    views: 0, avatar: "", achievements: ["🚀 Первооткрыватель"]
-                });
-                alert("Подтвердите почту!");
-            } catch (e) { alert(e.message); }
-        };
-
-        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
-
-        document.getElementById('save-profile').onclick = async () => {
-            await updateDoc(doc(db, "users", auth.currentUser.uid), {
-                nickname: clean(document.getElementById('set-nick').value),
-                avatar: clean(document.getElementById('set-ava').value)
+        // Навигация серий (ищем серии того же названия)
+        const nav = document.getElementById('v-nav');
+        nav.innerHTML = '';
+        if(p.type !== 'Фильм') {
+            const q = query(collection(db, "projects"), where("title", "==", p.title), orderBy("ep", "asc"));
+            const s = await getDocs(q);
+            s.forEach(docEp => {
+                const epData = docEp.data();
+                const btn = document.createElement('button');
+                btn.className = 'btn-ep';
+                btn.innerText = `Серия ${epData.ep}`;
+                if(epData.ep === p.ep) btn.style.borderColor = 'var(--accent)';
+                btn.onclick = () => openProject(epData);
+                nav.appendChild(btn);
             });
-            alert("Сохранено!"); location.reload();
-        };
+        }
+    }
 
-        // --- ADMIN ---
-        document.getElementById('add-title').onclick = async () => {
-            await addDoc(collection(db, "titles"), {
-                name: document.getElementById('t-name').value,
-                img: document.getElementById('t-img').value,
-                link: document.getElementById('t-link').value,
-                date: Date.now()
-            });
-            alert("Добавлено!"); allTitles = []; renderTitles();
-        };
-
-        document.getElementById('add-member').onclick = async () => {
-            await addDoc(collection(db, "team"), {
-                name: document.getElementById('m-name').value,
-                role: document.getElementById('m-role').value,
-                img: document.getElementById('m-img').value
-            });
-            alert("Добавлено!"); renderTeam();
-        };
-    </script>
+    onAuthStateChanged(auth, async (user) => {
+        if(user) {
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if(snap.exists() && snap.data().role === 'admin') {
+                document.getElementById('admin-ui').style.display = 'block';
+                document.getElementById('auth-msg').style.display = 'none';
+            }
+        }
+        loadAll();
+    });
+</script>
 </body>
 </html>
