@@ -40,6 +40,11 @@
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Поиск */
+        .search-container { margin-bottom: 30px; position: relative; max-width: 400px; }
+        .search-container input { padding-left: 40px; margin-bottom: 0; border-radius: 12px; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
+
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
         .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: var(--ts); position: relative; }
         .card:hover { border-color: var(--accent); transform: translateY(-5px); }
@@ -102,7 +107,13 @@
 
     <main id="home" class="section active">
         <div class="container">
-            <h2 style="margin-bottom: 30px;">Свежие <span>релизы</span></h2>
+            <h2 style="margin-bottom: 20px;">Свежие <span>релизы</span></h2>
+            
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Поиск по названию...">
+            </div>
+
             <div class="grid" id="titles-grid"></div>
         </div>
     </main>
@@ -184,17 +195,14 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // --- ЗАЩИТА ОТ IFRAME ---
+        // --- ЗАЩИТА ---
         if (window.top !== window.self) window.top.location = window.self.location;
-
-        // --- ПРИВЯЗКА К ДОМЕНУ ---
         const ALLOWED = "dntsstudio-ai.github.io";
         if (window.location.hostname !== ALLOWED && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-            document.body.innerHTML = "<div style='color:red; text-align:center; margin-top:20%; font-family:sans-serif;'><h1>ACCESS DENIED</h1><p>This code is unauthorized for this domain.</p></div>";
-            throw new Error("Domain protection active");
+            document.body.innerHTML = "<div style='color:red; text-align:center; margin-top:20%; font-family:sans-serif;'><h1>ACCESS DENIED</h1></div>";
+            throw new Error();
         }
 
-        // --- БЕЗОПАСНОСТЬ (XSS) ---
         const clean = (str) => {
             const div = document.createElement('div');
             div.textContent = str;
@@ -215,8 +223,8 @@
         const db = getFirestore(app);
 
         let isAdmin = false;
+        let allTitles = []; // Память для поиска
 
-        // --- ЛОГИКА ИНТЕРФЕЙСА ---
         const nav = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -233,33 +241,42 @@
             nav('player');
         };
 
-        // Слушатели навигации
-        document.getElementById('logo-btn').onclick = () => nav('home');
-        document.getElementById('n-home').onclick = () => nav('home');
-        document.getElementById('n-team').onclick = () => nav('team');
-        document.getElementById('n-profile').onclick = () => nav('profile');
-        document.getElementById('back-to-home').onclick = () => nav('home');
+        // --- ЛОГИКА ПОИСКА ---
+        document.getElementById('search-input').oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allTitles.filter(t => t.data.name.toLowerCase().includes(term));
+            drawTitles(filtered);
+        };
 
-        // --- ФУНКЦИИ РЕНДЕРИНГА ---
+        function drawTitles(list) {
+            const grid = document.getElementById('titles-grid');
+            grid.innerHTML = '';
+            list.forEach(itemDoc => {
+                const item = itemDoc.data;
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <button class="delete-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
+                    <img src="${clean(item.img)}">
+                    <div class="card-content"><b>${clean(item.name)}</b><br><small>SWS Dub</small></div>
+                `;
+                card.querySelector('img').onclick = () => watch(item.name, item.link);
+                if(isAdmin) card.querySelector('.delete-btn').onclick = () => deleteItem('titles', itemDoc.id);
+                grid.appendChild(card);
+            });
+        }
+
         async function renderTitles() {
+            if (allTitles.length > 0 && document.getElementById('search-input').value === '') {
+                drawTitles(allTitles);
+                return;
+            }
             const grid = document.getElementById('titles-grid');
             grid.innerHTML = 'Загрузка...';
             try {
                 const snap = await getDocs(query(collection(db, "titles"), orderBy("date", "desc")));
-                grid.innerHTML = '';
-                snap.forEach(d => {
-                    const item = d.data();
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <button class="delete-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
-                        <img src="${clean(item.img)}">
-                        <div class="card-content"><b>${clean(item.name)}</b><br><small>SWS Dub</small></div>
-                    `;
-                    card.querySelector('img').onclick = () => watch(item.name, item.link);
-                    if(isAdmin) card.querySelector('.delete-btn').onclick = () => deleteItem('titles', d.id);
-                    grid.appendChild(card);
-                });
+                allTitles = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+                drawTitles(allTitles);
             } catch (e) { grid.innerHTML = 'Ошибка загрузки'; }
         }
 
@@ -285,16 +302,15 @@
         async function deleteItem(coll, id) {
             if (!confirm("Удалить?")) return;
             await deleteDoc(doc(db, coll, id));
-            coll === 'titles' ? renderTitles() : renderTeam();
+            if(coll === 'titles') { allTitles = []; renderTitles(); } else { renderTeam(); }
         }
 
-        // --- АВТОРИЗАЦИЯ ---
+        // --- AUTH ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('auth-ui').style.display = 'none';
                 document.getElementById('user-ui').style.display = 'grid';
                 document.getElementById('verify-notice').style.display = user.emailVerified ? 'none' : 'block';
-                
                 const snap = await getDoc(doc(db, "users", user.uid));
                 if (snap.exists()) {
                     const d = snap.data();
@@ -304,11 +320,9 @@
                     document.getElementById('s-views').innerText = d.views || 0;
                     document.getElementById('s-date').innerText = d.regDate || "--";
                     document.getElementById('u-role-text').innerText = isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА";
-                    
                     const box = document.getElementById('u-ach-box'); box.innerHTML = '';
                     if(isAdmin) box.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
                     d.achievements?.forEach(a => box.innerHTML += `<span class="badge">${clean(a)}</span>`);
-
                     if(isAdmin) {
                         document.getElementById('admin-panel').style.display = 'block';
                         renderTitles();
@@ -332,7 +346,7 @@
                     role: "user", regDate: new Date().toLocaleDateString('ru-RU'),
                     views: 0, avatar: "", achievements: ["🚀 Первооткрыватель"]
                 });
-                alert("Готово! Подтвердите почту.");
+                alert("Подтвердите Email!");
             } catch (e) { alert(e.message); }
         };
 
@@ -341,7 +355,10 @@
                 .catch(() => alert("Ошибка входа"));
         };
 
-        document.getElementById('btn-logout').onclick = () => signOut(auth);
+        // Исправленный выход с обновлением страницы
+        document.getElementById('btn-logout').onclick = () => {
+            signOut(auth).then(() => location.reload());
+        };
 
         document.getElementById('save-profile').onclick = async () => {
             await updateDoc(doc(db, "users", auth.currentUser.uid), {
@@ -351,7 +368,7 @@
             alert("Сохранено!"); location.reload();
         };
 
-        // --- АДМИН ПАНЕЛЬ ---
+        // --- ADMIN ---
         document.getElementById('add-title').onclick = async () => {
             await addDoc(collection(db, "titles"), {
                 name: document.getElementById('t-name').value,
@@ -359,17 +376,7 @@
                 link: document.getElementById('t-link').value,
                 date: Date.now()
             });
-            alert("Добавлено!"); renderTitles();
+            alert("Добавлено!"); allTitles = []; renderTitles();
         };
 
         document.getElementById('add-member').onclick = async () => {
-            await addDoc(collection(db, "team"), {
-                name: document.getElementById('m-name').value,
-                role: document.getElementById('m-role').value,
-                img: document.getElementById('m-img').value
-            });
-            alert("Добавлено!"); renderTeam();
-        };
-    </script>
-</body>
-</html>
