@@ -11,7 +11,7 @@
             --border: #252529; --admin: #3897f0; --ts: all 0.2s ease;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
         .container { max-width: 1100px; margin: 0 auto; width: 100%; padding: 0 15px; flex: 1; }
 
@@ -20,16 +20,16 @@
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
             border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; 
         }
-        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 1px; }
+        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; }
         .logo span { color: var(--accent); }
         
         .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 13px; padding: 8px 10px; cursor: pointer; }
         .nav-link.active { color: var(--accent); }
 
-        /* SEARCH & FILTERS */
-        .search-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
-        .search-input { flex: 1; min-width: 200px; margin-bottom: 0; }
-        .filter-select { width: auto; min-width: 150px; margin-bottom: 0; }
+        /* SEARCH */
+        .search-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; margin-top: 10px; }
+        .search-input { flex: 1; min-width: 200px; }
+        .filter-select { width: auto; min-width: 140px; }
 
         .section { display: none; padding: 20px 0; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
@@ -37,31 +37,35 @@
 
         /* CARDS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); }
-        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; }
         .card img { width: 100%; height: 230px; object-fit: cover; cursor: pointer; }
         .card-info { padding: 10px; font-size: 12px; }
-        .genre-tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; margin-bottom: 5px; display: inline-block; }
+        .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+
+        /* PLAYER PAGE */
+        .view-header { display: flex; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .v-poster { width: 180px; border-radius: 10px; flex-shrink: 0; }
+        @media (max-width: 600px) { .view-header { flex-direction: column; align-items: center; text-align: center; } }
+        
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* ADM TOOLS */
+        .adm-tools { position: absolute; top: 5px; right: 5px; display: flex; gap: 4px; z-index: 10; }
+        .btn-sm { padding: 4px 8px; font-size: 9px; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; }
 
         /* MODALS */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 450px; padding: 25px; border-radius: 20px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 450px; padding: 20px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; }
         
-        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
-        
+        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; }
         .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; }
         .btn-blue { background: var(--admin); }
         .btn-outline { background: transparent; border: 1px solid var(--border); }
 
-        /* FOOTER */
-        footer { padding: 40px 0; border-top: 1px solid var(--border); margin-top: 50px; text-align: center; font-size: 13px; color: var(--text-dim); }
-        .footer-links { margin-top: 10px; display: flex; justify-content: center; gap: 20px; }
-        .footer-links a { color: var(--text-dim); text-decoration: none; transition: 0.2s; }
-        .footer-links a:hover { color: var(--accent); }
-
-        /* COMMENTS */
-        .comm-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--border); }
-        .comm-ava { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        footer { padding: 30px 0; border-top: 1px solid var(--border); margin-top: 40px; text-align: center; font-size: 12px; color: var(--text-dim); }
+        .comm-item { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .comm-ava { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -78,18 +82,17 @@
     <main class="container">
         <section id="home" class="section active">
             <div class="search-bar">
-                <input type="text" id="main-search" class="search-input" placeholder="Поиск по названию..." oninput="filterProjects()">
-                <select id="filter-genre" class="filter-select" onchange="filterProjects()">
+                <input type="text" id="main-search" placeholder="Поиск по названию..." oninput="filterData()">
+                <select id="filter-genre" onchange="filterData()">
                     <option value="all">Все жанры</option>
                     <option value="Аниме">Аниме</option>
                     <option value="Сериал">Сериалы</option>
                     <option value="Фильм">Фильмы</option>
                     <option value="Мультфильм">Мультфильмы</option>
                 </select>
-                <select id="filter-sort" class="filter-select" onchange="filterProjects()">
-                    <option value="new">Сначала новые</option>
-                    <option value="old">Сначала старые</option>
-                    <option value="pop">По популярности</option>
+                <select id="filter-sort" onchange="filterData()">
+                    <option value="new">Новинки</option>
+                    <option value="pop">Популярные</option>
                 </select>
                 <button id="adm-btn-rel" class="btn btn-blue" style="display:none;" onclick="openRelModal()">+ Проект</button>
             </div>
@@ -105,31 +108,47 @@
         </section>
 
         <section id="view" class="section">
-            <div id="view-content"></div> 
-            <div id="comm-container" style="margin-top:30px; background:var(--card-bg); padding:20px; border-radius:15px; border:1px solid var(--border);">
-                <h3>Комментарии (<span id="comm-count">0</span>)</h3>
-                <div id="comm-form-box" style="margin-top:15px; display:none;">
-                    <textarea id="comm-text" placeholder="Ваш комментарий на русском или любом другом языке..." rows="3"></textarea>
+            <div id="v-content-area"></div>
+            <div class="video-box"><iframe id="v-iframe" allowfullscreen></iframe></div>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+                <button id="v-prev" class="btn btn-outline" onclick="changeEp(-1)">←</button>
+                <b id="v-cur-ep" style="align-self:center;">Серия 1</b>
+                <button id="v-next" class="btn btn-outline" onclick="changeEp(1)">→</button>
+            </div>
+            <div style="background:var(--card-bg); padding:20px; border-radius:15px; border:1px solid var(--border);">
+                <h4>Комментарии (<span id="comm-count">0</span>)</h4>
+                <div id="comm-form" style="display:none; margin-top:10px;">
+                    <textarea id="comm-text" placeholder="Ваш комментарий..." rows="3"></textarea>
                     <button class="btn" onclick="sendComment()">Отправить</button>
                 </div>
-                <div id="comm-list"></div>
+                <div id="comm-list" style="margin-top:15px;"></div>
             </div>
         </section>
 
         <section id="profile" class="section">
-            <div id="auth-ui" style="max-width:350px; margin:40px auto; text-align:center;">
+            <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
                 <input type="email" id="email" placeholder="Email">
                 <input type="password" id="pass" placeholder="Пароль">
                 <button class="btn" style="width:100%" id="btn-login">Войти</button>
                 <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg">Регистрация</button>
             </div>
-            <div id="user-ui" style="display:none; max-width:500px; margin:0 auto; background:var(--card-bg); padding:30px; border-radius:20px; text-align:center; border:1px solid var(--border);">
-                <img id="u-ava" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--accent);">
-                <h2 id="u-nick" style="margin-top:10px;"></h2>
-                <div id="u-role" style="color:var(--accent); font-size:10px; font-weight:bold; margin-bottom:15px;"></div>
+            <div id="user-ui" style="display:none; max-width:500px; margin:0 auto; background:var(--card-bg); padding:25px; border-radius:20px; text-align:center; border:1px solid var(--border);">
+                <img id="u-ava" style="width:90px; height:90px; border-radius:50%; border:2px solid var(--accent); object-fit:cover;">
+                <h2 id="u-nick" style="margin:10px 0;"></h2>
+                <div id="u-role" style="color:var(--accent); font-size:11px; font-weight:bold; margin-bottom:15px;"></div>
+                <div id="u-stats" style="display:flex; justify-content:center; gap:20px; font-size:12px; margin-bottom:15px;">
+                    <div><b id="u-views">0</b><br>Просмотры</div>
+                    <div><b id="u-subs">0</b><br>Подписчики</div>
+                </div>
                 <div id="u-ach" style="margin-bottom:20px;"></div>
-                <button class="btn btn-outline" style="width:100%" onclick="openEditProfile()">Настройки</button>
+                <button class="btn btn-outline" style="width:100%" onclick="openEditProfile()">Редактировать</button>
                 <button class="btn btn-outline" style="width:100%; margin-top:10px; color:var(--accent);" id="btn-logout">Выйти</button>
+                
+                <div id="adm-ach-panel" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
+                    <input type="email" id="ad-ach-email" placeholder="Email юзера">
+                    <input type="text" id="ad-ach-name" placeholder="Название ачивки">
+                    <button class="btn btn-blue" style="width:100%" onclick="giveAch()">Выдать</button>
+                </div>
             </div>
         </section>
     </main>
@@ -137,31 +156,44 @@
     <footer>
         <div class="container">
             <p>© 2024-2026 <b>Sound Wave Studio</b>. Все права защищены.</p>
-            <p style="font-size:11px; margin-top:5px; opacity:0.6;">Весь контент предоставлен исключительно для ознакомительного просмотра.</p>
-            <div class="footer-links">
-                <a href="#">Вконтакте</a>
-                <a href="#">Telegram</a>
-                <a href="#">Discord</a>
-                <a href="#">YouTube</a>
+            <div style="margin-top:10px; opacity:0.6;">
+                <a href="#" style="color:white; margin:0 10px; text-decoration:none;">VK</a>
+                <a href="#" style="color:white; margin:0 10px; text-decoration:none;">Telegram</a>
+                <a href="#" style="color:white; margin:0 10px; text-decoration:none;">YouTube</a>
             </div>
         </div>
     </footer>
 
     <div id="m-rel" class="modal"><div class="modal-content">
-        <h3>Параметры публикации</h3>
+        <h3>Редактор проекта</h3>
         <input type="hidden" id="ed-rel-id">
-        <input type="text" id="ad-title" placeholder="Название (Русский поддерживается)">
+        <input type="text" id="ad-title" placeholder="Название (RU)">
         <select id="ad-genre">
-            <option value="Аниме">Аниме</option>
-            <option value="Сериал">Сериал</option>
-            <option value="Фильм">Фильм</option>
-            <option value="Мультфильм">Мультфильм</option>
+            <option>Аниме</option><option>Сериал</option><option>Фильм</option><option>Мультфильм</option>
         </select>
-        <input type="text" id="ad-year" placeholder="Год выпуска">
-        <input type="text" id="ad-authors" placeholder="Команда (дабберы, технари)">
+        <input type="text" id="ad-year" placeholder="Год">
+        <input type="text" id="ad-authors" placeholder="Авторы">
         <input type="text" id="ad-img" placeholder="URL постера">
-        <textarea id="ad-desc" placeholder="Полное описание проекта..." rows="5"></textarea>
-        <button class="btn btn-blue" style="width:100%" onclick="saveRel()">Опубликовать / Сохранить</button>
+        <textarea id="ad-desc" placeholder="Описание..." rows="4"></textarea>
+        <button class="btn btn-blue" style="width:100%" onclick="saveRel()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-team" class="modal"><div class="modal-content">
+        <h3>Участник</h3>
+        <input type="hidden" id="ed-team-id">
+        <input type="text" id="ad-m-name" placeholder="Никнейм">
+        <input type="text" id="ad-m-role" placeholder="Роль">
+        <input type="text" id="ad-m-img" placeholder="URL фото">
+        <button class="btn btn-blue" style="width:100%" onclick="saveTeam()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-prof" class="modal"><div class="modal-content">
+        <h3>Настройки профиля</h3>
+        <input type="text" id="ed-u-nick" placeholder="Никнейм">
+        <input type="text" id="ed-u-ava" placeholder="URL аватара">
+        <button class="btn" style="width:100%" onclick="saveProfile()">Сохранить</button>
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
     </div></div>
 
@@ -170,7 +202,6 @@
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-        // CONFIG (Твой конфиг остается)
         const firebaseConfig = {
             apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
             authDomain: "my-dub-site.firebaseapp.com",
@@ -184,38 +215,46 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let allProjects = [];
         let isAdmin = false;
-        let currentProjId = null;
+        let allRel = [];
+        let curProj = null;
+        let curEpIdx = 0;
 
-        // --- ПОИСК И ФИЛЬТРАЦИЯ ---
-        window.filterProjects = () => {
-            const searchText = document.getElementById('main-search').value.toLowerCase();
-            const genre = document.getElementById('filter-genre').value;
-            const sort = document.getElementById('filter-sort').value;
-
-            let filtered = allProjects.filter(p => {
-                const matchName = p.title.toLowerCase().includes(searchText);
-                const matchGenre = (genre === 'all' || p.genre === genre);
-                return matchName && matchGenre;
-            });
-
-            if (sort === 'new') filtered.sort((a, b) => b.time - a.time);
-            if (sort === 'old') filtered.sort((a, b) => a.time - b.time);
-            if (sort === 'pop') filtered.sort((a, b) => (b.commCount || 0) - (a.commCount || 0));
-
-            renderGrid(filtered);
+        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        
+        window.showSection = (id) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(document.getElementById('n-'+id)) document.getElementById('n-'+id).classList.add('active');
+            if(id === 'home') renderHome();
+            if(id === 'team') renderTeam();
         };
 
+        const dLink = (url) => {
+            if (!url || !url.includes('drive.google.com')) return url;
+            let id = url.includes('/d/') ? url.split('/d/')[1].split('/')[0] : url.split('id=')[1].split('&')[0];
+            return `https://drive.google.com/file/d/${id}/preview`;
+        };
+
+        // --- РЕЛИЗЫ ---
         async function renderHome() {
             const snap = await getDocs(collection(db, "projects"));
-            allProjects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            filterProjects();
+            allRel = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            filterData();
         }
 
-        function renderGrid(data) {
-            const g = document.getElementById('main-grid'); g.innerHTML = '';
-            data.forEach(p => {
+        window.filterData = () => {
+            const q = document.getElementById('main-search').value.toLowerCase();
+            const g = document.getElementById('filter-genre').value;
+            const s = document.getElementById('filter-sort').value;
+
+            let filtered = allRel.filter(p => p.title.toLowerCase().includes(q) && (g === 'all' || p.genre === g));
+            if(s === 'new') filtered.sort((a,b) => b.time - a.time);
+            if(s === 'pop') filtered.sort((a,b) => (b.commCount || 0) - (a.commCount || 0));
+
+            const grid = document.getElementById('main-grid'); grid.innerHTML = '';
+            filtered.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
@@ -224,60 +263,28 @@
                         <button class="btn-sm" style="background:red" onclick="window.delItem('projects','${p.id}')">УД</button>
                     </div>` : ''}
                     <img src="${p.img}" onclick="viewProj('${p.id}')">
-                    <div class="card-info">
-                        <span class="genre-tag">${p.genre || 'Релиз'}</span><br>
-                        <b>${p.title}</b><br><small>${p.year} • 💬 ${p.commCount || 0}</small>
-                    </div>
+                    <div class="card-info"><span class="tag">${p.genre}</span><br><b>${p.title}</b><br><small>${p.year} • 💬 ${p.commCount || 0}</small></div>
                 `;
-                g.appendChild(div);
+                grid.appendChild(div);
             });
-        }
-
-        // --- КОММЕНТАРИИ (ИСПРАВЛЕНО) ---
-        window.viewProj = async (id) => {
-            currentProjId = id;
-            const d = await getDoc(doc(db, "projects", id));
-            const p = d.data();
-            // Тут должен быть твой код отрисовки плеера...
-            showSection('view');
-            // Отрисовка комментов
-            renderComments(id);
         };
 
-        async function renderComments(projId) {
-            const list = document.getElementById('comm-list'); list.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "comments"), where("projId", "==", projId), orderBy("time", "desc")));
-            document.getElementById('comm-count').innerText = snap.size;
-            snap.forEach(d => {
-                const c = d.data();
-                list.innerHTML += `<div class="comm-item">
-                    <img src="${c.ava || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava">
-                    <div><b>${c.user}</b><p style="font-size:13px; color:#ddd;">${c.text}</p></div>
-                </div>`;
-            });
-        }
-
-        window.sendComment = async () => {
-            const text = document.getElementById('comm-text').value;
-            if(!text || !auth.currentUser) return;
-            
-            const u = (await getDoc(doc(db, "users", auth.currentUser.uid))).data();
-            await addDoc(collection(db, "comments"), {
-                projId: currentProjId,
-                user: u.nickname,
-                ava: u.avatar || '',
-                text: text, // Русский язык сохраняется корректно
-                time: Date.now()
-            });
-            
-            // Обновляем счетчик популярности в самом проекте
-            await updateDoc(doc(db, "projects", currentProjId), { commCount: increment(1) });
-            
-            document.getElementById('comm-text').value = '';
-            renderComments(currentProjId);
+        window.openRelModal = async (id = null) => {
+            document.getElementById('m-rel').style.display = 'flex';
+            document.getElementById('ed-rel-id').value = id || '';
+            if(id) {
+                const p = (await getDoc(doc(db, "projects", id))).data();
+                document.getElementById('ad-title').value = p.title;
+                document.getElementById('ad-genre').value = p.genre;
+                document.getElementById('ad-year').value = p.year;
+                document.getElementById('ad-authors').value = p.authors;
+                document.getElementById('ad-img').value = p.img;
+                document.getElementById('ad-desc').value = p.desc;
+            } else {
+                ['ad-title','ad-year','ad-authors','ad-img','ad-desc'].forEach(i => document.getElementById(i).value = '');
+            }
         };
 
-        // --- АДМИНКА (ЖАНРЫ И СОХРАНЕНИЕ) ---
         window.saveRel = async () => {
             const id = document.getElementById('ed-rel-id').value;
             const data = {
@@ -290,26 +297,150 @@
                 time: Date.now()
             };
             if(id) await updateDoc(doc(db, "projects", id), data);
-            else { data.commCount = 0; data.series = []; await addDoc(collection(db, "projects"), data); }
-            window.closeModals(); renderHome();
+            else { data.series = []; data.commCount = 0; await addDoc(collection(db, "projects"), data); }
+            closeModals(); renderHome();
         };
 
-        // ОСТАЛЬНЫЕ ФУНКЦИИ (Auth, Team, Del) аналогичны прошлой версии...
-        // Не забудь прописать window.delItem = delItem и т.д.
+        // --- СОСТАВ ---
+        async function renderTeam() {
+            const g = document.getElementById('team-grid'); g.innerHTML = '';
+            const snap = await getDocs(collection(db, "team"));
+            snap.forEach(d => {
+                const m = d.data();
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    ${isAdmin ? `<div class="adm-tools">
+                        <button class="btn-sm btn-blue" onclick="openTeamModal('${d.id}')">РЕД</button>
+                        <button class="btn-sm" style="background:red" onclick="window.delItem('team','${d.id}')">УД</button>
+                    </div>` : ''}
+                    <img src="${m.img}">
+                    <div class="card-info"><b>${m.name}</b><br><small>${m.role}</small></div>
+                `;
+                g.appendChild(div);
+            });
+        }
+
+        window.openTeamModal = async (id = null) => {
+            document.getElementById('m-team').style.display = 'flex';
+            document.getElementById('ed-team-id').value = id || '';
+            if(id) {
+                const m = (await getDoc(doc(db, "team", id))).data();
+                document.getElementById('ad-m-name').value = m.name;
+                document.getElementById('ad-m-role').value = m.role;
+                document.getElementById('ad-m-img').value = m.img;
+            }
+        };
+
+        window.saveTeam = async () => {
+            const id = document.getElementById('ed-team-id').value;
+            const data = { name: document.getElementById('ad-m-name').value, role: document.getElementById('ad-m-role').value, img: document.getElementById('ad-m-img').value };
+            if(id) await updateDoc(doc(db, "team", id), data); else await addDoc(collection(db, "team"), data);
+            closeModals(); renderTeam();
+        };
+
+        // --- ПРОСМОТР И КОММЕНТЫ ---
+        window.viewProj = async (id) => {
+            const d = await getDoc(doc(db, "projects", id));
+            curProj = { id: d.id, ...d.data() };
+            showSection('view');
+            document.getElementById('v-content-area').innerHTML = `
+                <div class="view-header">
+                    <img src="${curProj.img}" class="v-poster">
+                    <div class="v-details">
+                        <h1>${curProj.title}</h1>
+                        <p style="color:var(--text-dim); margin:10px 0;">${curProj.genre} | ${curProj.year} | ${curProj.authors}</p>
+                        <p style="font-size:14px; opacity:0.8;">${curProj.desc}</p>
+                        ${isAdmin ? `<button class="btn btn-blue" style="margin-top:15px;" onclick="window.addEp()">+ Серия</button>` : ''}
+                    </div>
+                </div>
+            `;
+            curEpIdx = 0; updatePlayer(); renderComments();
+        };
+
+        window.updatePlayer = () => {
+            const s = curProj.series || [];
+            if(s.length > 0) {
+                document.getElementById('v-iframe').src = dLink(s[curEpIdx].url);
+                document.getElementById('v-cur-ep').innerText = `Серия ${s[curEpIdx].num}`;
+            } else {
+                document.getElementById('v-iframe').src = '';
+                document.getElementById('v-cur-ep').innerText = "Нет серий";
+            }
+        };
+
+        window.changeEp = (dir) => {
+            const s = curProj.series || [];
+            if(curEpIdx + dir >= 0 && curEpIdx + dir < s.length) { curEpIdx += dir; updatePlayer(); }
+        };
+
+        window.addEp = async () => {
+            const url = prompt("Drive Link:"); if(!url) return;
+            const newS = [...(curProj.series || []), { num: (curProj.series?.length || 0) + 1, url: url }];
+            await updateDoc(doc(db, "projects", curProj.id), { series: newS });
+            curProj.series = newS; updatePlayer();
+        };
+
+        async function renderComments() {
+            const list = document.getElementById('comm-list'); list.innerHTML = '';
+            const snap = await getDocs(query(collection(db, "comments"), where("projId", "==", curProj.id), orderBy("time", "desc")));
+            document.getElementById('comm-count').innerText = snap.size;
+            snap.forEach(d => {
+                const c = d.data();
+                list.innerHTML += `<div class="comm-item"><img src="${c.ava}" class="comm-ava"><div><b>${c.user}</b><p style="font-size:13px;">${c.text}</p></div></div>`;
+            });
+        }
+
+        window.sendComment = async () => {
+            const text = document.getElementById('comm-text').value; if(!text || !auth.currentUser) return;
+            const u = (await getDoc(doc(db, "users", auth.currentUser.uid))).data();
+            await addDoc(collection(db, "comments"), { projId: curProj.id, user: u.nickname, ava: u.avatar || '', text: text, time: Date.now() });
+            await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(1) });
+            document.getElementById('comm-text').value = ''; renderComments();
+        };
+
+        // --- ПРОФИЛЬ ---
+        window.openEditProfile = () => {
+            document.getElementById('m-prof').style.display = 'flex';
+            document.getElementById('ed-u-nick').value = document.getElementById('u-nick').innerText;
+        };
+
+        window.saveProfile = async () => {
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: document.getElementById('ed-u-nick').value, avatar: document.getElementById('ed-u-ava').value });
+            location.reload();
+        };
+
+        window.delItem = async (col, id) => { if(confirm("Удалить навсегда?")) { await deleteDoc(doc(db, col, id)); renderHome(); } };
 
         onAuthStateChanged(auth, async (user) => {
             if(user) {
-                document.getElementById('comm-form-box').style.display = 'block';
+                document.getElementById('auth-ui').style.display = 'none';
+                document.getElementById('user-ui').style.display = 'block';
+                document.getElementById('comm-form').style.display = 'block';
                 const d = await getDoc(doc(db, "users", user.uid));
-                if(d.exists() && d.data().role === 'admin') {
-                    isAdmin = true;
-                    document.getElementById('adm-btn-rel').style.display = 'block';
-                    document.getElementById('adm-btn-team').style.display = 'block';
+                if(d.exists()) {
+                    const u = d.data(); isAdmin = u.role === 'admin';
+                    document.getElementById('u-nick').innerText = u.nickname;
+                    document.getElementById('u-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+                    document.getElementById('u-role').innerText = isAdmin ? "АДМИНИСТРАТОР" : "ЗРИТЕЛЬ";
+                    if(isAdmin) {
+                        document.getElementById('adm-ach-panel').style.display = 'block';
+                        document.getElementById('adm-btn-rel').style.display = 'block';
+                        document.getElementById('adm-btn-team').style.display = 'block';
+                    }
                 }
             }
             renderHome();
         });
 
+        document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
+        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
+        document.getElementById('btn-reg').onclick = async () => {
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+            const res = await createUserWithEmailAndPassword(auth, e, p);
+            await setDoc(doc(db, "users", res.user.uid), { email: e, nickname: e.split('@')[0], role: "user", views: 0, subscribers: 0 });
+            location.reload();
+        };
     </script>
 </body>
 </html>
