@@ -140,4 +140,261 @@
 
         <div id="profile" class="section">
             <div class="container">
-                <div id="auth-ui" style="max-width: 380px; margin: 40px auto; text-
+                <div id="auth-ui" style="max-width: 380px; margin: 40px auto; text-align: center;">
+                    <h2 style="margin-bottom:20px">SWS ID</h2>
+                    <input type="email" id="a-email" placeholder="Email">
+                    <input type="password" id="a-pass" placeholder="Пароль">
+                    <button class="btn" style="width:100%" id="btn-login">Войти</button>
+                    <button class="btn" style="width:100%; margin-top:10px; background:#222" id="btn-reg">Регистрация</button>
+                </div>
+
+                <div id="user-ui" class="profile-layout" style="display: none;">
+                    <aside class="sidebar">
+                        <img src="" id="u-ava" class="avatar">
+                        <h2 id="u-nick">...</h2>
+                        <p id="u-role-text" style="color:var(--accent); font-size:11px; font-weight:800; margin-bottom:20px"></p>
+                        <div class="stat-grid">
+                            <div class="stat-card"><span class="stat-val" id="s-views">0</span><span class="stat-lab">Проектов</span></div>
+                            <div class="stat-card"><span class="stat-val" id="s-date">--</span><span class="stat-lab">Рег.</span></div>
+                        </div>
+                        <div class="ach-list" id="u-ach-box"></div>
+                        <button class="btn" style="width:100%; margin-top:30px; background:#222" id="btn-logout">Выход</button>
+                    </aside>
+                    <div class="main-content">
+                        <div class="info-block">
+                            <h3 style="margin-bottom:20px">Настройки профиля</h3>
+                            <input type="text" id="set-nick" placeholder="Никнейм">
+                            <input type="text" id="set-ava" placeholder="URL аватара">
+                            <button class="btn" id="save-profile">Сохранить изменения</button>
+                        </div>
+                        <div id="admin-panel" class="info-block" style="display: none; border-color: var(--admin);">
+                            <h3 style="color: var(--admin); margin-bottom: 20px;">Консоль Администратора</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div>
+                                    <h4>+ Тайтл</h4>
+                                    <input type="text" id="t-name" placeholder="Название">
+                                    <input type="text" id="t-img" placeholder="URL обложки">
+                                    <input type="text" id="t-link" placeholder="Ссылка">
+                                    <button class="btn btn-admin" id="add-title">Добавить</button>
+                                </div>
+                                <div>
+                                    <h4>+ В команду</h4>
+                                    <input type="text" id="m-name" placeholder="Никнейм">
+                                    <input type="text" id="m-role" placeholder="Роль">
+                                    <input type="text" id="m-img" placeholder="URL фото">
+                                    <button class="btn btn-admin" id="add-member">Добавить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 <span>SoundWaveStudio.dub</span>. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // --- ЗАЩИТА ---
+        if (window.top !== window.self) window.top.location = window.self.location;
+        const ALLOWED = "dntsstudio-ai.github.io";
+        if (window.location.hostname !== ALLOWED && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+            document.body.innerHTML = "ACCESS DENIED"; throw new Error();
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
+            authDomain: "my-dub-site.firebaseapp.com",
+            projectId: "my-dub-site",
+            storageBucket: "my-dub-site.firebasestorage.app",
+            messagingSenderId: "302896869866",
+            appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let isAdmin = false;
+        let allTitles = []; 
+
+        const clean = (str) => {
+            const div = document.createElement('div');
+            div.textContent = str; return div.innerHTML;
+        };
+
+        // --- НАВИГАЦИЯ ---
+        const nav = (id) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const link = document.getElementById('n-' + id);
+            if (link) link.classList.add('active');
+            if (id === 'home') renderTitles();
+            if (id === 'team') renderTeam();
+            window.scrollTo(0, 0); // Прокрутка вверх при смене вкладки
+        };
+
+        document.getElementById('logo-btn').onclick = () => nav('home');
+        document.getElementById('n-home').onclick = () => nav('home');
+        document.getElementById('n-team').onclick = () => nav('team');
+        document.getElementById('n-profile').onclick = () => nav('profile');
+        document.getElementById('back-to-home').onclick = () => nav('home');
+
+        const watch = (name, link) => {
+            document.getElementById('pl-name').innerText = name;
+            document.getElementById('pl-frame').src = link;
+            nav('player');
+        };
+
+        // --- ТАЙТЛЫ ---
+        function drawTitles(list) {
+            const grid = document.getElementById('titles-grid');
+            grid.innerHTML = '';
+            list.forEach(itemDoc => {
+                const item = itemDoc.data;
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <button class="delete-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
+                    <img src="${clean(item.img)}">
+                    <div class="card-content"><b>${clean(item.name)}</b><br><small>SWS Dub</small></div>
+                `;
+                card.querySelector('img').onclick = () => watch(item.name, item.link);
+                if(isAdmin) card.querySelector('.delete-btn').onclick = () => deleteItem('titles', itemDoc.id);
+                grid.appendChild(card);
+            });
+        }
+
+        async function renderTitles() {
+            if (allTitles.length === 0) {
+                const snap = await getDocs(query(collection(db, "titles"), orderBy("date", "desc")));
+                allTitles = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+            }
+            drawTitles(allTitles);
+        }
+
+        document.getElementById('search-input').oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allTitles.filter(t => t.data.name.toLowerCase().includes(term));
+            drawTitles(filtered);
+        };
+
+        // --- КОМАНДА ---
+        async function renderTeam() {
+            const grid = document.getElementById('team-grid');
+            grid.innerHTML = 'Загрузка...';
+            const snap = await getDocs(collection(db, "team"));
+            grid.innerHTML = '';
+            snap.forEach(d => {
+                const item = d.data();
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <button class="delete-btn" style="display:${isAdmin?'block':'none'}">УДАЛИТЬ</button>
+                    <img src="${clean(item.img)}">
+                    <div class="card-content"><b>${clean(item.name)}</b><br><small>${clean(item.role)}</small></div>
+                `;
+                if(isAdmin) card.querySelector('.delete-btn').onclick = () => deleteItem('team', d.id);
+                grid.appendChild(card);
+            });
+        }
+
+        async function deleteItem(coll, id) {
+            if (!confirm("Удалить?")) return;
+            await deleteDoc(doc(db, coll, id));
+            if(coll === 'titles') allTitles = [];
+            coll === 'titles' ? renderTitles() : renderTeam();
+        }
+
+        // --- AUTH ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('auth-ui').style.display = 'none';
+                document.getElementById('user-ui').style.display = 'grid';
+                document.getElementById('verify-notice').style.display = user.emailVerified ? 'none' : 'block';
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    isAdmin = d.role === 'admin';
+                    document.getElementById('u-nick').innerText = d.nickname;
+                    document.getElementById('u-ava').src = d.avatar || `https://api.dicebear.com/7.x/notionists-neutral/svg?seed=${d.nickname}`;
+                    document.getElementById('s-views').innerText = d.views || 0;
+                    document.getElementById('s-date').innerText = d.regDate || "--";
+                    document.getElementById('u-role-text').innerText = isAdmin ? "ГЛАВНЫЙ АДМИНИСТРАТОР" : "УЧАСТНИК СООБЩЕСТВА";
+                    const box = document.getElementById('u-ach-box'); box.innerHTML = '';
+                    if(isAdmin) {
+                        box.innerHTML += `<span class="badge gold">🛡️ Основатель</span>`;
+                        document.getElementById('admin-panel').style.display = 'block';
+                    }
+                    d.achievements?.forEach(a => box.innerHTML += `<span class="badge">${clean(a)}</span>`);
+                }
+            } else {
+                document.getElementById('auth-ui').style.display = 'block';
+                document.getElementById('user-ui').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'none';
+                isAdmin = false;
+            }
+            renderTitles();
+        });
+
+        document.getElementById('btn-login').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('a-email').value, document.getElementById('a-pass').value)
+                .catch(() => alert("Ошибка входа"));
+        };
+
+        document.getElementById('btn-reg').onclick = async () => {
+            const email = document.getElementById('a-email').value;
+            const pass = document.getElementById('a-pass').value;
+            try {
+                const r = await createUserWithEmailAndPassword(auth, email, pass);
+                await sendEmailVerification(r.user);
+                await setDoc(doc(db, "users", r.user.uid), {
+                    email: email, nickname: email.split('@')[0],
+                    role: "user", regDate: new Date().toLocaleDateString('ru-RU'),
+                    views: 0, avatar: "", achievements: ["🚀 Первооткрыватель"]
+                });
+                alert("Подтвердите почту!");
+            } catch (e) { alert(e.message); }
+        };
+
+        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
+
+        document.getElementById('save-profile').onclick = async () => {
+            await updateDoc(doc(db, "users", auth.currentUser.uid), {
+                nickname: clean(document.getElementById('set-nick').value),
+                avatar: clean(document.getElementById('set-ava').value)
+            });
+            alert("Сохранено!"); location.reload();
+        };
+
+        // --- ADMIN ---
+        document.getElementById('add-title').onclick = async () => {
+            await addDoc(collection(db, "titles"), {
+                name: document.getElementById('t-name').value,
+                img: document.getElementById('t-img').value,
+                link: document.getElementById('t-link').value,
+                date: Date.now()
+            });
+            alert("Добавлено!"); allTitles = []; renderTitles();
+        };
+
+        document.getElementById('add-member').onclick = async () => {
+            await addDoc(collection(db, "team"), {
+                name: document.getElementById('m-name').value,
+                role: document.getElementById('m-role').value,
+                img: document.getElementById('m-img').value
+            });
+            alert("Добавлено!"); renderTeam();
+        };
+    </script>
+</body>
+</html>
