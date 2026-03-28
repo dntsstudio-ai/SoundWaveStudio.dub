@@ -23,7 +23,8 @@
         .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; }
         .logo span { color: var(--accent); }
         
-        .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 13px; padding: 8px 10px; cursor: pointer; }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 13px; padding: 8px 10px; cursor: pointer; transition: var(--ts); }
+        .nav-link:hover { color: white; }
         .nav-link.active { color: var(--accent); }
 
         /* SEARCH */
@@ -37,14 +38,15 @@
 
         /* CARDS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); }
+        .card:hover { transform: translateY(-3px); border-color: #333; }
         .card img { width: 100%; height: 230px; object-fit: cover; cursor: pointer; }
         .card-info { padding: 10px; font-size: 12px; }
         .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
 
         /* PLAYER PAGE */
         .view-header { display: flex; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .v-poster { width: 180px; border-radius: 10px; flex-shrink: 0; }
+        .v-poster { width: 180px; border-radius: 10px; flex-shrink: 0; object-fit: cover;}
         @media (max-width: 600px) { .view-header { flex-direction: column; align-items: center; text-align: center; } }
         
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); }
@@ -55,17 +57,32 @@
         .btn-sm { padding: 4px 8px; font-size: 9px; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; }
 
         /* MODALS */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 450px; padding: 20px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(3px); }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 450px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; }
         
-        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; }
-        .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; }
+        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; outline: none; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+        
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; transition: var(--ts); }
+        .btn:hover { opacity: 0.9; }
         .btn-blue { background: var(--admin); }
         .btn-outline { background: transparent; border: 1px solid var(--border); }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
 
         footer { padding: 30px 0; border-top: 1px solid var(--border); margin-top: 40px; text-align: center; font-size: 12px; color: var(--text-dim); }
-        .comm-item { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .comm-ava { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+        
+        /* COMMENTS */
+        .comm-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .comm-ava { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .comm-tools { display: flex; gap: 10px; margin-top: 5px; }
+        .comm-tools button { background: none; border: none; color: var(--text-dim); font-size: 10px; cursor: pointer; }
+        .comm-tools button:hover { color: white; }
+
+        /* ACHIEVEMENTS */
+        .ach-badge { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 50%; font-size: 20px; cursor: pointer; transition: 0.2s; margin: 5px; }
+        .ach-badge:hover { transform: scale(1.1); border-color: var(--accent); }
+        
+        .ach-anim-active { transform: scale(1) !important; opacity: 1 !important; }
     </style>
 </head>
 <body>
@@ -117,11 +134,11 @@
             </div>
             <div style="background:var(--card-bg); padding:20px; border-radius:15px; border:1px solid var(--border);">
                 <h4>Комментарии (<span id="comm-count">0</span>)</h4>
-                <div id="comm-form" style="display:none; margin-top:10px;">
+                <div id="comm-form" style="display:none; margin-top:15px;">
                     <textarea id="comm-text" placeholder="Ваш комментарий..." rows="3"></textarea>
                     <button class="btn" onclick="sendComment()">Отправить</button>
                 </div>
-                <div id="comm-list" style="margin-top:15px;"></div>
+                <div id="comm-list" style="margin-top:20px;"></div>
             </div>
         </section>
 
@@ -138,16 +155,24 @@
                 <div id="u-role" style="color:var(--accent); font-size:11px; font-weight:bold; margin-bottom:15px;"></div>
                 <div id="u-stats" style="display:flex; justify-content:center; gap:20px; font-size:12px; margin-bottom:15px;">
                     <div><b id="u-views">0</b><br>Просмотры</div>
-                    <div><b id="u-subs">0</b><br>Подписчики</div>
+                    <div><b id="u-subs">0</b><br>Подписки</div>
                 </div>
-                <div id="u-ach" style="margin-bottom:20px;"></div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; font-size: 14px; color: var(--text-dim);">Достижения</h4>
+                    <div id="u-ach"></div>
+                </div>
+
                 <button class="btn btn-outline" style="width:100%" onclick="openEditProfile()">Редактировать</button>
                 <button class="btn btn-outline" style="width:100%; margin-top:10px; color:var(--accent);" id="btn-logout">Выйти</button>
                 
-                <div id="adm-ach-panel" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
+                <div id="adm-ach-panel" style="display:none; margin-top:25px; border-top:1px solid var(--border); padding-top:20px;">
+                    <h4 style="margin-bottom: 10px; font-size: 13px; color:var(--admin);">Выдача достижений (Админ)</h4>
                     <input type="email" id="ad-ach-email" placeholder="Email юзера">
+                    <input type="text" id="ad-ach-icon" placeholder="Эмодзи или URL картинки (напр. 🏆)">
                     <input type="text" id="ad-ach-name" placeholder="Название ачивки">
-                    <button class="btn btn-blue" style="width:100%" onclick="giveAch()">Выдать</button>
+                    <textarea id="ad-ach-desc" placeholder="Описание ачивки" rows="2"></textarea>
+                    <button class="btn btn-blue" style="width:100%" onclick="giveAch()">Выдать достижение</button>
                 </div>
             </div>
         </section>
@@ -197,9 +222,20 @@
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
     </div></div>
 
+    <div id="m-ach-view" class="modal">
+        <div class="modal-content text-center" style="transform: scale(0.8); transition: 0.3s; opacity: 0; text-align: center;" id="ach-anim-box">
+            <div id="ach-v-img" style="font-size: 60px; margin-bottom: 10px;"></div>
+            <h2 id="ach-v-name" style="margin-bottom: 5px;"></h2>
+            <p id="ach-v-date" style="font-size:11px; color:var(--text-dim)"></p>
+            <p id="ach-v-desc" style="margin: 15px 0; font-size: 14px;"></p>
+            <div id="ach-v-admin" style="font-size:11px; color:var(--accent); display:none; border: 1px solid var(--accent); padding: 5px; border-radius: 5px; margin-bottom: 15px;">Выдана администрацией сайта</div>
+            <button class="btn btn-outline" style="width:100%; margin-top: 10px;" onclick="closeModals()">Отлично</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -220,7 +256,16 @@
         let curProj = null;
         let curEpIdx = 0;
 
-        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        // ЗАЩИТА ОТ XSS (Дыра закрыта)
+        const esc = (str) => {
+            if (!str) return '';
+            return str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        };
+
+        window.closeModals = () => {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            document.getElementById('ach-anim-box').classList.remove('ach-anim-active');
+        };
         
         window.showSection = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -249,7 +294,7 @@
             const g = document.getElementById('filter-genre').value;
             const s = document.getElementById('filter-sort').value;
 
-            let filtered = allRel.filter(p => p.title.toLowerCase().includes(q) && (g === 'all' || p.genre === g));
+            let filtered = allRel.filter(p => (p.title || "").toLowerCase().includes(q) && (g === 'all' || p.genre === g));
             if(s === 'new') filtered.sort((a,b) => b.time - a.time);
             if(s === 'pop') filtered.sort((a,b) => (b.commCount || 0) - (a.commCount || 0));
 
@@ -262,8 +307,8 @@
                         <button class="btn-sm btn-blue" onclick="openRelModal('${p.id}')">РЕД</button>
                         <button class="btn-sm" style="background:red" onclick="window.delItem('projects','${p.id}')">УД</button>
                     </div>` : ''}
-                    <img src="${p.img}" onclick="viewProj('${p.id}')">
-                    <div class="card-info"><span class="tag">${p.genre}</span><br><b>${p.title}</b><br><small>${p.year} • 💬 ${p.commCount || 0}</small></div>
+                    <img src="${esc(p.img)}" onclick="viewProj('${p.id}')">
+                    <div class="card-info"><span class="tag">${esc(p.genre)}</span><br><b>${esc(p.title)}</b><br><small>${esc(p.year)} • 💬 ${p.commCount || 0}</small></div>
                 `;
                 grid.appendChild(div);
             });
@@ -274,12 +319,12 @@
             document.getElementById('ed-rel-id').value = id || '';
             if(id) {
                 const p = (await getDoc(doc(db, "projects", id))).data();
-                document.getElementById('ad-title').value = p.title;
-                document.getElementById('ad-genre').value = p.genre;
-                document.getElementById('ad-year').value = p.year;
-                document.getElementById('ad-authors').value = p.authors;
-                document.getElementById('ad-img').value = p.img;
-                document.getElementById('ad-desc').value = p.desc;
+                document.getElementById('ad-title').value = p.title || '';
+                document.getElementById('ad-genre').value = p.genre || 'Аниме';
+                document.getElementById('ad-year').value = p.year || '';
+                document.getElementById('ad-authors').value = p.authors || '';
+                document.getElementById('ad-img').value = p.img || '';
+                document.getElementById('ad-desc').value = p.desc || '';
             } else {
                 ['ad-title','ad-year','ad-authors','ad-img','ad-desc'].forEach(i => document.getElementById(i).value = '');
             }
@@ -314,8 +359,8 @@
                         <button class="btn-sm btn-blue" onclick="openTeamModal('${d.id}')">РЕД</button>
                         <button class="btn-sm" style="background:red" onclick="window.delItem('team','${d.id}')">УД</button>
                     </div>` : ''}
-                    <img src="${m.img}">
-                    <div class="card-info"><b>${m.name}</b><br><small>${m.role}</small></div>
+                    <img src="${esc(m.img)}">
+                    <div class="card-info"><b>${esc(m.name)}</b><br><small>${esc(m.role)}</small></div>
                 `;
                 g.appendChild(div);
             });
@@ -326,9 +371,11 @@
             document.getElementById('ed-team-id').value = id || '';
             if(id) {
                 const m = (await getDoc(doc(db, "team", id))).data();
-                document.getElementById('ad-m-name').value = m.name;
-                document.getElementById('ad-m-role').value = m.role;
-                document.getElementById('ad-m-img').value = m.img;
+                document.getElementById('ad-m-name').value = m.name || '';
+                document.getElementById('ad-m-role').value = m.role || '';
+                document.getElementById('ad-m-img').value = m.img || '';
+            } else {
+                ['ad-m-name','ad-m-role','ad-m-img'].forEach(i => document.getElementById(i).value = '');
             }
         };
 
@@ -346,12 +393,12 @@
             showSection('view');
             document.getElementById('v-content-area').innerHTML = `
                 <div class="view-header">
-                    <img src="${curProj.img}" class="v-poster">
+                    <img src="${esc(curProj.img)}" class="v-poster">
                     <div class="v-details">
-                        <h1>${curProj.title}</h1>
-                        <p style="color:var(--text-dim); margin:10px 0;">${curProj.genre} | ${curProj.year} | ${curProj.authors}</p>
-                        <p style="font-size:14px; opacity:0.8;">${curProj.desc}</p>
-                        ${isAdmin ? `<button class="btn btn-blue" style="margin-top:15px;" onclick="window.addEp()">+ Серия</button>` : ''}
+                        <h1 style="margin-bottom:5px;">${esc(curProj.title)}</h1>
+                        <p style="color:var(--text-dim); margin-bottom:15px; font-size:13px;">Жанр: <span style="color:white;">${esc(curProj.genre)}</span> | Год: <span style="color:white;">${esc(curProj.year)}</span> | Озвучка: <span style="color:white;">${esc(curProj.authors)}</span></p>
+                        <p style="font-size:14px; opacity:0.9; line-height:1.5;">${esc(curProj.desc)}</p>
+                        ${isAdmin ? `<button class="btn btn-blue" style="margin-top:15px;" onclick="window.addEp()">+ Добавить Серию</button>` : ''}
                     </div>
                 </div>
             `;
@@ -375,7 +422,7 @@
         };
 
         window.addEp = async () => {
-            const url = prompt("Drive Link:"); if(!url) return;
+            const url = prompt("Введите ссылку на Google Drive:"); if(!url) return;
             const newS = [...(curProj.series || []), { num: (curProj.series?.length || 0) + 1, url: url }];
             await updateDoc(doc(db, "projects", curProj.id), { series: newS });
             curProj.series = newS; updatePlayer();
@@ -383,23 +430,84 @@
 
         async function renderComments() {
             const list = document.getElementById('comm-list'); list.innerHTML = '';
+            
+            // ЕСЛИ ЗДЕСЬ ОШИБКА В КОНСОЛИ - ЭТО ИЗ-ЗА ИНДЕКСА FIREBASE
             const snap = await getDocs(query(collection(db, "comments"), where("projId", "==", curProj.id), orderBy("time", "desc")));
+            
             document.getElementById('comm-count').innerText = snap.size;
             snap.forEach(d => {
                 const c = d.data();
-                list.innerHTML += `<div class="comm-item"><img src="${c.ava}" class="comm-ava"><div><b>${c.user}</b><p style="font-size:13px;">${c.text}</p></div></div>`;
+                const isOwner = auth.currentUser && auth.currentUser.uid === c.userId;
+                
+                // Кнопки управления комментарием
+                const tools = `
+                    <div class="comm-tools">
+                        ${isOwner ? `<button onclick="editComm('${d.id}', '${esc(c.text)}')">Изменить</button>` : ''}
+                        ${(isOwner || isAdmin) ? `<button onclick="delComm('${d.id}')">Удалить</button>` : ''}
+                    </div>
+                `;
+
+                list.innerHTML += `
+                    <div class="comm-item">
+                        <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava">
+                        <div style="flex:1;">
+                            <b>${esc(c.user)}</b>
+                            <p style="font-size:13px; margin-top:3px; word-break: break-word;">${esc(c.text)}</p>
+                            ${(isOwner || isAdmin) ? tools : ''}
+                        </div>
+                    </div>
+                `;
             });
         }
 
         window.sendComment = async () => {
             const text = document.getElementById('comm-text').value; if(!text || !auth.currentUser) return;
-            const u = (await getDoc(doc(db, "users", auth.currentUser.uid))).data();
-            await addDoc(collection(db, "comments"), { projId: curProj.id, user: u.nickname, ava: u.avatar || '', text: text, time: Date.now() });
+            const userRef = doc(db, "users", auth.currentUser.uid);
+            const userDoc = await getDoc(userRef);
+            const u = userDoc.data();
+            
+            // Сохраняем коммент с ID пользователя (чтобы он мог его удалять)
+            await addDoc(collection(db, "comments"), { 
+                projId: curProj.id, 
+                userId: auth.currentUser.uid, // <-- ВАЖНО для проверки владельца
+                user: u.nickname, 
+                ava: u.avatar || '', 
+                text: text, 
+                time: Date.now() 
+            });
             await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(1) });
-            document.getElementById('comm-text').value = ''; renderComments();
+            
+            // --- СИСТЕМА АВТО-АЧИВОК ---
+            if (!u.achReceivedFirstComm) {
+                const ach = { 
+                    name: "Первое слово", desc: "Написал свой первый комментарий на сайте!", 
+                    img: "✍️", date: Date.now(), fromAdmin: false 
+                };
+                await updateDoc(userRef, { achievements: arrayUnion(ach), achReceivedFirstComm: true });
+                alert("🎉 Получено достижение: Первое слово!");
+            }
+
+            document.getElementById('comm-text').value = ''; 
+            renderComments();
         };
 
-        // --- ПРОФИЛЬ ---
+        window.editComm = async (id, oldText) => {
+            const newText = prompt("Редактировать комментарий:", oldText);
+            if(newText && newText.trim() !== "" && newText !== oldText) {
+                await updateDoc(doc(db, "comments", id), { text: newText });
+                renderComments();
+            }
+        };
+
+        window.delComm = async (id) => {
+            if(confirm("Удалить этот комментарий навсегда?")) {
+                await deleteDoc(doc(db, "comments", id));
+                await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(-1) });
+                renderComments();
+            }
+        };
+
+        // --- ПРОФИЛЬ И АЧИВКИ ---
         window.openEditProfile = () => {
             document.getElementById('m-prof').style.display = 'flex';
             document.getElementById('ed-u-nick').value = document.getElementById('u-nick').innerText;
@@ -408,6 +516,61 @@
         window.saveProfile = async () => {
             await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: document.getElementById('ed-u-nick').value, avatar: document.getElementById('ed-u-ava').value });
             location.reload();
+        };
+
+        // Всплывающее окно ачивки
+        window.viewAch = (name, desc, img, dateMs, fromAdmin) => {
+            const m = document.getElementById('m-ach-view');
+            document.getElementById('ach-v-name').innerText = name;
+            document.getElementById('ach-v-desc').innerText = desc;
+            
+            // Если это ссылка на картинку, делаем тег img, иначе просто текст (эмодзи)
+            if(img && img.startsWith('http')) {
+                document.getElementById('ach-v-img').innerHTML = `<img src="${esc(img)}" style="width:70px; height:70px; border-radius:10px; object-fit:cover;">`;
+            } else {
+                document.getElementById('ach-v-img').innerText = img || '🏆';
+            }
+
+            const d = new Date(dateMs);
+            document.getElementById('ach-v-date').innerText = `Получено: ${d.toLocaleDateString()} в ${d.toLocaleTimeString()}`;
+            document.getElementById('ach-v-admin').style.display = fromAdmin ? 'block' : 'none';
+            
+            m.style.display = 'flex';
+            setTimeout(() => document.getElementById('ach-anim-box').classList.add('ach-anim-active'), 10);
+        };
+
+        // Выдача ачивок Админом
+        window.giveAch = async () => {
+            const email = document.getElementById('ad-ach-email').value;
+            const icon = document.getElementById('ad-ach-icon').value || '🏆';
+            const name = document.getElementById('ad-ach-name').value;
+            const desc = document.getElementById('ad-ach-desc').value || 'Особая награда от администрации';
+
+            if(!email || !name) return alert("Введите Email пользователя и Название ачивки");
+
+            try {
+                const q = query(collection(db, "users"), where("email", "==", email));
+                const snap = await getDocs(q);
+                
+                if(snap.empty) {
+                    alert("Пользователь с таким Email не найден.");
+                    return;
+                }
+
+                const targetUserRef = snap.docs[0].ref;
+                const newAch = { name: name, desc: desc, img: icon, date: Date.now(), fromAdmin: true };
+                
+                await updateDoc(targetUserRef, { achievements: arrayUnion(newAch) });
+                alert(`Достижение "${name}" успешно выдано пользователю ${email}!`);
+                
+                document.getElementById('ad-ach-email').value = '';
+                document.getElementById('ad-ach-name').value = '';
+                document.getElementById('ad-ach-desc').value = '';
+                document.getElementById('ad-ach-icon').value = '';
+            } catch (e) {
+                console.error(e);
+                alert("Ошибка при выдаче: Возможна проблема с правами БД.");
+            }
         };
 
         window.delItem = async (col, id) => { if(confirm("Удалить навсегда?")) { await deleteDoc(doc(db, col, id)); renderHome(); } };
@@ -423,6 +586,25 @@
                     document.getElementById('u-nick').innerText = u.nickname;
                     document.getElementById('u-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
                     document.getElementById('u-role').innerText = isAdmin ? "АДМИНИСТРАТОР" : "ЗРИТЕЛЬ";
+                    
+                    // Рендер ачивок в профиле
+                    const achContainer = document.getElementById('u-ach');
+                    achContainer.innerHTML = '';
+                    if(u.achievements && u.achievements.length > 0) {
+                        u.achievements.forEach(ach => {
+                            // Формируем безопасные параметры для onclick
+                            const safeName = esc(ach.name).replace(/'/g, "\\'");
+                            const safeDesc = esc(ach.desc).replace(/'/g, "\\'");
+                            const safeImg = esc(ach.img).replace(/'/g, "\\'");
+                            
+                            let content = (ach.img && ach.img.startsWith('http')) ? `<img src="${safeImg}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` : safeImg;
+                            
+                            achContainer.innerHTML += `<div class="ach-badge" title="${safeName}" onclick="viewAch('${safeName}', '${safeDesc}', '${safeImg}', ${ach.date}, ${ach.fromAdmin})">${content}</div>`;
+                        });
+                    } else {
+                        achContainer.innerHTML = '<span style="font-size:12px; color:var(--text-dim);">Пока нет достижений</span>';
+                    }
+
                     if(isAdmin) {
                         document.getElementById('adm-ach-panel').style.display = 'block';
                         document.getElementById('adm-btn-rel').style.display = 'block';
@@ -438,7 +620,7 @@
         document.getElementById('btn-reg').onclick = async () => {
             const e = document.getElementById('email').value, p = document.getElementById('pass').value;
             const res = await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "users", res.user.uid), { email: e, nickname: e.split('@')[0], role: "user", views: 0, subscribers: 0 });
+            await setDoc(doc(db, "users", res.user.uid), { email: e, nickname: e.split('@')[0], role: "user", views: 0, subscribers: 0, achievements: [] });
             location.reload();
         };
     </script>
