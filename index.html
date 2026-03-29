@@ -106,6 +106,8 @@
                     <option value="Аниме">Аниме</option>
                     <option value="Сериал">Сериалы</option>
                     <option value="Фильм">Фильмы</option>
+                    <option value="Фильм">Тизеры</option>
+                    <option value="Фильм">Трейлеры</option>
                     <option value="Мультфильм">Мультфильмы</option>
                 </select>
                 <select id="filter-sort" class="filter-select" onchange="filterData()">
@@ -220,6 +222,8 @@
             <option value="Аниме">Аниме</option>
             <option value="Сериал">Сериал</option>
             <option value="Фильм">Фильм</option>
+            <option value="Фильм">Тизер</option>
+            <option value="Фильм">Трейлер</option>
             <option value="Мультфильм">Мультфильм</option>
         </select>
         <input type="text" id="ad-year" placeholder="Год выпуска (например, 2024)">
@@ -668,8 +672,8 @@
             if(snap.empty) return alert("Пользователь не найден.");
             
             const ach = { 
-                name: document.getElementById('ga-name').value, 
-                desc: document.getElementById('ga-desc').value, 
+                name: document.getElementById('ga-name').value, || ''Привет!'',
+                desc: document.getElementById('ga-desc').value, || ''Добро-пожаловать в SWS!'',
                 img: document.getElementById('ga-img').value || '🏆', 
                 date: Date.now(), hidden: false, fromAdmin: true 
             };
