@@ -28,54 +28,43 @@
         .nav-link:hover { color: white; }
         .nav-link.active { color: var(--accent); }
 
-        /* SEARCH & SECTIONS */
-        .search-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; margin-top: 10px; }
         .section { display: none; padding: 20px 0; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* CARDS */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
         .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); cursor: pointer; }
         .card:hover { transform: translateY(-3px); border-color: #444; }
-        .card img { width: 100%; height: 230px; object-fit: cover; }
-        .card-info { padding: 10px; font-size: 12px; }
-        .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+        .card img { width: 100%; height: 250px; object-fit: cover; }
+        .card-info { padding: 12px; font-size: 13px; }
+        .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; margin-right: 5px; }
+        .year-tag { font-size: 9px; background: #333; padding: 2px 6px; border-radius: 4px; display: inline-block; }
 
-        /* PLAYER & TAPES */
+        /* PLAYER FIXED */
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         .no-episodes { position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10; flex-direction: column; overflow: hidden; }
         .tape { position: absolute; background: var(--accent); color: white; font-weight: 900; padding: 10px 200%; transform: rotate(-35deg); font-size: 20px; white-space: nowrap; opacity: 0.8; }
         .tape.two { transform: rotate(35deg); }
-        .no-epi-box { background: var(--card-bg); border: 2px solid var(--accent); padding: 20px; border-radius: 15px; z-index: 11; text-align: center; }
 
         /* MODALS */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(5px); }
         .modal-content { background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; position: relative; }
         
-        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; outline: none; }
+        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 14px; }
         .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; transition: var(--ts); }
         .btn-blue { background: var(--admin); }
         .btn-outline { background: transparent; border: 1px solid var(--border); }
 
-        /* ACHIEVEMENTS INVENTORY */
-        .ach-inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 15px; }
-        .ach-inv-item { background: var(--input-bg); border: 1px solid var(--border); padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; position: relative; }
-        .ach-inv-item.is-hidden { opacity: 0.4; filter: grayscale(1); }
-        .ach-st-tag { position: absolute; top: 2px; right: 2px; font-size: 7px; padding: 2px 4px; border-radius: 3px; background: #ff9800; color: #000; font-weight: bold; }
+        /* MENTIONS */
+        .mention-link { color: var(--admin); text-decoration: none; font-weight: bold; border-bottom: 1px dashed var(--admin); }
 
-        /* FOOTER */
         footer { padding: 40px 0; border-top: 1px solid var(--border); margin-top: 40px; text-align: center; }
         .soc-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
         .soc-links a { color: white; font-size: 20px; transition: 0.3s; opacity: 0.6; }
-        .soc-links a:hover { opacity: 1; color: var(--accent); transform: translateY(-3px); }
-        .copy-text { font-size: 12px; color: var(--text-dim); cursor: pointer; transition: 0.2s; }
-        .copy-text:hover { color: white; }
-
-        /* TEAM PAGE */
-        .team-page-content { line-height: 1.6; }
-        .team-page-content h1 { color: var(--accent); margin-bottom: 10px; }
-        .contact-box { background: var(--input-bg); padding: 15px; border-radius: 10px; margin-top: 20px; }
+        .soc-links a:hover { opacity: 1; color: var(--accent); }
+        .copy-text { font-size: 12px; color: var(--text-dim); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -91,87 +80,69 @@
 
     <main class="container">
         <section id="home" class="section active">
-            <div class="search-bar">
-                <input type="text" id="main-search" placeholder="Поиск по названию..." oninput="filterData()">
-                <select id="filter-genre" onchange="filterData()">
-                    <option value="all">Все жанры</option>
-                    <option value="Аниме">Аниме</option>
-                    <option value="Сериал">Сериалы</option>
-                    <option value="Фильм">Фильмы</option>
-                    <option value="Мультфильм">Мультфильмы</option>
-                </select>
-                <button id="adm-btn-rel" class="btn btn-blue" style="display:none;" onclick="openRelModal()">+ Проект</button>
+            <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+                <input type="text" id="main-search" placeholder="Поиск..." oninput="filterData()" style="flex:1; margin-bottom:0;">
+                <button id="adm-btn-rel" class="btn btn-blue" style="display:none;" onclick="openRelModal()">+ Добавить релиз</button>
             </div>
             <div class="grid" id="main-grid"></div>
         </section>
 
         <section id="team" class="section">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h2>Команда проекта</h2>
-                <button id="adm-btn-team" class="btn btn-blue" style="display:none;" onclick="openTeamModal()">+ Участник</button>
+                <h2>Команда</h2>
+                <button id="adm-btn-team" class="btn btn-blue" style="display:none;" onclick="openTeamModal()">+ Добавить участника</button>
             </div>
             <div class="grid" id="team-grid"></div>
         </section>
 
+        <section id="team-page" class="section">
+            <button class="btn btn-outline" onclick="showSection('team')" style="margin-bottom:20px;">← Назад</button>
+            <div id="team-page-view" style="background:var(--card-bg); padding:30px; border-radius:20px; border:1px solid var(--border);"></div>
+            <div id="adm-tp-controls" style="display:none; margin-top:20px; gap:10px;">
+                <button class="btn btn-blue" onclick="openTPModal()">Редактировать био</button>
+                <button class="btn btn-outline" style="color:red" onclick="deleteTP()">Удалить био</button>
+            </div>
+        </section>
+
         <section id="view" class="section">
-            <div id="v-content-area"></div>
-            <div class="video-box" id="v-player-container">
-                <div id="v-tape-overlay" class="no-episodes" style="display:none;">
-                    <div class="tape">SoundWave DUB</div>
-                    <div class="tape two">SoundWave DUB</div>
-                    <div class="no-epi-box">
-                        <h2 style="margin:0;">Пока серий нет</h2>
-                        <p style="opacity:0.7; font-size:13px; margin-top:5px;">Но скоро они появятся! ⏳</p>
+            <button class="btn btn-outline" onclick="showSection('home')" style="margin-bottom:20px;">← К релизам</button>
+            <div id="v-info"></div>
+            <div class="video-box">
+                <div id="v-tape" class="no-episodes" style="display:none;">
+                    <div class="tape">SoundWave DUB</div><div class="tape two">SoundWave DUB</div>
+                    <div style="background:var(--card-bg); border:2px solid var(--accent); padding:20px; border-radius:15px; z-index:11;">
+                        <h3>Серий пока нет 😔</h3>
                     </div>
                 </div>
                 <iframe id="v-iframe" allowfullscreen></iframe>
             </div>
-            <div id="v-controls" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
-                <button class="btn btn-outline" onclick="changeEp(-1)">←</button>
-                <b id="v-cur-ep" style="align-self:center;">Серия 1</b>
-                <button class="btn btn-outline" onclick="changeEp(1)">→</button>
-            </div>
-            <div style="background:var(--card-bg); padding:20px; border-radius:15px; border:1px solid var(--border);">
-                <h4>Комментарии (<span id="comm-count">0</span>)</h4>
-                <div id="comm-form" style="display:none; margin-top:15px;">
-                    <textarea id="comm-text" placeholder="Ваш комментарий..." rows="3"></textarea>
+            <div style="background:var(--card-bg); padding:20px; border-radius:15px; margin-top:20px;">
+                <h4>Комментарии</h4>
+                <div id="comm-list" style="margin:15px 0;"></div>
+                <div id="comm-form" style="display:none;">
+                    <textarea id="comm-text" placeholder="Напишите мнение..." rows="2"></textarea>
                     <button class="btn" onclick="sendComment()">Отправить</button>
                 </div>
-                <div id="comm-list" style="margin-top:20px;"></div>
-            </div>
-        </section>
-
-        <section id="team-page" class="section">
-            <button class="btn btn-outline" onclick="showSection('team')" style="margin-bottom:20px;">← К составу</button>
-            <div id="team-page-view" class="team-page-content"></div>
-            <div id="adm-team-page-tools" style="display:none; margin-top:30px; border-top:1px solid var(--border); padding-top:20px;">
-                <button class="btn btn-blue" onclick="openTeamPageEditor()">Редактировать страницу</button>
-                <button class="btn btn-outline" style="color:red;" onclick="deleteTeamPage()">Удалить страницу</button>
             </div>
         </section>
 
         <section id="profile" class="section">
             <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
-                <input type="email" id="email" placeholder="Email">
-                <input type="password" id="pass" placeholder="Пароль">
+                <input type="email" id="email" placeholder="Email"><input type="password" id="pass" placeholder="Пароль">
                 <button class="btn" style="width:100%" id="btn-login">Войти</button>
                 <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg">Регистрация</button>
             </div>
-            <div id="user-ui" style="display:none; max-width:500px; margin:0 auto; background:var(--card-bg); padding:25px; border-radius:20px; text-align:center; border:1px solid var(--border);">
-                <img id="u-ava" style="width:90px; height:90px; border-radius:50%; border:2px solid var(--accent); object-fit:cover;">
+            <div id="user-ui" style="display:none; max-width:500px; margin:0 auto; text-align:center; background:var(--card-bg); padding:30px; border-radius:20px; border:1px solid var(--border);">
+                <img id="u-ava" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--accent);">
                 <h2 id="u-nick" style="margin:10px 0;"></h2>
-                <div id="u-role" style="color:var(--accent); font-size:11px; font-weight:bold; margin-bottom:15px;"></div>
-                
-                <div style="margin-bottom: 20px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <h4 style="font-size: 14px; color: var(--text-dim);">Достижения</h4>
-                        <button class="btn btn-sm btn-outline" style="padding:4px 8px; font-size:10px;" onclick="openAchInventory()">Инвентарь</button>
-                    </div>
-                    <div id="u-ach"></div>
+                <div id="u-ach" style="display:flex; justify-content:center; gap:5px; margin-bottom:20px;"></div>
+                <button class="btn btn-outline" onclick="openAchInventory()" style="margin-bottom:10px; width:100%;">Инвентарь достижений</button>
+                <button class="btn btn-outline" onclick="document.getElementById('m-prof').style.display='flex'" style="width:100%;">Настройки</button>
+                <div id="adm-ach-panel" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+                    <p style="font-size:11px; color:var(--text-dim); margin-bottom:10px;">АДМИН-ПАНЕЛЬ</p>
+                    <button class="btn btn-blue" onclick="document.getElementById('m-give-ach').style.display='flex'" style="width:100%;">Выдать ачивку пользователю</button>
                 </div>
-
-                <button class="btn btn-outline" style="width:100%" onclick="document.getElementById('m-prof').style.display='flex'">Настройки</button>
-                <button class="btn btn-outline" style="width:100%; margin-top:10px; color:var(--accent);" id="btn-logout">Выйти</button>
+                <button class="btn btn-outline" id="btn-logout" style="width:100%; margin-top:20px; color:var(--accent);">Выйти</button>
             </div>
         </section>
     </main>
@@ -182,63 +153,62 @@
             <a href="https://t.me/soundwavestudiosws" target="_blank"><i class="fab fa-telegram-plane"></i></a>
             <a href="https://www.youtube.com/@SoundWaveDUB" target="_blank"><i class="fab fa-youtube"></i></a>
         </div>
-        <p class="copy-text" onclick="openPrivacy()">© 2024-2026 Sound Wave Studio. Политика конфиденциальности</p>
+        <p class="copy-text" onclick="openPrivacy()">© 2024-2026 Sound Wave Studio. Все права защищены.</p>
     </footer>
 
-    <div id="m-ach-inv" class="modal"><div class="modal-content">
-        <h3>Мои достижения</h3>
-        <div id="ach-inv-list" class="ach-inv-grid"></div>
-        <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModals()">Закрыть</button>
-    </div></div>
-
-    <div id="m-ach-manage" class="modal"><div class="modal-content" style="text-align:center;">
-        <div id="m-ach-manage-icon" style="font-size:50px;"></div>
-        <h2 id="m-ach-manage-name"></h2>
-        <p id="m-ach-manage-desc" style="margin:10px 0; font-size:14px; opacity:0.8;"></p>
-        <div style="display:flex; flex-direction:column; gap:8px; margin-top:20px;">
-            <button id="btn-ach-toggle" class="btn">Скрыть</button>
-            <button class="btn" style="background:red;" onclick="deleteAchievement()">Удалить навсегда</button>
-            <button class="btn btn-outline" onclick="document.getElementById('m-ach-manage').style.display='none'">Назад</button>
-        </div>
-    </div></div>
-
-    <div id="m-team-editor" class="modal"><div class="modal-content">
-        <h3>Редактор страницы участника</h3>
-        <textarea id="tp-html" placeholder="Описание (можно использовать HTML)..." rows="10"></textarea>
-        <input type="text" id="tp-contacts" placeholder="Контакты (Telegram, VK и т.д.)">
-        <button class="btn btn-blue" style="width:100%" onclick="saveTeamPage()">Применить</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
-    </div></div>
-
     <div id="m-rel" class="modal"><div class="modal-content">
-        <h3>Проект</h3>
-        <input type="hidden" id="ed-rel-id"><input type="text" id="ad-title" placeholder="Название"><select id="ad-genre"><option>Аниме</option><option>Сериал</option><option>Фильм</option></select>
-        <input type="text" id="ad-year" placeholder="Год"><input type="text" id="ad-img" placeholder="Постер"><textarea id="ad-desc" placeholder="Описание" rows="4"></textarea>
+        <h3>Управление релизом</h3>
+        <input type="text" id="ad-title" placeholder="Название">
+        <input type="text" id="ad-year" placeholder="Год выпуска (например, 2024)">
+        <input type="text" id="ad-genre" placeholder="Жанр">
+        <input type="text" id="ad-img" placeholder="URL постера">
+        <textarea id="ad-desc" placeholder="Описание" rows="4"></textarea>
         <button class="btn btn-blue" style="width:100%" onclick="saveRel()">Сохранить</button>
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
     </div></div>
 
+    <div id="m-tp-edit" class="modal"><div class="modal-content">
+        <h3>Биография участника</h3>
+        <p style="font-size:11px; margin-bottom:10px;">Используйте @email для упоминания профиля</p>
+        <textarea id="tp-bio" placeholder="Расскажите об участнике..." rows="8"></textarea>
+        <input type="text" id="tp-social" placeholder="Соцсети (через запятую)">
+        <button class="btn btn-blue" style="width:100%" onclick="saveTP()">Сохранить био</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-give-ach" class="modal"><div class="modal-content">
+        <h3>Выдать ачивку</h3>
+        <input type="text" id="ga-uid" placeholder="ID пользователя">
+        <input type="text" id="ga-name" placeholder="Название ачивки">
+        <input type="text" id="ga-desc" placeholder="Описание">
+        <input type="text" id="ga-img" placeholder="Эмодзи или URL картинки">
+        <button class="btn btn-blue" style="width:100%" onclick="giveAch()">Выдать</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-ach-inv" class="modal"><div class="modal-content">
+        <h3>Инвентарь</h3><div id="ach-inv-list" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:15px;"></div>
+        <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
     <div id="m-prof" class="modal"><div class="modal-content">
-        <h3>Профиль</h3>
-        <input type="text" id="ed-u-nick" placeholder="Никнейм"><input type="text" id="ed-u-ava" placeholder="URL аватара">
+        <h3>Настройки</h3>
+        <input type="text" id="ed-nick" placeholder="Никнейм"><input type="text" id="ed-ava" placeholder="URL аватара">
         <button class="btn" style="width:100%" onclick="saveProfile()">Сохранить</button>
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
     </div></div>
 
-    <div id="m-privacy" class="modal"><div class="modal-content" style="max-width:700px;">
+    <div id="m-privacy" class="modal"><div class="modal-content">
         <h3>Политика конфиденциальности</h3>
-        <div id="priv-view" style="font-size:14px; line-height:1.6; margin:15px 0;"></div>
-        <textarea id="priv-edit" style="display:none; height:300px;"></textarea>
-        <div id="priv-admin" style="display:none;">
-            <button id="priv-btn-edit" class="btn btn-blue" onclick="editPriv()">Изменить</button>
-            <button id="priv-btn-save" class="btn btn-blue" style="display:none;" onclick="savePriv()">Сохранить</button>
-        </div>
+        <div id="priv-text" style="font-size:13px; line-height:1.5; margin:15px 0;"></div>
+        <textarea id="priv-edit" style="display:none; height:200px;"></textarea>
+        <div id="priv-adm-btns" style="display:none;"><button class="btn btn-blue" onclick="editPriv()">Изменить</button></div>
         <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModals()">Закрыть</button>
     </div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, query, where, orderBy, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -254,218 +224,165 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let isAdmin = false, allRel = [], curProj = null, curEpIdx = 0, userData = null, curSelectedTeamMember = null;
+        let isAdmin = false, userData = null, allRel = [], curProj = null, curTM = null;
         const esc = (s) => s ? s.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
 
-        window.closeModals = () => { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); };
+        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
 
         window.showSection = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(document.getElementById('n-'+id)) document.getElementById('n-'+id).classList.add('active');
-            if(id === 'home') renderHome();
-            if(id === 'team') renderTeam();
+            if(id === 'home') loadHome();
+            if(id === 'team') loadTeam();
         };
 
-        // --- РЕЛИЗЫ И ПЛЕЕР ---
-        async function renderHome() {
+        // РЕЛИЗЫ
+        async function loadHome() {
             const snap = await getDocs(collection(db, "projects"));
-            allRel = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            allRel = snap.docs.map(d => ({id:d.id, ...d.data()}));
             filterData();
         }
 
         window.filterData = () => {
             const q = document.getElementById('main-search').value.toLowerCase();
-            const g = document.getElementById('filter-genre').value;
-            let filtered = allRel.filter(p => (p.title || "").toLowerCase().includes(q) && (g === 'all' || p.genre === g));
             const grid = document.getElementById('main-grid'); grid.innerHTML = '';
-            filtered.forEach(p => {
+            allRel.filter(p => p.title.toLowerCase().includes(q)).forEach(p => {
                 grid.innerHTML += `
-                    <div class="card" onclick="viewProj('${p.id}')">
-                        <img src="${esc(p.img)}">
-                        <div class="card-info"><span class="tag">${esc(p.genre)}</span><br><b>${esc(p.title)}</b></div>
-                    </div>`;
+                <div class="card" onclick="viewProj('${p.id}')">
+                    <img src="${esc(p.img)}">
+                    <div class="card-info">
+                        <div><span class="tag">${esc(p.genre)}</span><span class="year-tag">${esc(p.year || '2024')}</span></div>
+                        <b style="display:block; margin-top:5px;">${esc(p.title)}</b>
+                    </div>
+                </div>`;
             });
+        };
+
+        window.openRelModal = () => { document.getElementById('m-rel').style.display = 'flex'; };
+
+        window.saveRel = async () => {
+            const data = {
+                title: document.getElementById('ad-title').value,
+                year: document.getElementById('ad-year').value,
+                genre: document.getElementById('ad-genre').value,
+                img: document.getElementById('ad-img').value,
+                desc: document.getElementById('ad-desc').value,
+                series: []
+            };
+            await addDoc(collection(db, "projects"), data);
+            closeModals(); loadHome();
         };
 
         window.viewProj = async (id) => {
-            const d = await getDoc(doc(db, "projects", id)); curProj = { id: d.id, ...d.data() };
+            const d = await getDoc(doc(db, "projects", id)); curProj = {id:d.id, ...d.data()};
             showSection('view');
-            document.getElementById('v-content-area').innerHTML = `<h1>${esc(curProj.title)}</h1><p>${esc(curProj.desc)}</p>`;
-            curEpIdx = 0; updatePlayer(); renderComments();
+            document.getElementById('v-info').innerHTML = `<h2>${esc(curProj.title)} (${esc(curProj.year)})</h2><p style="margin:10px 0; color:var(--text-dim);">${esc(curProj.desc)}</p>`;
+            const hasS = curProj.series && curProj.series.length > 0;
+            document.getElementById('v-tape').style.display = hasS ? 'none' : 'flex';
+            document.getElementById('v-iframe').style.display = hasS ? 'block' : 'none';
+            if(hasS) document.getElementById('v-iframe').src = curProj.series[0].url;
+            renderComments();
         };
 
-        window.updatePlayer = () => {
-            const s = curProj.series || [];
-            const overlay = document.getElementById('v-tape-overlay');
-            const frame = document.getElementById('v-iframe');
-            if(s.length === 0) {
-                overlay.style.display = 'flex'; frame.style.display = 'none';
-                document.getElementById('v-cur-ep').innerText = "Нет серий";
-            } else {
-                overlay.style.display = 'none'; frame.style.display = 'block';
-                frame.src = s[curEpIdx].url.replace('drive.google.com/file/d/', 'drive.google.com/file/d/').replace('/view', '/preview');
-                document.getElementById('v-cur-ep').innerText = `Серия ${s[curEpIdx].num || curEpIdx+1}`;
-            }
-        };
-
-        // --- КОММЕНТАРИИ (ИСПРАВЛЕНО) ---
-        async function renderComments() {
-            const list = document.getElementById('comm-list'); list.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "comments"), where("projId", "==", curProj.id), orderBy("time", "desc")));
-            document.getElementById('comm-count').innerText = snap.size;
-            snap.forEach(d => {
-                const c = d.data();
-                list.innerHTML += `<div style="margin-bottom:10px;"><b>${esc(c.user)}:</b> ${esc(c.text)}</div>`;
-            });
-        }
-
-        window.sendComment = async () => {
-            const txt = document.getElementById('comm-text').value; if(!txt || !auth.currentUser) return;
-            await addDoc(collection(db, "comments"), { projId: curProj.id, userId: auth.currentUser.uid, user: userData.nickname, text: txt, time: Date.now() });
-            await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(1) });
-            document.getElementById('comm-text').value = ''; renderComments();
-        };
-
-        // --- КОМАНДА И ПЕРСОНАЛЬНЫЕ СТРАНИЦЫ ---
-        async function renderTeam() {
-            const g = document.getElementById('team-grid'); g.innerHTML = '';
+        // КОМАНДА + МЕНШИНЫ
+        async function loadTeam() {
+            const grid = document.getElementById('team-grid'); grid.innerHTML = '';
             const snap = await getDocs(collection(db, "team"));
             snap.forEach(d => {
                 const m = d.data();
-                const card = document.createElement('div'); card.className = 'card';
-                card.innerHTML = `<img src="${esc(m.img)}"><div class="card-info"><b>${esc(m.name)}</b><br><small>${esc(m.role)}</small></div>`;
-                card.onclick = () => openTeamPage(d.id, m);
-                g.appendChild(card);
+                grid.innerHTML += `<div class="card" onclick="viewTM('${d.id}')"><img src="${esc(m.img)}"><div class="card-info"><b>${esc(m.name)}</b><br><small>${esc(m.role)}</small></div></div>`;
             });
         }
 
-        window.openTeamPage = async (id, data) => {
-            curSelectedTeamMember = { id, ...data };
+        window.viewTM = async (id) => {
+            curTM = {id}; const d = await getDoc(doc(db, "team", id)); Object.assign(curTM, d.data());
             const pDoc = await getDoc(doc(db, "teamPages", id));
             showSection('team-page');
-            const view = document.getElementById('team-page-view');
+            const box = document.getElementById('team-page-view');
             if(pDoc.exists()) {
-                const p = pDoc.data();
-                view.innerHTML = `<h1>${esc(data.name)}</h1><div class="team-page-content">${p.html}</div><div class="contact-box"><b>Контакты:</b> ${esc(p.contacts)}</div>`;
+                let bio = pDoc.data().bio;
+                // Логика упоминаний @email
+                const mentions = bio.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+                for(let m of mentions) {
+                    const email = m.replace('@', '');
+                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+                    if(!uSnap.empty) {
+                        const u = uSnap.docs[0].data();
+                        bio = bio.replace(m, `<a href="#" class="mention-link">@${esc(u.nickname)}</a>`);
+                    }
+                }
+                box.innerHTML = `<h2>${esc(curTM.name)}</h2><div style="margin:20px 0;">${bio}</div><p><b>Связь:</b> ${esc(pDoc.data().social)}</p>`;
             } else {
-                view.innerHTML = `<h1>${esc(data.name)}</h1><p>У данного участника пока нет своей страницы 😔</p>`;
+                box.innerHTML = `<h2>${esc(curTM.name)}</h2><p>У участника пока нет своей страницы 😔</p>`;
             }
-            if(isAdmin) document.getElementById('adm-team-page-tools').style.display = 'block';
+            if(isAdmin) document.getElementById('adm-tp-controls').style.display = 'flex';
         };
 
-        window.openTeamPageEditor = async () => {
-            const pDoc = await getDoc(doc(db, "teamPages", curSelectedTeamMember.id));
-            if(pDoc.exists()) {
-                document.getElementById('tp-html').value = pDoc.data().html;
-                document.getElementById('tp-contacts').value = pDoc.data().contacts;
-            }
-            document.getElementById('m-team-editor').style.display = 'flex';
+        window.openTPModal = () => document.getElementById('m-tp-edit').style.display='flex';
+        window.saveTP = async () => {
+            await setDoc(doc(db, "teamPages", curTM.id), { bio: document.getElementById('tp-bio').value, social: document.getElementById('tp-social').value });
+            closeModals(); viewTM(curTM.id);
         };
 
-        window.saveTeamPage = async () => {
-            await setDoc(doc(db, "teamPages", curSelectedTeamMember.id), { 
-                html: document.getElementById('tp-html').value, 
-                contacts: document.getElementById('tp-contacts').value 
-            });
-            closeModals(); openTeamPage(curSelectedTeamMember.id, curSelectedTeamMember);
+        // АЧИВКИ (АДМИН)
+        window.giveAch = async () => {
+            const uid = document.getElementById('ga-uid').value;
+            const ach = { name: document.getElementById('ga-name').value, desc: document.getElementById('ga-desc').value, img: document.getElementById('ga-img').value, date: Date.now(), hidden: false };
+            await updateDoc(doc(db, "users", uid), { achievements: arrayUnion(ach) });
+            alert("Ачивка выдана!"); closeModals();
         };
 
-        // --- ИНВЕНТАРЬ АЧИВОК ---
+        // ИНВЕНТАРЬ
         window.openAchInventory = () => {
             const list = document.getElementById('ach-inv-list'); list.innerHTML = '';
             userData.achievements.forEach((a, i) => {
-                list.innerHTML += `
-                <div class="ach-inv-item ${a.hidden ? 'is-hidden' : ''}" onclick="manageAch(${i})">
-                    ${a.hidden ? '<span class="ach-st-tag">СКРЫТО</span>' : ''}
-                    <div style="font-size:30px;">${a.img}</div>
-                </div>`;
+                list.innerHTML += `<div style="text-align:center; background:var(--input-bg); padding:5px; border-radius:10px; opacity:${a.hidden?0.4:1}" onclick="toggleAch(${i})"><div style="font-size:25px;">${a.img}</div><small style="font-size:8px;">${a.hidden?'Скрыта':'Видна'}</small></div>`;
             });
             document.getElementById('m-ach-inv').style.display = 'flex';
         };
 
-        let curAchIdx = -1;
-        window.manageAch = (idx) => {
-            curAchIdx = idx; const a = userData.achievements[idx];
-            document.getElementById('m-ach-manage-icon').innerText = a.img;
-            document.getElementById('m-ach-manage-name').innerText = a.name;
-            document.getElementById('m-ach-manage-desc').innerText = a.desc;
-            document.getElementById('btn-ach-toggle').innerText = a.hidden ? "Показать в профиле" : "Скрыть";
-            document.getElementById('btn-ach-toggle').onclick = toggleAch;
-            document.getElementById('m-ach-manage').style.display = 'flex';
-        };
-
-        async function toggleAch() {
-            userData.achievements[curAchIdx].hidden = !userData.achievements[curAchIdx].hidden;
+        window.toggleAch = async (i) => {
+            userData.achievements[i].hidden = !userData.achievements[i].hidden;
             await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
-            closeModals(); openAchInventory(); renderAchInProfile();
-        }
-
-        window.deleteAchievement = async () => {
-            if(confirm("Вы точно хотите удалить эту ачивку? Вы потеряете её навсегда!")) {
-                userData.achievements.splice(curAchIdx, 1);
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
-                closeModals(); openAchInventory(); renderAchInProfile();
-            }
-        }
-
-        function renderAchInProfile() {
-            const container = document.getElementById('u-ach'); container.innerHTML = '';
-            userData.achievements.filter(a => !a.hidden).forEach(a => {
-                container.innerHTML += `<div class="ach-badge" title="${esc(a.name)}">${a.img}</div>`;
-            });
-        }
-
-        // --- ПОЛИТИКА (АДМИН) ---
-        window.openPrivacy = async () => {
-            const d = await getDoc(doc(db, "settings", "privacy"));
-            const txt = d.exists() ? d.data().text : "Политика не заполнена";
-            document.getElementById('priv-view').innerText = txt;
-            document.getElementById('priv-edit').value = txt;
-            document.getElementById('m-privacy').style.display = 'flex';
-            if(isAdmin) document.getElementById('priv-admin').style.display = 'block';
+            openAchInventory(); renderAchProfile();
         };
 
-        window.editPriv = () => {
-            document.getElementById('priv-view').style.display = 'none';
-            document.getElementById('priv-edit').style.display = 'block';
-            document.getElementById('priv-btn-edit').style.display = 'none';
-            document.getElementById('priv-btn-save').style.display = 'block';
-        };
+        function renderAchProfile() {
+            const box = document.getElementById('u-ach'); box.innerHTML = '';
+            userData.achievements.filter(a => !a.hidden).forEach(a => { box.innerHTML += `<span title="${a.name}">${a.img}</span>`; });
+        }
 
-        window.savePriv = async () => {
-            const txt = document.getElementById('priv-edit').value;
-            await setDoc(doc(db, "settings", "privacy"), { text: txt });
-            location.reload();
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            if(user) {
-                const d = await getDoc(doc(db, "users", user.uid));
-                userData = d.data(); isAdmin = userData.role === 'admin';
+        // AUTH & CORE
+        onAuthStateChanged(auth, async (u) => {
+            if(u) {
+                const d = await getDoc(doc(db, "users", u.uid)); userData = d.data();
+                isAdmin = userData.role === 'admin';
                 document.getElementById('auth-ui').style.display = 'none';
                 document.getElementById('user-ui').style.display = 'block';
                 document.getElementById('u-nick').innerText = userData.nickname;
                 document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
                 document.getElementById('comm-form').style.display = 'block';
-                if(isAdmin) { 
+                if(isAdmin) {
                     document.getElementById('adm-btn-rel').style.display = 'block';
                     document.getElementById('adm-btn-team').style.display = 'block';
+                    document.getElementById('adm-ach-panel').style.display = 'block';
                 }
-                renderAchInProfile();
+                renderAchProfile();
             }
-            renderHome();
+            loadHome();
         });
 
         document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value);
         document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
         document.getElementById('btn-reg').onclick = async () => {
             const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-            const res = await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "users", res.user.uid), { email: e, nickname: e.split('@')[0], role: "user", achievements: [] });
+            const r = await createUserWithEmailAndPassword(auth, e, p);
+            await setDoc(doc(db, "users", r.user.uid), { email: e, nickname: e.split('@')[0], role: "user", achievements: [] });
             location.reload();
         };
+
     </script>
 </body>
 </html>
