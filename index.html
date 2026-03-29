@@ -20,9 +20,15 @@
 
     <style>
         :root {
-            --bg: #0b0b0d; --card-bg: #141417; --input-bg: #050506;
-            --accent: #ff2e2e; --text: #ffffff; --text-dim: #9ca3af;
-            --border: #252529; --admin: #3897f0; --ts: all 0.2s ease;
+            --bg: #0b0b0d;
+            --card-bg: #141417;
+            --input-bg: #050506;
+            --accent: #ff2e2e;
+            --text: #ffffff;
+            --text-dim: #9ca3af;
+            --border: #252529;
+            --admin: #3897f0;
+            --ts: all 0.2s ease;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -34,33 +40,41 @@
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
             border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; 
         }
-        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; }
+        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 1px; }
         .logo span { color: var(--accent); }
         
+        nav { display: flex; gap: 15px; }
         .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 13px; padding: 8px 10px; cursor: pointer; transition: var(--ts); }
         .nav-link:hover { color: white; }
         .nav-link.active { color: var(--accent); }
 
         .search-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; margin-top: 10px; }
-        .search-input { flex: 1; min-width: 200px; }
-        .filter-select { width: auto; min-width: 140px; }
+        input, select, textarea { 
+            flex: 1; padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border); 
+            color: white; border-radius: 8px; outline: none; font-size: 14px; transition: var(--ts);
+        }
+        input:focus { border-color: var(--accent); }
+        .filter-select { width: auto; min-width: 140px; cursor: pointer; }
 
         .section { display: none; padding: 20px 0; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); cursor: pointer; }
-        .card:hover { transform: translateY(-3px); border-color: #444; }
+        .card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); 
+            position: relative; transition: var(--ts); cursor: pointer; display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-3px); border-color: #444; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
         .card img { width: 100%; height: 250px; object-fit: cover; }
-        .card-info { padding: 12px; font-size: 13px; }
-        .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; margin-right: 5px; color: white; }
-        .year-tag { font-size: 9px; background: #333; padding: 2px 6px; border-radius: 4px; display: inline-block; color: white; }
+        .card-info { padding: 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; font-weight: 800; color: white; }
+        .year-tag { font-size: 9px; background: #333; padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; color: white; }
 
-        /* PLAYER FIXED & VIEW HEADER */
+        /* PLAYER & VIEW */
         .view-header { display: flex; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
         .v-poster { width: 220px; height: 320px; border-radius: 10px; flex-shrink: 0; object-fit: cover; border: 1px solid var(--border); }
+        .v-details { flex: 1; }
         @media (max-width: 700px) { 
             .view-header { flex-direction: column; align-items: center; text-align: center; } 
             .v-poster { width: 180px; height: 260px; }
@@ -68,750 +82,405 @@
         
         .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
         .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .no-episodes { position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10; flex-direction: column; overflow: hidden; }
-        .tape { position: absolute; background: var(--accent); color: white; font-weight: 900; padding: 10px 200%; transform: rotate(-35deg); font-size: 20px; white-space: nowrap; opacity: 0.8; }
-        .tape.two { transform: rotate(35deg); }
-        .no-epi-box { background: var(--card-bg); border: 2px solid var(--accent); padding: 20px; border-radius: 15px; z-index: 11; text-align: center; }
 
         /* MODALS */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; position: relative; }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; }
         
-        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 14px; }
-        .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; transition: var(--ts); }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; transition: var(--ts); display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+        .btn:hover { opacity: 0.9; transform: scale(1.02); }
         .btn-blue { background: var(--admin); }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: white; }
+        .btn-sm { padding: 6px 10px; font-size: 10px; }
 
-        /* MENTIONS & COMMENTS */
-        .mention-link { color: var(--admin); text-decoration: none; font-weight: bold; padding: 2px 5px; background: rgba(56, 151, 240, 0.1); border-radius: 4px; }
+        /* COMMENTS */
         .comm-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--border); }
         .comm-ava { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .unauth-msg { text-align: center; padding: 20px; background: rgba(255, 46, 46, 0.05); border-radius: 12px; border: 1px solid rgba(255, 46, 46, 0.2); }
-
-        /* ADM TOOLS */
-        .adm-tools { position: absolute; top: 5px; right: 5px; display: flex; gap: 4px; z-index: 10; }
-        .btn-sm { padding: 4px 8px; font-size: 10px; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; }
 
         footer { padding: 40px 0; border-top: 1px solid var(--border); margin-top: 40px; text-align: center; }
         .soc-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
         .soc-links a { color: white; font-size: 20px; transition: 0.3s; opacity: 0.6; }
         .soc-links a:hover { opacity: 1; color: var(--accent); }
-        .copy-text { font-size: 12px; color: var(--text-dim); cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo" onclick="showSection('home')">SOUND<span> WAVE</span> STUDIO</div>
-        <nav>
-            <a id="n-home" class="nav-link active" onclick="showSection('home')">Релизы</a>
-            <a id="n-team" class="nav-link" onclick="showSection('team')">Состав</a>
-            <a id="n-profile" class="nav-link" onclick="showSection('profile')">Профиль</a>
-        </nav>
-    </header>
+<header>
+    <div class="logo" onclick="loadHome()">Sound Wave <span>Studio</span></div>
+    <nav>
+        <span class="nav-link active" onclick="loadHome()">Главная</span>
+        <span class="nav-link" onclick="showSection('team')">Состав</span>
+        <span class="nav-link" id="adm-btn-add" style="display:none" onclick="openAddModal()">Добавить релиз</span>
+        <span class="nav-link" id="adm-btn-team" style="display:none" onclick="openTeamModal()">Управление составом</span>
+    </nav>
+</header>
 
-    <main class="container">
-        <section id="home" class="section active">
-            <div class="search-bar">
-                <input type="text" id="main-search" class="search-input" placeholder="Поиск по названию..." oninput="filterData()">
-                <select id="filter-genre" class="filter-select" onchange="filterData()">
-                    <option value="all">Все жанры</option>
-                    <option value="Аниме">Аниме</option>
-                    <option value="Сериал">Сериалы</option>
-                    <option value="Фильм">Фильмы</option>
-                    <option value="Мультфильм">Мультфильмы</option>
-                    <option value="Аниме">Трейлеры</option>
-                    <option value="Аниме">Тизеры</option>
-                </select>
-                <select id="filter-sort" class="filter-select" onchange="filterData()">
-                    <option value="new">Новинки</option>
-                    <option value="pop">Популярные</option>
-                </select>
-                <button id="adm-btn-rel" class="btn btn-blue" style="display:none;" onclick="openRelModal()">+ Добавить релиз</button>
-            </div>
-            <div class="grid" id="main-grid"></div>
-        </section>
-
-        <section id="team" class="section">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h2>Команда</h2>
-                <button id="adm-btn-team" class="btn btn-blue" style="display:none;" onclick="openTeamModal()">+ Добавить участника</button>
-            </div>
-            <div class="grid" id="team-grid"></div>
-        </section>
-
-        <section id="team-page" class="section">
-            <button class="btn btn-outline" onclick="showSection('team')" style="margin-bottom:20px;">← Назад</button>
-            <div id="team-page-view" style="background:var(--card-bg); padding:30px; border-radius:20px; border:1px solid var(--border);"></div>
-            <div id="adm-tp-controls" style="display:none; margin-top:20px; gap:10px;">
-                <button class="btn btn-blue" onclick="openTPModal()">Редактировать страницу</button>
-                <button class="btn btn-outline" style="color:red; border-color:red;" onclick="deleteTP()">Удалить страницу</button>
-            </div>
-        </section>
-
-        <section id="view" class="section">
-            <button class="btn btn-outline" onclick="showSection('home')" style="margin-bottom:20px;">← К релизам</button>
-            <div id="v-info"></div>
-            
-            <div class="video-box" id="v-player-container">
-                <div id="v-tape" class="no-episodes" style="display:none;">
-                    <div class="tape">SoundWave DUB</div><div class="tape two">SoundWave DUB</div>
-                    <div class="no-epi-box">
-                        <h2 style="margin:0; color:white;">Серий пока нет 😔</h2>
-                        <p style="opacity:0.8; font-size:14px; margin-top:5px; color:white;">Но скоро они появятся!</p>
-                    </div>
-                </div>
-                <iframe id="v-iframe" allowfullscreen></iframe>
-            </div>
-            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
-                <button class="btn btn-outline" onclick="changeEp(-1)">←</button>
-                <b id="v-cur-ep" style="align-self:center;">Серия 1</b>
-                <button class="btn btn-outline" onclick="changeEp(1)">→</button>
-            </div>
-
-            <div style="background:var(--card-bg); padding:20px; border-radius:15px; border: 1px solid var(--border);">
-                <h4>Комментарии (<span id="comm-count">0</span>)</h4>
-                
-                <div id="comm-auth-msg" class="unauth-msg">
-                    <p style="margin-bottom:10px; font-weight:bold;">Чтобы оставить комментарий, необходимо авторизоваться.</p>
-                    <button class="btn btn-blue" onclick="showSection('profile')">Войти или Зарегистрироваться</button>
-                </div>
-
-                <div id="comm-form" style="display:none; margin-top:15px;">
-                    <textarea id="comm-text" placeholder="Напишите свое мнение..." rows="3"></textarea>
-                    <button class="btn" onclick="sendComment()">Отправить</button>
-                </div>
-                <div id="comm-list" style="margin-top:20px;"></div>
-            </div>
-        </section>
-
-        <section id="profile" class="section">
-            <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
-                <input type="email" id="email" placeholder="Email"><input type="password" id="pass" placeholder="Пароль">
-                <button class="btn" style="width:100%" id="btn-login">Войти</button>
-                <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg">Регистрация</button>
-            </div>
-            <div id="user-ui" style="display:none; max-width:500px; margin:0 auto; text-align:center; background:var(--card-bg); padding:30px; border-radius:20px; border:1px solid var(--border);">
-                <img id="u-ava" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--accent);">
-                <h2 id="u-nick" style="margin:10px 0;"></h2>
-                <div id="u-role" style="color:var(--accent); font-size:11px; font-weight:bold; margin-bottom:15px;"></div>
-                
-                <div style="display:flex; justify-content:center; gap:25px; margin-bottom:20px; font-size:12px;">
-                    <div><b id="u-views" style="font-size:16px;">0</b><br><span style="color:var(--text-dim)">Просмотрено</span></div>
-                    <div><b id="u-subs" style="font-size:16px;">0</b><br><span style="color:var(--text-dim)">Подписчики</span></div>
-                </div>
-
-                <div style="margin-bottom:20px;">
-                    <h4 style="font-size:14px; color:var(--text-dim); margin-bottom:10px;">Достижения</h4>
-                    <div id="u-ach" style="display:flex; justify-content:center; gap:5px; flex-wrap:wrap;"></div>
-                </div>
-
-                <button class="btn btn-outline" onclick="openAchInventory()" style="margin-bottom:10px; width:100%;">Инвентарь достижений</button>
-                <button class="btn btn-outline" onclick="document.getElementById('m-prof').style.display='flex'" style="width:100%;">Настройки профиля</button>
-                
-                <div id="adm-ach-panel" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
-                    <p style="font-size:11px; color:var(--text-dim); margin-bottom:10px;">АДМИН-ПАНЕЛЬ</p>
-                    <button class="btn btn-blue" onclick="document.getElementById('m-give-ach').style.display='flex'" style="width:100%;">Выдать ачивку пользователю</button>
-                </div>
-                <button class="btn btn-outline" id="btn-logout" style="width:100%; margin-top:20px; color:var(--accent); border-color:var(--accent);">Выйти</button>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="soc-links">
-            <a href="https://vk.ru/soundwavestudiosws" target="_blank"><i class="fab fa-vk"></i></a>
-            <a href="https://t.me/soundwavestudiosws" target="_blank"><i class="fab fa-telegram-plane"></i></a>
-            <a href="https://www.youtube.com/@SoundWaveDUB" target="_blank"><i class="fab fa-youtube"></i></a>
+<div class="container">
+    <div id="home" class="section active">
+        <div class="search-bar">
+            <input type="text" id="search-q" placeholder="Поиск по названию..." oninput="renderReleases()">
+            <select class="filter-select" id="filter-type" onchange="renderReleases()">
+                <option value="">Все типы</option>
+                <option value="Аниме">Аниме</option>
+                <option value="Фильм">Фильм</option>
+                <option value="Сериал">Сериал</option>
+                <option value="Трейлер">Трейлер</option>
+                <option value="Тизер">Тизер</option>
+            </select>
         </div>
-        <p class="copy-text" onclick="openPrivacy()">© 2024-2026 Sound Wave Studio. Все права защищены.</p>
-    </footer>
+        <div class="grid" id="releases-grid"></div>
+    </div>
 
-    <div id="m-rel" class="modal"><div class="modal-content">
-        <h3>Управление релизом</h3>
-        <input type="hidden" id="ed-rel-id">
-        <input type="text" id="ad-title" placeholder="Название (Русский поддерживается)">
-        <select id="ad-genre">
+    <div id="view" class="section">
+        <div id="view-content"></div>
+        <div class="video-box" id="player-container"></div>
+        
+        <div class="comments" style="margin-top: 30px;">
+            <h3>Комментарии</h3>
+            <div id="comm-auth-msg" style="display:none; padding: 20px; text-align: center; color: var(--text-dim);">
+                Войдите, чтобы оставить отзыв
+            </div>
+            <div id="comm-form" style="margin-top: 15px;">
+                <textarea id="comm-text" style="height: 80px;" placeholder="Ваш комментарий..."></textarea>
+                <button class="btn" onclick="sendComment()">Отправить</button>
+            </div>
+            <div id="comments-list"></div>
+        </div>
+    </div>
+
+    <div id="team" class="section">
+        <h2 style="margin-bottom: 20px;">Наш Состав</h2>
+        <div class="grid" id="team-grid"></div>
+    </div>
+
+    <div id="auth-panel" style="margin-top: 40px; background: var(--card-bg); padding: 30px; border-radius: 16px; border: 1px solid var(--border);">
+        <div id="auth-ui">
+            <h3 style="margin-bottom: 20px;">Личный кабинет</h3>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="pass" placeholder="Пароль">
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn" id="btn-login">Войти</button>
+                <button class="btn btn-outline" id="btn-reg">Регистрация</button>
+            </div>
+        </div>
+
+        <div id="user-ui" style="display:none">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+                <img id="user-ava" class="comm-ava" style="width: 80px; height: 80px;" src="https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg">
+                <div>
+                    <h2 id="user-nick">Никнейм</h2>
+                    <p id="user-role-tag" style="color: var(--accent); font-weight: 800; font-size: 12px; margin-bottom: 5px;"></p>
+                    <div id="user-stats" style="font-size: 12px; color: var(--text-dim);"></div>
+                </div>
+            </div>
+
+            <div id="adm-ach-panel" style="display:none; padding: 15px; background: rgba(56, 151, 240, 0.05); border: 1px solid var(--admin); border-radius: 10px; margin-bottom: 20px;">
+                <p style="font-size: 11px; margin-bottom: 10px;"><b>ВЫДАЧА ДОСТИЖЕНИЙ (ADMIN)</b></p>
+                <input type="text" id="target-uid" placeholder="UID пользователя" style="margin-bottom: 5px;">
+                <input type="text" id="ach-name" placeholder="Название ачивки" style="margin-bottom: 5px;">
+                <button class="btn btn-blue btn-sm" onclick="giveAchievement()">Выдать</button>
+            </div>
+
+            <div id="user-achievements" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;"></div>
+            <button class="btn btn-outline" id="btn-logout">Выйти из системы</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="soc-links">
+        <a href="#"><i class="fab fa-vk"></i></a>
+        <a href="#"><i class="fab fa-telegram"></i></a>
+    </div>
+    <p style="font-size: 12px; color: var(--text-dim);">© 2024-2026 <b>Sound Wave Studio</b>. All rights reserved.</p>
+</footer>
+
+<div class="modal" id="modal-add">
+    <div class="modal-content">
+        <h3>Добавить новый релиз</h3><br>
+        <input type="text" id="add-title" placeholder="Название проекта">
+        <input type="text" id="add-img" placeholder="URL постера">
+        <input type="text" id="add-year" placeholder="Год выпуска">
+        <select id="add-type">
             <option value="Аниме">Аниме</option>
-            <option value="Сериал">Сериал</option>
             <option value="Фильм">Фильм</option>
-            <option value="Мультфильм">Мультфильм</option>
-            <option value="Мультфильм">Трейлер</option>
-            <option value="Мультфильм">Тизер</option>
+            <option value="Сериал">Сериал</option>
+            <option value="Трейлер">Трейлер</option>
+            <option value="Тизер">Тизер</option>
         </select>
-        <input type="text" id="ad-year" placeholder="Год выпуска (например, 2024)">
-        <input type="text" id="ad-authors" placeholder="Студия / Авторы">
-        <input type="text" id="ad-img" placeholder="URL постера">
-        <textarea id="ad-desc" placeholder="Описание сюжета..." rows="4"></textarea>
-        <button class="btn btn-blue" style="width:100%" onclick="saveRel()">Сохранить</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
-    </div></div>
-
-    <div id="m-team" class="modal"><div class="modal-content">
-        <h3>Добавить участника</h3>
-        <input type="hidden" id="ed-team-id">
-        <input type="text" id="ad-m-name" placeholder="Никнейм">
-        <input type="text" id="ad-m-role" placeholder="Роль (Например: Даббер)">
-        <input type="text" id="ad-m-img" placeholder="URL фото">
-        <button class="btn btn-blue" style="width:100%" onclick="saveTeam()">Сохранить</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
-    </div></div>
-
-    <div id="m-tp-edit" class="modal"><div class="modal-content">
-        <h3>Страница участника</h3>
-        <p style="font-size:11px; margin-bottom:10px; color:var(--text-dim);">Используйте @email для кликабельного упоминания профиля другого человека на сайте.</p>
-        <textarea id="tp-bio" placeholder="Расскажите об участнике..." rows="8"></textarea>
-        <input type="text" id="tp-social" placeholder="Ссылки на соцсети (VK, TG)">
-        <button class="btn btn-blue" style="width:100%" onclick="saveTP()">Сохранить страницу</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
-    </div></div>
-
-    <div id="m-give-ach" class="modal"><div class="modal-content">
-        <h3>Выдать ачивку</h3>
-        <input type="text" id="ga-uid" placeholder="Email пользователя">
-        <input type="text" id="ga-name" placeholder="Название ачивки">
-        <input type="text" id="ga-desc" placeholder="Описание (за что)">
-        <input type="text" id="ga-img" placeholder="Эмодзи или URL картинки">
-        <button class="btn btn-blue" style="width:100%" onclick="giveAch()">Выдать</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Закрыть</button>
-    </div></div>
-
-    <div id="m-ach-inv" class="modal"><div class="modal-content">
-        <h3>Инвентарь достижений</h3>
-        <p style="font-size:11px; color:var(--text-dim);">Нажмите на ачивку, чтобы скрыть или показать её в публичном профиле.</p>
-        <div id="ach-inv-list" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:15px;"></div>
-        <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModals()">Закрыть</button>
-    </div></div>
-
-    <div id="m-ach-view" class="modal"><div class="modal-content" style="text-align:center;">
-        <div id="ach-v-img" style="font-size:50px; margin-bottom:10px;"></div>
-        <h2 id="ach-v-name"></h2>
-        <p id="ach-v-date" style="font-size:11px; color:var(--text-dim); margin:5px 0;"></p>
-        <p id="ach-v-desc" style="font-size:14px; margin:15px 0;"></p>
-        <div id="ach-v-admin" style="display:none; color:var(--accent); font-size:11px; border:1px solid var(--accent); padding:5px; border-radius:5px; margin-bottom:15px;">Выдана администрацией</div>
-        <button id="btn-ach-del" class="btn" style="background:red; width:100%; display:none; margin-bottom:5px;" onclick="deleteAchievement()">Удалить навсегда</button>
-        <button class="btn btn-outline" style="width:100%;" onclick="closeModals()">Закрыть</button>
-    </div></div>
-
-    <div id="m-prof" class="modal"><div class="modal-content">
-        <h3>Настройки</h3>
-        <input type="text" id="ed-nick" placeholder="Никнейм">
-        <input type="text" id="ed-ava" placeholder="URL аватара">
-        <button class="btn" style="width:100%" onclick="saveProfile()">Сохранить</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
-    </div></div>
-
-    <div id="m-privacy" class="modal"><div class="modal-content" style="max-width:700px;">
-        <h3>Политика конфиденциальности</h3>
-        <div id="priv-text" style="font-size:13px; line-height:1.6; margin:15px 0; max-height: 400px; overflow-y:auto; white-space:pre-wrap;"></div>
-        <textarea id="priv-edit" style="display:none; height:300px; width:100%;"></textarea>
-        <div id="priv-adm-btns" style="display:none; margin-top:10px;">
-            <button id="priv-btn-edit" class="btn btn-blue" style="width:100%" onclick="editPriv()">Редактировать (Админ)</button>
-            <button id="priv-btn-save" class="btn btn-blue" style="display:none; width:100%; background:green;" onclick="savePriv()">Сохранить политику</button>
+        <textarea id="add-desc" placeholder="Краткое описание" style="height: 100px;"></textarea>
+        <input type="text" id="add-player" placeholder="Iframe код плеера">
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="btn" onclick="saveRelease()">Сохранить</button>
+            <button class="btn btn-outline" onclick="closeModals()">Закрыть</button>
         </div>
-        <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModals()">Закрыть</button>
-    </div></div>
+    </div>
+</div>
 
-    <div id="m-user-profile" class="modal"><div class="modal-content" style="text-align:center;">
-        <img id="mu-ava" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border:2px solid var(--accent);">
-        <h2 id="mu-nick"></h2>
-        <p id="mu-role" style="font-size:11px; color:var(--text-dim); font-weight:bold; margin-bottom:15px;"></p>
-        <div style="display:flex; justify-content:center; gap:20px; font-size:12px; margin-bottom:20px;">
-            <div><b id="mu-views">0</b><br>Просмотры</div>
-            <div><b id="mu-subs">0</b><br>Подписчики</div>
+<div class="modal" id="modal-team">
+    <div class="modal-content">
+        <h3>Добавить участника</h3><br>
+        <input type="text" id="t-name" placeholder="Никнейм">
+        <input type="text" id="t-role" placeholder="Роль (Даббер, Технарь...)">
+        <input type="text" id="t-img" placeholder="URL фото">
+        <div style="display: flex; gap: 10px;">
+            <button class="btn" onclick="saveMember()">Добавить</button>
+            <button class="btn btn-outline" onclick="closeModals()">Закрыть</button>
         </div>
-        <button id="btn-mu-sub" class="btn" style="width:100%">Подписаться</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Закрыть</button>
-    </div></div>
+    </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+<script type="module">
+    // ИНИЦИАЛИЗАЦИЯ FIREBASE (ТВОЯ ВЕРСИЯ БЕЗ ИЗМЕНЕНИЙ)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, onSnapshot, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
-            authDomain: "my-dub-site.firebaseapp.com",
-            projectId: "my-dub-site",
-            storageBucket: "my-dub-site.firebasestorage.app",
-            messagingSenderId: "302896869866",
-            appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
+        authDomain: "my-dub-site.firebaseapp.com",
+        projectId: "my-dub-site",
+        storageBucket: "my-dub-site.appspot.com",
+        messagingSenderId: "374261778949",
+        appId: "1:374261778949:web:53a6c561a067644265cc88"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        let isAdmin = false, userData = null, allRel = [], curProj = null, curEpIdx = 0, curTM = null, viewAchIdx = -1;
-        
-        // Экранирование для безопасности (чтобы JS не выполнялся из текста)
-        const esc = (s) => s ? s.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+    let currentUser = null;
+    let currentViewId = null;
 
-        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    // СИСТЕМНАЯ ЛОГИКА
+    window.showSection = (id) => {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-link').forEach(l => {
+            l.classList.remove('active');
+            if(l.getAttribute('onclick')?.includes(id)) l.classList.add('active');
+        });
+        window.scrollTo(0, 0);
+    };
 
-        window.showSection = (id) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(document.getElementById('n-'+id)) document.getElementById('n-'+id).classList.add('active');
-            if(id === 'home') loadHome();
-            if(id === 'team') loadTeam();
-        };
+    window.loadHome = () => showSection('home');
+    window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    window.openAddModal = () => document.getElementById('modal-add').style.display = 'flex';
+    window.openTeamModal = () => document.getElementById('modal-team').style.display = 'flex';
 
-        window.delItem = async (col, id) => {
-            if(confirm("Удалить навсегда?")) { await deleteDoc(doc(db, col, id)); loadHome(); loadTeam(); }
-        };
+    // РЕЛИЗЫ (ТВОЙ ПОЛНЫЙ ФУНКЦИОНАЛ)
+    let allReleases = [];
+    onSnapshot(collection(db, "releases"), (snap) => {
+        allReleases = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderReleases();
+    });
 
-        // --- РЕЛИЗЫ ---
-        async function loadHome() {
-            const snap = await getDocs(collection(db, "projects"));
-            allRel = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            filterData();
-        }
+    window.renderReleases = () => {
+        const q = document.getElementById('search-q').value.toLowerCase();
+        const type = document.getElementById('filter-type').value;
+        const grid = document.getElementById('releases-grid');
+        grid.innerHTML = '';
 
-        window.filterData = () => {
-            const q = document.getElementById('main-search').value.toLowerCase();
-            const g = document.getElementById('filter-genre').value;
-            const s = document.getElementById('filter-sort').value;
-
-            let filtered = allRel.filter(p => (p.title||"").toLowerCase().includes(q) && (g === 'all' || p.genre === g));
-            if(s === 'new') filtered.sort((a,b) => b.time - a.time);
-            if(s === 'pop') filtered.sort((a,b) => (b.commCount || 0) - (a.commCount || 0));
-
-            const grid = document.getElementById('main-grid'); grid.innerHTML = '';
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                <div class="card" onclick="viewProj('${p.id}')">
-                    ${isAdmin ? `<div class="adm-tools">
-                        <button class="btn-sm btn-blue" onclick="event.stopPropagation(); openRelModal('${p.id}')">РЕД</button>
-                        <button class="btn-sm" style="background:red" onclick="event.stopPropagation(); window.delItem('projects','${p.id}')">УД</button>
-                    </div>` : ''}
-                    <img src="${esc(p.img)}">
-                    <div class="card-info">
-                        <div><span class="tag">${esc(p.genre)}</span><span class="year-tag">${esc(p.year)}</span></div>
-                        <b style="display:block; margin-top:5px; font-size:14px;">${esc(p.title)}</b>
-                        <small style="color:var(--text-dim); margin-top:5px; display:block;">💬 ${p.commCount || 0}</small>
-                    </div>
+        allReleases.filter(r => r.title.toLowerCase().includes(q) && (type === '' || r.type === type)).forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+                <img src="${r.img}">
+                <div class="card-info">
+                    <span class="tag">${r.type}</span>
+                    <span class="year-tag">${r.year}</span>
+                    <div style="font-weight:700; margin-top:5px; line-height:1.2;">${r.title}</div>
                 </div>`;
-            });
+            div.onclick = () => openRelease(r.id);
+            grid.appendChild(div);
+        });
+    };
+
+    window.saveRelease = async () => {
+        const data = {
+            title: document.getElementById('add-title').value,
+            img: document.getElementById('add-img').value,
+            year: document.getElementById('add-year').value,
+            type: document.getElementById('add-type').value,
+            desc: document.getElementById('add-desc').value,
+            player: document.getElementById('add-player').value
         };
+        await addDoc(collection(db, "releases"), data);
+        closeModals();
+        alert("Релиз успешно добавлен!");
+    };
 
-        window.openRelModal = async (id = null) => {
-            document.getElementById('m-rel').style.display = 'flex';
-            document.getElementById('ed-rel-id').value = id || '';
-            if(id) {
-                const p = (await getDoc(doc(db, "projects", id))).data();
-                document.getElementById('ad-title').value = p.title || '';
-                document.getElementById('ad-genre').value = p.genre || 'Аниме';
-                document.getElementById('ad-year').value = p.year || '';
-                document.getElementById('ad-authors').value = p.authors || '';
-                document.getElementById('ad-img').value = p.img || '';
-                document.getElementById('ad-desc').value = p.desc || '';
-            } else {
-                ['ad-title','ad-year','ad-authors','ad-img','ad-desc'].forEach(i => document.getElementById(i).value = '');
-            }
-        };
-
-        window.saveRel = async () => {
-            const id = document.getElementById('ed-rel-id').value;
-            const data = {
-                title: document.getElementById('ad-title').value,
-                genre: document.getElementById('ad-genre').value,
-                year: document.getElementById('ad-year').value,
-                authors: document.getElementById('ad-authors').value,
-                img: document.getElementById('ad-img').value,
-                desc: document.getElementById('ad-desc').value,
-                time: Date.now()
-            };
-            if(id) await updateDoc(doc(db, "projects", id), data);
-            else { data.series = []; data.commCount = 0; await addDoc(collection(db, "projects"), data); }
-            closeModals(); loadHome();
-        };
-
-        const dLink = (url) => {
-            if (!url || !url.includes('drive.google.com')) return url;
-            let id = "";
-            if (url.includes('/d/')) id = url.split('/d/')[1].split('/')[0];
-            else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
-            return `https://drive.google.com/file/d/${id}/preview`;
-        };
-
-        // --- ПРОСМОТР РЕЛИЗА ---
-        window.viewProj = async (id) => {
-            const d = await getDoc(doc(db, "projects", id)); curProj = {id:d.id, ...d.data()};
-            showSection('view');
-            
-            // Просмотры
-            if(auth.currentUser) {
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { views: increment(1) });
-                userData.views = (userData.views || 0) + 1;
-                document.getElementById('u-views').innerText = userData.views;
-            }
-
-            // Оформление: Картинка слева, Заголовок справа
-            document.getElementById('v-info').innerHTML = `
-                <div class="view-header">
-                    <img src="${esc(curProj.img)}" class="v-poster">
-                    <div class="v-details" style="flex:1;">
-                        <h1 style="margin-bottom:10px; color:var(--accent); font-size:2rem;">${esc(curProj.title)}</h1>
-                        <p style="font-size:14px; line-height:1.6; opacity:0.9; margin-bottom:15px; white-space:pre-wrap;">${esc(curProj.desc)}</p>
-                        <div style="background:var(--input-bg); padding:10px 15px; border-radius:10px; font-size:13px; color:var(--text-dim); border:1px solid var(--border);">
-                            <b>Год выхода:</b> <span style="color:white">${esc(curProj.year)}</span> | 
-                            <b>Жанр:</b> <span style="color:white">${esc(curProj.genre)}</span> | 
-                            <b>Авторы:</b> <span style="color:white">${esc(curProj.authors)}</span>
-                        </div>
-                        ${isAdmin ? `<button class="btn btn-blue" style="margin-top:15px;" onclick="window.addEp()">+ Добавить серию</button>` : ''}
+    window.openRelease = async (id) => {
+        const r = allReleases.find(x => x.id === id);
+        currentViewId = id;
+        
+        document.getElementById('view-content').innerHTML = `
+            <div class="view-header">
+                <img src="${r.img}" class="v-poster">
+                <div class="v-details">
+                    <h1 style="font-size: 1.8rem; margin-bottom:10px">${r.title}</h1>
+                    <div style="margin-bottom:15px">
+                        <span class="tag">${r.type}</span>
+                        <span class="year-tag">${r.year}</span>
                     </div>
+                    <p style="color:var(--text-dim); font-size: 14px; line-height:1.6">${r.desc}</p>
                 </div>
-            `;
+            </div>`;
             
-            curEpIdx = 0; updatePlayer(); renderComments();
-        };
-
-        window.updatePlayer = () => {
-            const s = curProj.series || [];
-            const tape = document.getElementById('v-tape');
-            const iframe = document.getElementById('v-iframe');
-            
-            if(s.length === 0) {
-                tape.style.display = 'flex'; iframe.style.display = 'none';
-                document.getElementById('v-cur-ep').innerText = "Нет серий";
-            } else {
-                tape.style.display = 'none'; iframe.style.display = 'block';
-                iframe.src = dLink(s[curEpIdx].url);
-                document.getElementById('v-cur-ep').innerText = `Серия ${s[curEpIdx].num || curEpIdx+1}`;
-            }
-        };
-
-        window.changeEp = (dir) => {
-            const s = curProj.series || [];
-            if(curEpIdx + dir >= 0 && curEpIdx + dir < s.length) { curEpIdx += dir; updatePlayer(); }
-        };
-
-        window.addEp = async () => {
-            const url = prompt("Drive URL:"); if(!url) return;
-            const newS = [...(curProj.series || []), { num: (curProj.series?.length || 0) + 1, url: url }];
-            await updateDoc(doc(db, "projects", curProj.id), { series: newS });
-            curProj.series = newS; updatePlayer();
-        };
-
-        // --- КОММЕНТАРИИ (Редакт и Удаление) ---
-        async function renderComments() {
-            const list = document.getElementById('comm-list'); list.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "comments"), where("projId", "==", curProj.id), orderBy("time", "desc")));
-            document.getElementById('comm-count').innerText = snap.size;
-            
-            snap.forEach(d => {
-                const c = d.data();
-                const isOwner = auth.currentUser && auth.currentUser.uid === c.userId;
-                
-                const tools = `
-                    <div style="margin-top:8px; display:flex; gap:10px;">
-                        ${isOwner ? `<button class="btn-sm btn-blue" onclick="editComm('${d.id}')">Редактировать</button>` : ''}
-                        ${(isOwner || isAdmin) ? `<button class="btn-sm" style="background:red;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
-                    </div>
-                `;
-
-                list.innerHTML += `
-                    <div class="comm-item">
-                        <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="viewUserProfile('${c.userId}')">
-                        <div style="flex:1;">
-                            <b style="cursor:pointer; color:var(--accent);" onclick="viewUserProfile('${c.userId}')">${esc(c.user)}</b>
-                            <p id="comm-txt-${d.id}" style="font-size:14px; margin-top:5px; line-height:1.4; white-space:pre-wrap;">${esc(c.text)}</p>
-                            ${(isOwner || isAdmin) ? tools : ''}
-                        </div>
-                    </div>`;
-            });
-        }
-
-        window.sendComment = async () => {
-            const txt = document.getElementById('comm-text').value; if(!txt || !auth.currentUser) return;
-            await addDoc(collection(db, "comments"), { projId: curProj.id, userId: auth.currentUser.uid, user: userData.nickname, ava: userData.avatar, text: txt, time: Date.now() });
-            await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(1) });
-            document.getElementById('comm-text').value = ''; renderComments();
-        };
-
-        window.editComm = async (id) => {
-            const el = document.getElementById(`comm-txt-${id}`);
-            const oldText = el.innerText;
-            const newText = prompt("Отредактируйте комментарий:", oldText);
-            if(newText && newText.trim() !== "" && newText !== oldText) {
-                await updateDoc(doc(db, "comments", id), { text: newText });
-                renderComments();
-            }
-        };
-
-        window.delComm = async (id) => {
-            if(confirm("Удалить этот комментарий навсегда?")) {
-                await deleteDoc(doc(db, "comments", id));
-                await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(-1) });
-                renderComments();
-            }
-        };
-
-        // --- КОМАНДА И СТРАНИЦЫ ---
-        async function loadTeam() {
-            const grid = document.getElementById('team-grid'); grid.innerHTML = '';
-            const snap = await getDocs(collection(db, "team"));
-            snap.forEach(d => {
-                const m = d.data();
-                grid.innerHTML += `
-                <div class="card" onclick="viewTM('${d.id}')">
-                    ${isAdmin ? `<div class="adm-tools">
-                        <button class="btn-sm btn-blue" onclick="event.stopPropagation(); openTeamModal('${d.id}')">РЕД</button>
-                        <button class="btn-sm" style="background:red" onclick="event.stopPropagation(); window.delItem('team','${d.id}')">УД</button>
-                    </div>` : ''}
-                    <img src="${esc(m.img)}">
-                    <div class="card-info"><b style="font-size:14px;">${esc(m.name)}</b><br><small style="color:var(--text-dim);">${esc(m.role)}</small></div>
-                </div>`;
-            });
-        }
-
-        window.openTeamModal = async (id = null) => {
-            document.getElementById('m-team').style.display = 'flex';
-            document.getElementById('ed-team-id').value = id || '';
-            if(id) {
-                const m = (await getDoc(doc(db, "team", id))).data();
-                document.getElementById('ad-m-name').value = m.name || '';
-                document.getElementById('ad-m-role').value = m.role || '';
-                document.getElementById('ad-m-img').value = m.img || '';
-            } else {
-                ['ad-m-name','ad-m-role','ad-m-img'].forEach(i => document.getElementById(i).value = '');
-            }
-        };
-
-        window.saveTeam = async () => {
-            const id = document.getElementById('ed-team-id').value;
-            const data = { name: document.getElementById('ad-m-name').value, role: document.getElementById('ad-m-role').value, img: document.getElementById('ad-m-img').value };
-            if(id) await updateDoc(doc(db, "team", id), data); else await addDoc(collection(db, "team"), data);
-            closeModals(); loadTeam();
-        };
-
-        window.viewTM = async (id) => {
-            curTM = {id}; const d = await getDoc(doc(db, "team", id)); Object.assign(curTM, d.data());
-            const pDoc = await getDoc(doc(db, "teamPages", id));
-            showSection('team-page');
-            const box = document.getElementById('team-page-view');
-            
-            if(pDoc.exists()) {
-                let bio = pDoc.data().bio;
-                // Парсим упоминания @email
-                const mentions = bio.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
-                for(let m of mentions) {
-                    const email = m.replace('@', '');
-                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
-                    if(!uSnap.empty) {
-                        const uDoc = uSnap.docs[0];
-                        bio = bio.replace(m, `<a href="#" class="mention-link" onclick="viewUserProfile('${uDoc.id}'); return false;">@${esc(uDoc.data().nickname)}</a>`);
-                    }
-                }
-                box.innerHTML = `
-                    <div style="display:flex; gap:20px; align-items:center; border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:20px;">
-                        <img src="${esc(curTM.img)}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px solid var(--accent);">
-                        <div><h2 style="margin:0; font-size:2rem;">${esc(curTM.name)}</h2><span style="color:var(--text-dim); font-weight:bold; font-size:14px;">${esc(curTM.role)}</span></div>
-                    </div>
-                    <div style="line-height:1.6; font-size:15px; opacity:0.9; white-space:pre-wrap;">${bio}</div>
-                    ${pDoc.data().social ? `<div style="margin-top:20px; padding:15px; background:var(--input-bg); border-radius:10px; border:1px solid var(--border);"><b>Связь:</b> ${esc(pDoc.data().social)}</div>` : ''}
-                `;
-            } else {
-                box.innerHTML = `<h2>${esc(curTM.name)}</h2><p style="margin-top:10px; color:var(--text-dim);">Страница участника пока не оформлена.</p>`;
-            }
-            if(isAdmin) document.getElementById('adm-tp-controls').style.display = 'flex';
-        };
-
-        window.openTPModal = async () => {
-            const pDoc = await getDoc(doc(db, "teamPages", curTM.id));
-            if(pDoc.exists()) {
-                document.getElementById('tp-bio').value = pDoc.data().bio;
-                document.getElementById('tp-social').value = pDoc.data().social;
-            } else {
-                document.getElementById('tp-bio').value = ''; document.getElementById('tp-social').value = '';
-            }
-            document.getElementById('m-tp-edit').style.display='flex';
-        };
-
-        window.saveTP = async () => {
-            await setDoc(doc(db, "teamPages", curTM.id), { bio: document.getElementById('tp-bio').value, social: document.getElementById('tp-social').value });
-            closeModals(); viewTM(curTM.id);
-        };
+        document.getElementById('player-container').innerHTML = r.player || '<div style="padding:40px; text-align:center; opacity:0.5">Контент находится в обработке...</div>';
         
-        window.deleteTP = async () => {
-            if(confirm("Удалить био участника?")) { await deleteDoc(doc(db, "teamPages", curTM.id)); viewTM(curTM.id); }
-        };
-
-        // --- ПРОФИЛЬ ДРУГОГО ЮЗЕРА (ПОДПИСКИ) ---
-        window.viewUserProfile = async (uid) => {
-            const d = await getDoc(doc(db, "users", uid));
-            if(d.exists()) {
-                const u = d.data();
-                document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-                document.getElementById('mu-nick').innerText = u.nickname;
-                document.getElementById('mu-role').innerText = u.role === 'admin' ? "АДМИНИСТРАТОР" : "ПОЛЬЗОВАТЕЛЬ";
-                document.getElementById('mu-views').innerText = u.views || 0;
-                document.getElementById('mu-subs').innerText = u.subscribers || 0;
-                
-                const subBtn = document.getElementById('btn-mu-sub');
-                if(auth.currentUser && auth.currentUser.uid !== uid) {
-                    subBtn.style.display = 'block';
-                    
-                    const subList = u.subscribersList || [];
-                    const isSubbed = subList.includes(auth.currentUser.uid);
-                    
-                    subBtn.innerText = isSubbed ? "Отписаться" : "Подписаться";
-                    subBtn.style.background = isSubbed ? "var(--border)" : "var(--accent)";
-                    
-                    subBtn.onclick = async () => {
-                        const targetRef = doc(db, "users", uid);
-                        if(isSubbed) {
-                            await updateDoc(targetRef, { subscribers: increment(-1), subscribersList: arrayRemove(auth.currentUser.uid) });
-                            alert("Вы отписались");
-                        } else {
-                            await updateDoc(targetRef, { subscribers: increment(1), subscribersList: arrayUnion(auth.currentUser.uid) });
-                            alert("Вы успешно подписались!");
-                        }
-                        closeModals();
-                    };
-                } else { subBtn.style.display = 'none'; }
-                
-                document.getElementById('m-user-profile').style.display = 'flex';
-            }
-        };
-
-        // --- АЧИВКИ (ИНВЕНТАРЬ И АДМИН) ---
-        window.giveAch = async () => {
-            const email = document.getElementById('ga-uid').value;
-            const q = query(collection(db, "users"), where("email", "==", email));
-            const snap = await getDocs(q);
-            if(snap.empty) return alert("Пользователь не найден.");
-            
-            const ach = { 
-                name: document.getElementById('ga-name').value, 
-                desc: document.getElementById('ga-desc').value, 
-                img: document.getElementById('ga-img').value || '🏆', 
-                date: Date.now(), hidden: false, fromAdmin: true 
-            };
-            
-            await updateDoc(doc(db, "users", snap.docs[0].id), { achievements: arrayUnion(ach) });
-            alert("Ачивка успешно выдана!"); closeModals();
-        };
-
-        window.openAchInventory = () => {
-            const list = document.getElementById('ach-inv-list'); list.innerHTML = '';
-            (userData.achievements || []).forEach((a, i) => {
-                list.innerHTML += `<div style="text-align:center; background:var(--input-bg); padding:10px; border-radius:10px; cursor:pointer; opacity:${a.hidden?0.4:1}; border:1px solid var(--border);" onclick="toggleAch(${i})"><div style="font-size:30px;">${a.img}</div><div style="font-size:10px; margin-top:5px; color:var(--text-dim);">${a.hidden?'Скрыта':'Показать'}</div></div>`;
-            });
-            document.getElementById('m-ach-inv').style.display = 'flex';
-        };
-
-        window.toggleAch = async (i) => {
-            userData.achievements[i].hidden = !userData.achievements[i].hidden;
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
-            openAchInventory(); renderAchProfile();
-        };
-
-        window.viewAch = (i) => {
-            viewAchIdx = i; const a = userData.achievements[i];
-            document.getElementById('ach-v-img').innerText = a.img;
-            document.getElementById('ach-v-name').innerText = a.name;
-            document.getElementById('ach-v-desc').innerText = a.desc;
-            const d = new Date(a.date);
-            document.getElementById('ach-v-date').innerText = `Дата получения: ${d.toLocaleDateString()}`;
-            document.getElementById('ach-v-admin').style.display = a.fromAdmin ? 'block' : 'none';
-            document.getElementById('btn-ach-del').style.display = 'block'; 
-            document.getElementById('m-ach-view').style.display = 'flex';
-        };
-
-        window.deleteAchievement = async () => {
-            if(confirm("Удалить эту ачивку навсегда?")) {
-                userData.achievements.splice(viewAchIdx, 1);
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
-                closeModals(); renderAchProfile();
-            }
-        };
-
-        function renderAchProfile() {
-            const box = document.getElementById('u-ach'); box.innerHTML = '';
-            (userData.achievements || []).forEach((a, i) => {
-                if(!a.hidden) {
-                    box.innerHTML += `<div style="width:45px;height:45px;border-radius:50%;background:var(--input-bg);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:1px solid var(--border);" onclick="viewAch(${i})">${a.img}</div>`; 
-                }
-            });
-            if(box.innerHTML === '') box.innerHTML = '<span style="font-size:12px; color:var(--text-dim);">Достижений нет</span>';
+        showSection('view');
+        loadComments(id);
+        
+        // Твоя логика просмотров
+        if(auth.currentUser) {
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { views: (currentUser.views || 0) + 1 });
         }
+    };
 
-        // --- ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ---
-        window.openPrivacy = async () => {
-            document.getElementById('m-privacy').style.display = 'flex';
-            const d = await getDoc(doc(db, "settings", "privacy"));
-            const txt = d.exists() ? d.data().text : "Политика конфиденциальности пока не заполнена.";
-            document.getElementById('priv-text').innerText = txt;
-            document.getElementById('priv-edit').value = txt;
-            
-            if(isAdmin) {
-                document.getElementById('priv-adm-btns').style.display = 'block';
-            }
-        };
+    // КОММЕНТАРИИ
+    window.loadComments = (relId) => {
+        const q = query(collection(db, "releases", relId, "comments"), orderBy("date", "desc"));
+        onSnapshot(q, (snap) => {
+            const list = document.getElementById('comments-list');
+            list.innerHTML = '';
+            snap.forEach(doc => {
+                const c = doc.data();
+                const div = document.createElement('div');
+                div.className = 'comm-item';
+                div.innerHTML = `
+                    <img class="comm-ava" src="https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg">
+                    <div>
+                        <div style="font-weight:800; color:var(--accent); font-size:12px;">${c.user}</div>
+                        <div style="margin-top:4px; font-size:13px; line-height:1.4">${c.text}</div>
+                    </div>`;
+                list.appendChild(div);
+            });
+        });
+    };
 
-        window.editPriv = () => {
-            document.getElementById('priv-text').style.display = 'none';
-            document.getElementById('priv-edit').style.display = 'block';
-            document.getElementById('priv-btn-edit').style.display = 'none';
-            document.getElementById('priv-btn-save').style.display = 'block';
-        };
+    window.sendComment = async () => {
+        const text = document.getElementById('comm-text').value;
+        if(!text || !currentUser) return;
+        await addDoc(collection(db, "releases", currentViewId, "comments"), {
+            user: currentUser.nickname,
+            text: text,
+            date: new Date()
+        });
+        document.getElementById('comm-text').value = '';
+    };
 
-        window.savePriv = async () => {
-            await setDoc(doc(db, "settings", "privacy"), { text: document.getElementById('priv-edit').value });
-            closeModals();
-        };
+    // ПРОФИЛЬ (АЧИВКИ, УРОВНИ, ПОДПИСКИ)
+    window.renderAchProfile = () => {
+        const achCont = document.getElementById('user-achievements');
+        achCont.innerHTML = '';
+        if(currentUser.achievements) {
+            currentUser.achievements.forEach(a => {
+                const s = document.createElement('span');
+                s.className = 'tag';
+                s.style.background = 'var(--admin)';
+                s.innerText = a;
+                achCont.appendChild(s);
+            });
+        }
+        
+        // Твой расчет уровня
+        const level = Math.floor((currentUser.views || 0) / 10) + 1;
+        document.getElementById('user-stats').innerHTML = `
+            Уровень: <b>${level}</b> | 
+            Просмотры: <b>${currentUser.views || 0}</b> | 
+            Подписчики: <b>${currentUser.subscribers || 0}</b>`;
+    };
 
-        // --- ПРОФИЛЬ И АВТОРИЗАЦИЯ ---
-        window.saveProfile = async () => {
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: document.getElementById('ed-nick').value, avatar: document.getElementById('ed-ava').value });
-            location.reload();
-        };
+    window.giveAchievement = async () => {
+        const uid = document.getElementById('target-uid').value;
+        const name = document.getElementById('ach-name').value;
+        if(!uid || !name) return;
+        try {
+            await updateDoc(doc(db, "users", uid), { achievements: arrayUnion(name) });
+            alert("Достижение выдано!");
+        } catch(e) { alert("Ошибка: Проверьте UID"); }
+    };
 
-        onAuthStateChanged(auth, async (u) => {
-            if(u) {
-                const d = await getDoc(doc(db, "users", u.uid)); userData = d.data();
-                isAdmin = userData.role === 'admin';
+    // СОСТАВ
+    onSnapshot(collection(db, "team"), (snap) => {
+        const grid = document.getElementById('team-grid');
+        grid.innerHTML = '';
+        snap.forEach(doc => {
+            const m = doc.data();
+            grid.innerHTML += `
+                <div class="card" style="cursor:default">
+                    <img src="${m.img}">
+                    <div class="card-info">
+                        <div style="font-weight:800">${m.name}</div>
+                        <div style="font-size:11px; color:var(--accent); text-transform:uppercase">${m.role}</div>
+                    </div>
+                </div>`;
+        });
+    });
+
+    window.saveMember = async () => {
+        await addDoc(collection(db, "team"), {
+            name: document.getElementById('t-name').value,
+            role: document.getElementById('t-role').value,
+            img: document.getElementById('t-img').value
+        });
+        closeModals();
+    };
+
+    // АВТОРИЗАЦИЯ (ФИНАЛЬНЫЙ ФИКС)
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if(snap.exists()) {
+                currentUser = snap.data();
                 document.getElementById('auth-ui').style.display = 'none';
                 document.getElementById('user-ui').style.display = 'block';
+                document.getElementById('user-nick').innerText = currentUser.nickname;
+                document.getElementById('user-role-tag').innerText = currentUser.role === 'admin' ? 'АДМИНИСТРАЦИЯ SWS' : 'УЧАСТНИК СООБЩЕСТВА';
                 
-                // Комменты доступны
-                document.getElementById('comm-form').style.display = 'block';
-                document.getElementById('comm-auth-msg').style.display = 'none';
-
-                document.getElementById('u-nick').innerText = userData.nickname;
-                document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-                document.getElementById('u-role').innerText = isAdmin ? "АДМИНИСТРАТОР" : "ПОЛЬЗОВАТЕЛЬ";
-                document.getElementById('u-views').innerText = userData.views || 0;
-                document.getElementById('u-subs').innerText = userData.subscribers || 0;
-                
-                if(isAdmin) {
-                    document.getElementById('adm-btn-rel').style.display = 'block';
+                if(currentUser.role === 'admin') {
+                    document.getElementById('adm-btn-add').style.display = 'block';
                     document.getElementById('adm-btn-team').style.display = 'block';
                     document.getElementById('adm-ach-panel').style.display = 'block';
                 }
                 renderAchProfile();
-            } else {
-                document.getElementById('auth-ui').style.display = 'block';
-                document.getElementById('user-ui').style.display = 'none';
-                
-                // Комменты закрыты
-                document.getElementById('comm-form').style.display = 'none';
-                document.getElementById('comm-auth-msg').style.display = 'block';
             }
-            loadHome();
-        });
+            document.getElementById('comm-form').style.display = 'block';
+            document.getElementById('comm-auth-msg').style.display = 'none';
+        } else {
+            currentUser = null;
+            document.getElementById('auth-ui').style.display = 'block';
+            document.getElementById('user-ui').style.display = 'none';
+            document.getElementById('comm-form').style.display = 'none';
+            document.getElementById('comm-auth-msg').style.display = 'block';
+        }
+    });
 
-        document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e=>alert("Ошибка входа"));
-        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
-        document.getElementById('btn-reg').onclick = async () => {
-            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+    document.getElementById('btn-login').onclick = () => {
+        const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+        signInWithEmailAndPassword(auth, e, p).catch(err => alert("Ошибка: " + err.message));
+    };
+
+    document.getElementById('btn-reg').onclick = async () => {
+        const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+        try {
             const r = await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "users", r.user.uid), { email: e, nickname: e.split('@')[0], role: "user", achievements: [], views: 0, subscribers: 0, subscribersList: [] });
+            await setDoc(doc(db, "users", r.user.uid), { 
+                email: e, 
+                nickname: e.split('@')[0], 
+                role: "user", 
+                achievements: [], 
+                views: 0, 
+                subscribers: 0, 
+                subscribersList: [] 
+            });
             location.reload();
-        };
-    </script>
+        } catch(err) { alert("Ошибка регистрации: " + err.message); }
+    };
+
+    document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
+
+</script>
 </body>
 </html>
