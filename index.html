@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sound Wave Studio | Официальный сайт</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #0b0b0d; --card-bg: #141417; --input-bg: #050506;
@@ -12,7 +13,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         .container { max-width: 1100px; margin: 0 auto; width: 100%; padding: 0 15px; flex: 1; }
 
         header { 
@@ -27,62 +28,54 @@
         .nav-link:hover { color: white; }
         .nav-link.active { color: var(--accent); }
 
-        /* SEARCH */
+        /* SEARCH & SECTIONS */
         .search-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; margin-top: 10px; }
-        .search-input { flex: 1; min-width: 200px; }
-        .filter-select { width: auto; min-width: 140px; }
-
         .section { display: none; padding: 20px 0; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* CARDS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); }
-        .card:hover { transform: translateY(-3px); border-color: #333; }
-        .card img { width: 100%; height: 230px; object-fit: cover; cursor: pointer; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); cursor: pointer; }
+        .card:hover { transform: translateY(-3px); border-color: #444; }
+        .card img { width: 100%; height: 230px; object-fit: cover; }
         .card-info { padding: 10px; font-size: 12px; }
         .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
 
-        /* PLAYER PAGE */
-        .view-header { display: flex; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .v-poster { width: 180px; border-radius: 10px; flex-shrink: 0; object-fit: cover;}
-        @media (max-width: 600px) { .view-header { flex-direction: column; align-items: center; text-align: center; } }
-        
-        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); }
-        iframe { width: 100%; height: 100%; border: none; }
-
-        /* ADM TOOLS */
-        .adm-tools { position: absolute; top: 5px; right: 5px; display: flex; gap: 4px; z-index: 10; }
-        .btn-sm { padding: 4px 8px; font-size: 9px; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; }
+        /* PLAYER & TAPES */
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        .no-episodes { position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10; flex-direction: column; overflow: hidden; }
+        .tape { position: absolute; background: var(--accent); color: white; font-weight: 900; padding: 10px 200%; transform: rotate(-35deg); font-size: 20px; white-space: nowrap; opacity: 0.8; }
+        .tape.two { transform: rotate(35deg); }
+        .no-epi-box { background: var(--card-bg); border: 2px solid var(--accent); padding: 20px; border-radius: 15px; z-index: 11; text-align: center; }
 
         /* MODALS */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(3px); }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 450px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; position: relative; }
         
         input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; outline: none; }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-        
         .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; transition: var(--ts); }
-        .btn:hover { opacity: 0.9; }
         .btn-blue { background: var(--admin); }
         .btn-outline { background: transparent; border: 1px solid var(--border); }
-        .btn-outline:hover { background: rgba(255,255,255,0.05); }
 
-        footer { padding: 30px 0; border-top: 1px solid var(--border); margin-top: 40px; text-align: center; font-size: 12px; color: var(--text-dim); }
-        
-        /* COMMENTS */
-        .comm-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--border); }
-        .comm-ava { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
-        .comm-tools { display: flex; gap: 10px; margin-top: 5px; }
-        .comm-tools button { background: none; border: none; color: var(--text-dim); font-size: 10px; cursor: pointer; }
-        .comm-tools button:hover { color: white; }
+        /* ACHIEVEMENTS INVENTORY */
+        .ach-inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 15px; }
+        .ach-inv-item { background: var(--input-bg); border: 1px solid var(--border); padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; position: relative; }
+        .ach-inv-item.is-hidden { opacity: 0.4; filter: grayscale(1); }
+        .ach-st-tag { position: absolute; top: 2px; right: 2px; font-size: 7px; padding: 2px 4px; border-radius: 3px; background: #ff9800; color: #000; font-weight: bold; }
 
-        /* ACHIEVEMENTS */
-        .ach-badge { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 50%; font-size: 20px; cursor: pointer; transition: 0.2s; margin: 5px; }
-        .ach-badge:hover { transform: scale(1.1); border-color: var(--accent); }
-        
-        .ach-anim-active { transform: scale(1) !important; opacity: 1 !important; }
+        /* FOOTER */
+        footer { padding: 40px 0; border-top: 1px solid var(--border); margin-top: 40px; text-align: center; }
+        .soc-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
+        .soc-links a { color: white; font-size: 20px; transition: 0.3s; opacity: 0.6; }
+        .soc-links a:hover { opacity: 1; color: var(--accent); transform: translateY(-3px); }
+        .copy-text { font-size: 12px; color: var(--text-dim); cursor: pointer; transition: 0.2s; }
+        .copy-text:hover { color: white; }
+
+        /* TEAM PAGE */
+        .team-page-content { line-height: 1.6; }
+        .team-page-content h1 { color: var(--accent); margin-bottom: 10px; }
+        .contact-box { background: var(--input-bg); padding: 15px; border-radius: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -107,10 +100,6 @@
                     <option value="Фильм">Фильмы</option>
                     <option value="Мультфильм">Мультфильмы</option>
                 </select>
-                <select id="filter-sort" onchange="filterData()">
-                    <option value="new">Новинки</option>
-                    <option value="pop">Популярные</option>
-                </select>
                 <button id="adm-btn-rel" class="btn btn-blue" style="display:none;" onclick="openRelModal()">+ Проект</button>
             </div>
             <div class="grid" id="main-grid"></div>
@@ -118,7 +107,7 @@
 
         <section id="team" class="section">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h2>Команда</h2>
+                <h2>Команда проекта</h2>
                 <button id="adm-btn-team" class="btn btn-blue" style="display:none;" onclick="openTeamModal()">+ Участник</button>
             </div>
             <div class="grid" id="team-grid"></div>
@@ -126,11 +115,21 @@
 
         <section id="view" class="section">
             <div id="v-content-area"></div>
-            <div class="video-box"><iframe id="v-iframe" allowfullscreen></iframe></div>
-            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
-                <button id="v-prev" class="btn btn-outline" onclick="changeEp(-1)">←</button>
+            <div class="video-box" id="v-player-container">
+                <div id="v-tape-overlay" class="no-episodes" style="display:none;">
+                    <div class="tape">SoundWave DUB</div>
+                    <div class="tape two">SoundWave DUB</div>
+                    <div class="no-epi-box">
+                        <h2 style="margin:0;">Пока серий нет</h2>
+                        <p style="opacity:0.7; font-size:13px; margin-top:5px;">Но скоро они появятся! ⏳</p>
+                    </div>
+                </div>
+                <iframe id="v-iframe" allowfullscreen></iframe>
+            </div>
+            <div id="v-controls" style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+                <button class="btn btn-outline" onclick="changeEp(-1)">←</button>
                 <b id="v-cur-ep" style="align-self:center;">Серия 1</b>
-                <button id="v-next" class="btn btn-outline" onclick="changeEp(1)">→</button>
+                <button class="btn btn-outline" onclick="changeEp(1)">→</button>
             </div>
             <div style="background:var(--card-bg); padding:20px; border-radius:15px; border:1px solid var(--border);">
                 <h4>Комментарии (<span id="comm-count">0</span>)</h4>
@@ -139,6 +138,15 @@
                     <button class="btn" onclick="sendComment()">Отправить</button>
                 </div>
                 <div id="comm-list" style="margin-top:20px;"></div>
+            </div>
+        </section>
+
+        <section id="team-page" class="section">
+            <button class="btn btn-outline" onclick="showSection('team')" style="margin-bottom:20px;">← К составу</button>
+            <div id="team-page-view" class="team-page-content"></div>
+            <div id="adm-team-page-tools" style="display:none; margin-top:30px; border-top:1px solid var(--border); padding-top:20px;">
+                <button class="btn btn-blue" onclick="openTeamPageEditor()">Редактировать страницу</button>
+                <button class="btn btn-outline" style="color:red;" onclick="deleteTeamPage()">Удалить страницу</button>
             </div>
         </section>
 
@@ -153,85 +161,80 @@
                 <img id="u-ava" style="width:90px; height:90px; border-radius:50%; border:2px solid var(--accent); object-fit:cover;">
                 <h2 id="u-nick" style="margin:10px 0;"></h2>
                 <div id="u-role" style="color:var(--accent); font-size:11px; font-weight:bold; margin-bottom:15px;"></div>
-                <div id="u-stats" style="display:flex; justify-content:center; gap:20px; font-size:12px; margin-bottom:15px;">
-                    <div><b id="u-views">0</b><br>Просмотры</div>
-                    <div><b id="u-subs">0</b><br>Подписки</div>
-                </div>
                 
                 <div style="margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 10px; font-size: 14px; color: var(--text-dim);">Достижения</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="font-size: 14px; color: var(--text-dim);">Достижения</h4>
+                        <button class="btn btn-sm btn-outline" style="padding:4px 8px; font-size:10px;" onclick="openAchInventory()">Инвентарь</button>
+                    </div>
                     <div id="u-ach"></div>
                 </div>
 
-                <button class="btn btn-outline" style="width:100%" onclick="openEditProfile()">Редактировать</button>
+                <button class="btn btn-outline" style="width:100%" onclick="document.getElementById('m-prof').style.display='flex'">Настройки</button>
                 <button class="btn btn-outline" style="width:100%; margin-top:10px; color:var(--accent);" id="btn-logout">Выйти</button>
-                
-                <div id="adm-ach-panel" style="display:none; margin-top:25px; border-top:1px solid var(--border); padding-top:20px;">
-                    <h4 style="margin-bottom: 10px; font-size: 13px; color:var(--admin);">Выдача достижений (Админ)</h4>
-                    <input type="email" id="ad-ach-email" placeholder="Email юзера">
-                    <input type="text" id="ad-ach-icon" placeholder="Эмодзи или URL картинки (напр. 🏆)">
-                    <input type="text" id="ad-ach-name" placeholder="Название ачивки">
-                    <textarea id="ad-ach-desc" placeholder="Описание ачивки" rows="2"></textarea>
-                    <button class="btn btn-blue" style="width:100%" onclick="giveAch()">Выдать достижение</button>
-                </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <div class="container">
-            <p>© 2024-2026 <b>Sound Wave Studio</b>. Все права защищены.</p>
-            <div style="margin-top:10px; opacity:0.6;">
-                <a href="#" style="color:white; margin:0 10px; text-decoration:none;">VK</a>
-                <a href="#" style="color:white; margin:0 10px; text-decoration:none;">Telegram</a>
-                <a href="#" style="color:white; margin:0 10px; text-decoration:none;">YouTube</a>
-            </div>
+        <div class="soc-links">
+            <a href="https://vk.ru/soundwavestudiosws" target="_blank"><i class="fab fa-vk"></i></a>
+            <a href="https://t.me/soundwavestudiosws" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+            <a href="https://www.youtube.com/@SoundWaveDUB" target="_blank"><i class="fab fa-youtube"></i></a>
         </div>
+        <p class="copy-text" onclick="openPrivacy()">© 2024-2026 Sound Wave Studio. Политика конфиденциальности</p>
     </footer>
 
+    <div id="m-ach-inv" class="modal"><div class="modal-content">
+        <h3>Мои достижения</h3>
+        <div id="ach-inv-list" class="ach-inv-grid"></div>
+        <button class="btn btn-outline" style="width:100%; margin-top:20px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-ach-manage" class="modal"><div class="modal-content" style="text-align:center;">
+        <div id="m-ach-manage-icon" style="font-size:50px;"></div>
+        <h2 id="m-ach-manage-name"></h2>
+        <p id="m-ach-manage-desc" style="margin:10px 0; font-size:14px; opacity:0.8;"></p>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:20px;">
+            <button id="btn-ach-toggle" class="btn">Скрыть</button>
+            <button class="btn" style="background:red;" onclick="deleteAchievement()">Удалить навсегда</button>
+            <button class="btn btn-outline" onclick="document.getElementById('m-ach-manage').style.display='none'">Назад</button>
+        </div>
+    </div></div>
+
+    <div id="m-team-editor" class="modal"><div class="modal-content">
+        <h3>Редактор страницы участника</h3>
+        <textarea id="tp-html" placeholder="Описание (можно использовать HTML)..." rows="10"></textarea>
+        <input type="text" id="tp-contacts" placeholder="Контакты (Telegram, VK и т.д.)">
+        <button class="btn btn-blue" style="width:100%" onclick="saveTeamPage()">Применить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
     <div id="m-rel" class="modal"><div class="modal-content">
-        <h3>Редактор проекта</h3>
-        <input type="hidden" id="ed-rel-id">
-        <input type="text" id="ad-title" placeholder="Название (RU)">
-        <select id="ad-genre">
-            <option>Аниме</option><option>Сериал</option><option>Фильм</option><option>Мультфильм</option>
-        </select>
-        <input type="text" id="ad-year" placeholder="Год">
-        <input type="text" id="ad-authors" placeholder="Авторы">
-        <input type="text" id="ad-img" placeholder="URL постера">
-        <textarea id="ad-desc" placeholder="Описание..." rows="4"></textarea>
+        <h3>Проект</h3>
+        <input type="hidden" id="ed-rel-id"><input type="text" id="ad-title" placeholder="Название"><select id="ad-genre"><option>Аниме</option><option>Сериал</option><option>Фильм</option></select>
+        <input type="text" id="ad-year" placeholder="Год"><input type="text" id="ad-img" placeholder="Постер"><textarea id="ad-desc" placeholder="Описание" rows="4"></textarea>
         <button class="btn btn-blue" style="width:100%" onclick="saveRel()">Сохранить</button>
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
     </div></div>
 
-    <div id="m-team" class="modal"><div class="modal-content">
-        <h3>Участник</h3>
-        <input type="hidden" id="ed-team-id">
-        <input type="text" id="ad-m-name" placeholder="Никнейм">
-        <input type="text" id="ad-m-role" placeholder="Роль">
-        <input type="text" id="ad-m-img" placeholder="URL фото">
-        <button class="btn btn-blue" style="width:100%" onclick="saveTeam()">Сохранить</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
-    </div></div>
-
     <div id="m-prof" class="modal"><div class="modal-content">
-        <h3>Настройки профиля</h3>
-        <input type="text" id="ed-u-nick" placeholder="Никнейм">
-        <input type="text" id="ed-u-ava" placeholder="URL аватара">
+        <h3>Профиль</h3>
+        <input type="text" id="ed-u-nick" placeholder="Никнейм"><input type="text" id="ed-u-ava" placeholder="URL аватара">
         <button class="btn" style="width:100%" onclick="saveProfile()">Сохранить</button>
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
     </div></div>
 
-    <div id="m-ach-view" class="modal">
-        <div class="modal-content text-center" style="transform: scale(0.8); transition: 0.3s; opacity: 0; text-align: center;" id="ach-anim-box">
-            <div id="ach-v-img" style="font-size: 60px; margin-bottom: 10px;"></div>
-            <h2 id="ach-v-name" style="margin-bottom: 5px;"></h2>
-            <p id="ach-v-date" style="font-size:11px; color:var(--text-dim)"></p>
-            <p id="ach-v-desc" style="margin: 15px 0; font-size: 14px;"></p>
-            <div id="ach-v-admin" style="font-size:11px; color:var(--accent); display:none; border: 1px solid var(--accent); padding: 5px; border-radius: 5px; margin-bottom: 15px;">Выдана администрацией сайта</div>
-            <button class="btn btn-outline" style="width:100%; margin-top: 10px;" onclick="closeModals()">Отлично</button>
+    <div id="m-privacy" class="modal"><div class="modal-content" style="max-width:700px;">
+        <h3>Политика конфиденциальности</h3>
+        <div id="priv-view" style="font-size:14px; line-height:1.6; margin:15px 0;"></div>
+        <textarea id="priv-edit" style="display:none; height:300px;"></textarea>
+        <div id="priv-admin" style="display:none;">
+            <button id="priv-btn-edit" class="btn btn-blue" onclick="editPriv()">Изменить</button>
+            <button id="priv-btn-save" class="btn btn-blue" style="display:none;" onclick="savePriv()">Сохранить</button>
         </div>
-    </div>
+        <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -251,22 +254,11 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let isAdmin = false;
-        let allRel = [];
-        let curProj = null;
-        let curEpIdx = 0;
+        let isAdmin = false, allRel = [], curProj = null, curEpIdx = 0, userData = null, curSelectedTeamMember = null;
+        const esc = (s) => s ? s.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
 
-        // ЗАЩИТА ОТ XSS (Дыра закрыта)
-        const esc = (str) => {
-            if (!str) return '';
-            return str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-        };
+        window.closeModals = () => { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); };
 
-        window.closeModals = () => {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-            document.getElementById('ach-anim-box').classList.remove('ach-anim-active');
-        };
-        
         window.showSection = (id) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -276,13 +268,7 @@
             if(id === 'team') renderTeam();
         };
 
-        const dLink = (url) => {
-            if (!url || !url.includes('drive.google.com')) return url;
-            let id = url.includes('/d/') ? url.split('/d/')[1].split('/')[0] : url.split('id=')[1].split('&')[0];
-            return `https://drive.google.com/file/d/${id}/preview`;
-        };
-
-        // --- РЕЛИЗЫ ---
+        // --- РЕЛИЗЫ И ПЛЕЕР ---
         async function renderHome() {
             const snap = await getDocs(collection(db, "projects"));
             allRel = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -292,325 +278,182 @@
         window.filterData = () => {
             const q = document.getElementById('main-search').value.toLowerCase();
             const g = document.getElementById('filter-genre').value;
-            const s = document.getElementById('filter-sort').value;
-
             let filtered = allRel.filter(p => (p.title || "").toLowerCase().includes(q) && (g === 'all' || p.genre === g));
-            if(s === 'new') filtered.sort((a,b) => b.time - a.time);
-            if(s === 'pop') filtered.sort((a,b) => (b.commCount || 0) - (a.commCount || 0));
-
             const grid = document.getElementById('main-grid'); grid.innerHTML = '';
             filtered.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `
-                    ${isAdmin ? `<div class="adm-tools">
-                        <button class="btn-sm btn-blue" onclick="openRelModal('${p.id}')">РЕД</button>
-                        <button class="btn-sm" style="background:red" onclick="window.delItem('projects','${p.id}')">УД</button>
-                    </div>` : ''}
-                    <img src="${esc(p.img)}" onclick="viewProj('${p.id}')">
-                    <div class="card-info"><span class="tag">${esc(p.genre)}</span><br><b>${esc(p.title)}</b><br><small>${esc(p.year)} • 💬 ${p.commCount || 0}</small></div>
-                `;
-                grid.appendChild(div);
+                grid.innerHTML += `
+                    <div class="card" onclick="viewProj('${p.id}')">
+                        <img src="${esc(p.img)}">
+                        <div class="card-info"><span class="tag">${esc(p.genre)}</span><br><b>${esc(p.title)}</b></div>
+                    </div>`;
             });
         };
 
-        window.openRelModal = async (id = null) => {
-            document.getElementById('m-rel').style.display = 'flex';
-            document.getElementById('ed-rel-id').value = id || '';
-            if(id) {
-                const p = (await getDoc(doc(db, "projects", id))).data();
-                document.getElementById('ad-title').value = p.title || '';
-                document.getElementById('ad-genre').value = p.genre || 'Аниме';
-                document.getElementById('ad-year').value = p.year || '';
-                document.getElementById('ad-authors').value = p.authors || '';
-                document.getElementById('ad-img').value = p.img || '';
-                document.getElementById('ad-desc').value = p.desc || '';
-            } else {
-                ['ad-title','ad-year','ad-authors','ad-img','ad-desc'].forEach(i => document.getElementById(i).value = '');
-            }
-        };
-
-        window.saveRel = async () => {
-            const id = document.getElementById('ed-rel-id').value;
-            const data = {
-                title: document.getElementById('ad-title').value,
-                genre: document.getElementById('ad-genre').value,
-                year: document.getElementById('ad-year').value,
-                authors: document.getElementById('ad-authors').value,
-                img: document.getElementById('ad-img').value,
-                desc: document.getElementById('ad-desc').value,
-                time: Date.now()
-            };
-            if(id) await updateDoc(doc(db, "projects", id), data);
-            else { data.series = []; data.commCount = 0; await addDoc(collection(db, "projects"), data); }
-            closeModals(); renderHome();
-        };
-
-        // --- СОСТАВ ---
-        async function renderTeam() {
-            const g = document.getElementById('team-grid'); g.innerHTML = '';
-            const snap = await getDocs(collection(db, "team"));
-            snap.forEach(d => {
-                const m = d.data();
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `
-                    ${isAdmin ? `<div class="adm-tools">
-                        <button class="btn-sm btn-blue" onclick="openTeamModal('${d.id}')">РЕД</button>
-                        <button class="btn-sm" style="background:red" onclick="window.delItem('team','${d.id}')">УД</button>
-                    </div>` : ''}
-                    <img src="${esc(m.img)}">
-                    <div class="card-info"><b>${esc(m.name)}</b><br><small>${esc(m.role)}</small></div>
-                `;
-                g.appendChild(div);
-            });
-        }
-
-        window.openTeamModal = async (id = null) => {
-            document.getElementById('m-team').style.display = 'flex';
-            document.getElementById('ed-team-id').value = id || '';
-            if(id) {
-                const m = (await getDoc(doc(db, "team", id))).data();
-                document.getElementById('ad-m-name').value = m.name || '';
-                document.getElementById('ad-m-role').value = m.role || '';
-                document.getElementById('ad-m-img').value = m.img || '';
-            } else {
-                ['ad-m-name','ad-m-role','ad-m-img'].forEach(i => document.getElementById(i).value = '');
-            }
-        };
-
-        window.saveTeam = async () => {
-            const id = document.getElementById('ed-team-id').value;
-            const data = { name: document.getElementById('ad-m-name').value, role: document.getElementById('ad-m-role').value, img: document.getElementById('ad-m-img').value };
-            if(id) await updateDoc(doc(db, "team", id), data); else await addDoc(collection(db, "team"), data);
-            closeModals(); renderTeam();
-        };
-
-        // --- ПРОСМОТР И КОММЕНТЫ ---
         window.viewProj = async (id) => {
-            const d = await getDoc(doc(db, "projects", id));
-            curProj = { id: d.id, ...d.data() };
+            const d = await getDoc(doc(db, "projects", id)); curProj = { id: d.id, ...d.data() };
             showSection('view');
-            document.getElementById('v-content-area').innerHTML = `
-                <div class="view-header">
-                    <img src="${esc(curProj.img)}" class="v-poster">
-                    <div class="v-details">
-                        <h1 style="margin-bottom:5px;">${esc(curProj.title)}</h1>
-                        <p style="color:var(--text-dim); margin-bottom:15px; font-size:13px;">Жанр: <span style="color:white;">${esc(curProj.genre)}</span> | Год: <span style="color:white;">${esc(curProj.year)}</span> | Озвучка: <span style="color:white;">${esc(curProj.authors)}</span></p>
-                        <p style="font-size:14px; opacity:0.9; line-height:1.5;">${esc(curProj.desc)}</p>
-                        ${isAdmin ? `<button class="btn btn-blue" style="margin-top:15px;" onclick="window.addEp()">+ Добавить Серию</button>` : ''}
-                    </div>
-                </div>
-            `;
+            document.getElementById('v-content-area').innerHTML = `<h1>${esc(curProj.title)}</h1><p>${esc(curProj.desc)}</p>`;
             curEpIdx = 0; updatePlayer(); renderComments();
         };
 
         window.updatePlayer = () => {
             const s = curProj.series || [];
-            if(s.length > 0) {
-                document.getElementById('v-iframe').src = dLink(s[curEpIdx].url);
-                document.getElementById('v-cur-ep').innerText = `Серия ${s[curEpIdx].num}`;
-            } else {
-                document.getElementById('v-iframe').src = '';
+            const overlay = document.getElementById('v-tape-overlay');
+            const frame = document.getElementById('v-iframe');
+            if(s.length === 0) {
+                overlay.style.display = 'flex'; frame.style.display = 'none';
                 document.getElementById('v-cur-ep').innerText = "Нет серий";
+            } else {
+                overlay.style.display = 'none'; frame.style.display = 'block';
+                frame.src = s[curEpIdx].url.replace('drive.google.com/file/d/', 'drive.google.com/file/d/').replace('/view', '/preview');
+                document.getElementById('v-cur-ep').innerText = `Серия ${s[curEpIdx].num || curEpIdx+1}`;
             }
         };
 
-        window.changeEp = (dir) => {
-            const s = curProj.series || [];
-            if(curEpIdx + dir >= 0 && curEpIdx + dir < s.length) { curEpIdx += dir; updatePlayer(); }
-        };
-
-        window.addEp = async () => {
-            const url = prompt("Введите ссылку на Google Drive:"); if(!url) return;
-            const newS = [...(curProj.series || []), { num: (curProj.series?.length || 0) + 1, url: url }];
-            await updateDoc(doc(db, "projects", curProj.id), { series: newS });
-            curProj.series = newS; updatePlayer();
-        };
-
+        // --- КОММЕНТАРИИ (ИСПРАВЛЕНО) ---
         async function renderComments() {
             const list = document.getElementById('comm-list'); list.innerHTML = '';
-            
-            // ЕСЛИ ЗДЕСЬ ОШИБКА В КОНСОЛИ - ЭТО ИЗ-ЗА ИНДЕКСА FIREBASE
             const snap = await getDocs(query(collection(db, "comments"), where("projId", "==", curProj.id), orderBy("time", "desc")));
-            
             document.getElementById('comm-count').innerText = snap.size;
             snap.forEach(d => {
                 const c = d.data();
-                const isOwner = auth.currentUser && auth.currentUser.uid === c.userId;
-                
-                // Кнопки управления комментарием
-                const tools = `
-                    <div class="comm-tools">
-                        ${isOwner ? `<button onclick="editComm('${d.id}', '${esc(c.text)}')">Изменить</button>` : ''}
-                        ${(isOwner || isAdmin) ? `<button onclick="delComm('${d.id}')">Удалить</button>` : ''}
-                    </div>
-                `;
-
-                list.innerHTML += `
-                    <div class="comm-item">
-                        <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava">
-                        <div style="flex:1;">
-                            <b>${esc(c.user)}</b>
-                            <p style="font-size:13px; margin-top:3px; word-break: break-word;">${esc(c.text)}</p>
-                            ${(isOwner || isAdmin) ? tools : ''}
-                        </div>
-                    </div>
-                `;
+                list.innerHTML += `<div style="margin-bottom:10px;"><b>${esc(c.user)}:</b> ${esc(c.text)}</div>`;
             });
         }
 
         window.sendComment = async () => {
-            const text = document.getElementById('comm-text').value; if(!text || !auth.currentUser) return;
-            const userRef = doc(db, "users", auth.currentUser.uid);
-            const userDoc = await getDoc(userRef);
-            const u = userDoc.data();
-            
-            // Сохраняем коммент с ID пользователя (чтобы он мог его удалять)
-            await addDoc(collection(db, "comments"), { 
-                projId: curProj.id, 
-                userId: auth.currentUser.uid, // <-- ВАЖНО для проверки владельца
-                user: u.nickname, 
-                ava: u.avatar || '', 
-                text: text, 
-                time: Date.now() 
-            });
+            const txt = document.getElementById('comm-text').value; if(!txt || !auth.currentUser) return;
+            await addDoc(collection(db, "comments"), { projId: curProj.id, userId: auth.currentUser.uid, user: userData.nickname, text: txt, time: Date.now() });
             await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(1) });
-            
-            // --- СИСТЕМА АВТО-АЧИВОК ---
-            if (!u.achReceivedFirstComm) {
-                const ach = { 
-                    name: "Первое слово", desc: "Написал свой первый комментарий на сайте!", 
-                    img: "✍️", date: Date.now(), fromAdmin: false 
-                };
-                await updateDoc(userRef, { achievements: arrayUnion(ach), achReceivedFirstComm: true });
-                alert("🎉 Получено достижение: Первое слово!");
+            document.getElementById('comm-text').value = ''; renderComments();
+        };
+
+        // --- КОМАНДА И ПЕРСОНАЛЬНЫЕ СТРАНИЦЫ ---
+        async function renderTeam() {
+            const g = document.getElementById('team-grid'); g.innerHTML = '';
+            const snap = await getDocs(collection(db, "team"));
+            snap.forEach(d => {
+                const m = d.data();
+                const card = document.createElement('div'); card.className = 'card';
+                card.innerHTML = `<img src="${esc(m.img)}"><div class="card-info"><b>${esc(m.name)}</b><br><small>${esc(m.role)}</small></div>`;
+                card.onclick = () => openTeamPage(d.id, m);
+                g.appendChild(card);
+            });
+        }
+
+        window.openTeamPage = async (id, data) => {
+            curSelectedTeamMember = { id, ...data };
+            const pDoc = await getDoc(doc(db, "teamPages", id));
+            showSection('team-page');
+            const view = document.getElementById('team-page-view');
+            if(pDoc.exists()) {
+                const p = pDoc.data();
+                view.innerHTML = `<h1>${esc(data.name)}</h1><div class="team-page-content">${p.html}</div><div class="contact-box"><b>Контакты:</b> ${esc(p.contacts)}</div>`;
+            } else {
+                view.innerHTML = `<h1>${esc(data.name)}</h1><p>У данного участника пока нет своей страницы 😔</p>`;
             }
-
-            document.getElementById('comm-text').value = ''; 
-            renderComments();
+            if(isAdmin) document.getElementById('adm-team-page-tools').style.display = 'block';
         };
 
-        window.editComm = async (id, oldText) => {
-            const newText = prompt("Редактировать комментарий:", oldText);
-            if(newText && newText.trim() !== "" && newText !== oldText) {
-                await updateDoc(doc(db, "comments", id), { text: newText });
-                renderComments();
+        window.openTeamPageEditor = async () => {
+            const pDoc = await getDoc(doc(db, "teamPages", curSelectedTeamMember.id));
+            if(pDoc.exists()) {
+                document.getElementById('tp-html').value = pDoc.data().html;
+                document.getElementById('tp-contacts').value = pDoc.data().contacts;
             }
+            document.getElementById('m-team-editor').style.display = 'flex';
         };
 
-        window.delComm = async (id) => {
-            if(confirm("Удалить этот комментарий навсегда?")) {
-                await deleteDoc(doc(db, "comments", id));
-                await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(-1) });
-                renderComments();
+        window.saveTeamPage = async () => {
+            await setDoc(doc(db, "teamPages", curSelectedTeamMember.id), { 
+                html: document.getElementById('tp-html').value, 
+                contacts: document.getElementById('tp-contacts').value 
+            });
+            closeModals(); openTeamPage(curSelectedTeamMember.id, curSelectedTeamMember);
+        };
+
+        // --- ИНВЕНТАРЬ АЧИВОК ---
+        window.openAchInventory = () => {
+            const list = document.getElementById('ach-inv-list'); list.innerHTML = '';
+            userData.achievements.forEach((a, i) => {
+                list.innerHTML += `
+                <div class="ach-inv-item ${a.hidden ? 'is-hidden' : ''}" onclick="manageAch(${i})">
+                    ${a.hidden ? '<span class="ach-st-tag">СКРЫТО</span>' : ''}
+                    <div style="font-size:30px;">${a.img}</div>
+                </div>`;
+            });
+            document.getElementById('m-ach-inv').style.display = 'flex';
+        };
+
+        let curAchIdx = -1;
+        window.manageAch = (idx) => {
+            curAchIdx = idx; const a = userData.achievements[idx];
+            document.getElementById('m-ach-manage-icon').innerText = a.img;
+            document.getElementById('m-ach-manage-name').innerText = a.name;
+            document.getElementById('m-ach-manage-desc').innerText = a.desc;
+            document.getElementById('btn-ach-toggle').innerText = a.hidden ? "Показать в профиле" : "Скрыть";
+            document.getElementById('btn-ach-toggle').onclick = toggleAch;
+            document.getElementById('m-ach-manage').style.display = 'flex';
+        };
+
+        async function toggleAch() {
+            userData.achievements[curAchIdx].hidden = !userData.achievements[curAchIdx].hidden;
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
+            closeModals(); openAchInventory(); renderAchInProfile();
+        }
+
+        window.deleteAchievement = async () => {
+            if(confirm("Вы точно хотите удалить эту ачивку? Вы потеряете её навсегда!")) {
+                userData.achievements.splice(curAchIdx, 1);
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
+                closeModals(); openAchInventory(); renderAchInProfile();
             }
+        }
+
+        function renderAchInProfile() {
+            const container = document.getElementById('u-ach'); container.innerHTML = '';
+            userData.achievements.filter(a => !a.hidden).forEach(a => {
+                container.innerHTML += `<div class="ach-badge" title="${esc(a.name)}">${a.img}</div>`;
+            });
+        }
+
+        // --- ПОЛИТИКА (АДМИН) ---
+        window.openPrivacy = async () => {
+            const d = await getDoc(doc(db, "settings", "privacy"));
+            const txt = d.exists() ? d.data().text : "Политика не заполнена";
+            document.getElementById('priv-view').innerText = txt;
+            document.getElementById('priv-edit').value = txt;
+            document.getElementById('m-privacy').style.display = 'flex';
+            if(isAdmin) document.getElementById('priv-admin').style.display = 'block';
         };
 
-        // --- ПРОФИЛЬ И АЧИВКИ ---
-        window.openEditProfile = () => {
-            document.getElementById('m-prof').style.display = 'flex';
-            document.getElementById('ed-u-nick').value = document.getElementById('u-nick').innerText;
+        window.editPriv = () => {
+            document.getElementById('priv-view').style.display = 'none';
+            document.getElementById('priv-edit').style.display = 'block';
+            document.getElementById('priv-btn-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'block';
         };
 
-        window.saveProfile = async () => {
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: document.getElementById('ed-u-nick').value, avatar: document.getElementById('ed-u-ava').value });
+        window.savePriv = async () => {
+            const txt = document.getElementById('priv-edit').value;
+            await setDoc(doc(db, "settings", "privacy"), { text: txt });
             location.reload();
         };
 
-        // Всплывающее окно ачивки
-        window.viewAch = (name, desc, img, dateMs, fromAdmin) => {
-            const m = document.getElementById('m-ach-view');
-            document.getElementById('ach-v-name').innerText = name;
-            document.getElementById('ach-v-desc').innerText = desc;
-            
-            // Если это ссылка на картинку, делаем тег img, иначе просто текст (эмодзи)
-            if(img && img.startsWith('http')) {
-                document.getElementById('ach-v-img').innerHTML = `<img src="${esc(img)}" style="width:70px; height:70px; border-radius:10px; object-fit:cover;">`;
-            } else {
-                document.getElementById('ach-v-img').innerText = img || '🏆';
-            }
-
-            const d = new Date(dateMs);
-            document.getElementById('ach-v-date').innerText = `Получено: ${d.toLocaleDateString()} в ${d.toLocaleTimeString()}`;
-            document.getElementById('ach-v-admin').style.display = fromAdmin ? 'block' : 'none';
-            
-            m.style.display = 'flex';
-            setTimeout(() => document.getElementById('ach-anim-box').classList.add('ach-anim-active'), 10);
-        };
-
-        // Выдача ачивок Админом
-        window.giveAch = async () => {
-            const email = document.getElementById('ad-ach-email').value;
-            const icon = document.getElementById('ad-ach-icon').value || '🏆';
-            const name = document.getElementById('ad-ach-name').value;
-            const desc = document.getElementById('ad-ach-desc').value || 'Особая награда от администрации';
-
-            if(!email || !name) return alert("Введите Email пользователя и Название ачивки");
-
-            try {
-                const q = query(collection(db, "users"), where("email", "==", email));
-                const snap = await getDocs(q);
-                
-                if(snap.empty) {
-                    alert("Пользователь с таким Email не найден.");
-                    return;
-                }
-
-                const targetUserRef = snap.docs[0].ref;
-                const newAch = { name: name, desc: desc, img: icon, date: Date.now(), fromAdmin: true };
-                
-                await updateDoc(targetUserRef, { achievements: arrayUnion(newAch) });
-                alert(`Достижение "${name}" успешно выдано пользователю ${email}!`);
-                
-                document.getElementById('ad-ach-email').value = '';
-                document.getElementById('ad-ach-name').value = '';
-                document.getElementById('ad-ach-desc').value = '';
-                document.getElementById('ad-ach-icon').value = '';
-            } catch (e) {
-                console.error(e);
-                alert("Ошибка при выдаче: Возможна проблема с правами БД.");
-            }
-        };
-
-        window.delItem = async (col, id) => { if(confirm("Удалить навсегда?")) { await deleteDoc(doc(db, col, id)); renderHome(); } };
-
         onAuthStateChanged(auth, async (user) => {
             if(user) {
+                const d = await getDoc(doc(db, "users", user.uid));
+                userData = d.data(); isAdmin = userData.role === 'admin';
                 document.getElementById('auth-ui').style.display = 'none';
                 document.getElementById('user-ui').style.display = 'block';
+                document.getElementById('u-nick').innerText = userData.nickname;
+                document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
                 document.getElementById('comm-form').style.display = 'block';
-                const d = await getDoc(doc(db, "users", user.uid));
-                if(d.exists()) {
-                    const u = d.data(); isAdmin = u.role === 'admin';
-                    document.getElementById('u-nick').innerText = u.nickname;
-                    document.getElementById('u-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-                    document.getElementById('u-role').innerText = isAdmin ? "АДМИНИСТРАТОР" : "ЗРИТЕЛЬ";
-                    
-                    // Рендер ачивок в профиле
-                    const achContainer = document.getElementById('u-ach');
-                    achContainer.innerHTML = '';
-                    if(u.achievements && u.achievements.length > 0) {
-                        u.achievements.forEach(ach => {
-                            // Формируем безопасные параметры для onclick
-                            const safeName = esc(ach.name).replace(/'/g, "\\'");
-                            const safeDesc = esc(ach.desc).replace(/'/g, "\\'");
-                            const safeImg = esc(ach.img).replace(/'/g, "\\'");
-                            
-                            let content = (ach.img && ach.img.startsWith('http')) ? `<img src="${safeImg}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` : safeImg;
-                            
-                            achContainer.innerHTML += `<div class="ach-badge" title="${safeName}" onclick="viewAch('${safeName}', '${safeDesc}', '${safeImg}', ${ach.date}, ${ach.fromAdmin})">${content}</div>`;
-                        });
-                    } else {
-                        achContainer.innerHTML = '<span style="font-size:12px; color:var(--text-dim);">Пока нет достижений</span>';
-                    }
-
-                    if(isAdmin) {
-                        document.getElementById('adm-ach-panel').style.display = 'block';
-                        document.getElementById('adm-btn-rel').style.display = 'block';
-                        document.getElementById('adm-btn-team').style.display = 'block';
-                    }
+                if(isAdmin) { 
+                    document.getElementById('adm-btn-rel').style.display = 'block';
+                    document.getElementById('adm-btn-team').style.display = 'block';
                 }
+                renderAchInProfile();
             }
             renderHome();
         });
@@ -620,7 +463,7 @@
         document.getElementById('btn-reg').onclick = async () => {
             const e = document.getElementById('email').value, p = document.getElementById('pass').value;
             const res = await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "users", res.user.uid), { email: e, nickname: e.split('@')[0], role: "user", views: 0, subscribers: 0, achievements: [] });
+            await setDoc(doc(db, "users", res.user.uid), { email: e, nickname: e.split('@')[0], role: "user", achievements: [] });
             location.reload();
         };
     </script>
