@@ -21,7 +21,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        /* 1-е: Фон сделан ярче (opacity 0.15 вместо 0.03) */
         body { 
             background-color: var(--bg); 
             background-image: url("data:image/svg+xml,%3Csvg width='150' height='150' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='20' y='40' fill='rgba(255,46,46,0.15)' font-weight='bold' font-size='24' font-family='sans-serif'%3EX%3C/text%3E%3Ctext x='90' y='90' fill='rgba(255,46,46,0.15)' font-weight='bold' font-size='24' font-family='sans-serif'%3EO%3C/text%3E%3Ctext x='40' y='130' fill='rgba(255,46,46,0.15)' font-weight='bold' font-size='16' font-family='sans-serif'%3ESWS%3C/text%3E%3C/svg%3E");
@@ -73,6 +72,9 @@
         .video-box iframe, .video-box video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         .no-episodes { position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10; flex-direction: column; overflow: hidden; }
         
+        /* Стили для активной серии */
+        .ep-btn.active-ep { background: var(--accent); color: white; border-color: var(--accent); }
+
         /* TOASTS */
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: var(--card-bg); border-left: 4px solid var(--accent); color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); font-size: 13px; font-weight: 500; animation: slideIn 0.3s ease forwards; max-width: 300px; }
@@ -180,12 +182,19 @@
             
             <div style="display:flex; gap:10px; margin-bottom: 15px; overflow-x:auto;" id="v-ep-list"></div>
 
+            <h3 id="v-current-ep-title" style="margin-bottom: 15px; color: var(--accent); display:none; font-size: 1.2rem;"></h3>
+
             <div class="video-box" id="v-player-container">
                 <div id="v-tape" class="no-episodes" style="display:none;">
                     <h2 style="margin:0; color:white;">Серий пока нет 😔</h2>
                     <p style="opacity:0.8; font-size:14px; margin-top:5px; color:white;">Но скоро они появятся!</p>
                 </div>
                 <iframe id="v-iframe" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
+
+            <div id="v-likes-bar" style="display:flex; gap:15px; margin-bottom: 20px; background: var(--card-bg); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border); width: fit-content;">
+                <button id="btn-like" class="react-btn" onclick="rateProj('like')"><i class="fas fa-thumbs-up"></i> <span id="v-like-cnt">0</span></button>
+                <button id="btn-dislike" class="react-btn" onclick="rateProj('dislike')"><i class="fas fa-thumbs-down"></i> <span id="v-dislike-cnt">0</span></button>
             </div>
 
             <div style="background:var(--card-bg); padding:20px; border-radius:15px; border: 1px solid var(--border);">
@@ -201,6 +210,7 @@
                 <div id="comm-list" style="margin-top:20px;"></div>
             </div>
         </section>
+        
         <section id="profile" class="section">
             <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
                 <input type="email" id="email" placeholder="Email">
@@ -275,7 +285,8 @@
         <select id="ad-ep-type">
             <option value="series">Серия</option><option value="trailer">Трейлер / Тизер</option>
         </select>
-        <input type="text" id="ad-ep-name" placeholder="Название (Серия 1 / Официальный трейлер)">
+        <input type="text" id="ad-ep-name" placeholder="Номер/Тип (Серия 1 / Официальный трейлер)">
+        <input type="text" id="ad-ep-title" placeholder="Название серии (например: Возвращение героя) - необязательно">
         <input type="text" id="ad-ep-url" placeholder="URL (Google Drive или YouTube)">
         <button class="btn btn-blue" style="width:100%" onclick="saveEp()">Добавить</button>
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
@@ -358,9 +369,15 @@
     <div id="m-user-profile" class="modal"><div class="modal-content" style="text-align:center;">
         <img id="mu-ava" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--accent);">
         <h2 id="mu-nick" style="margin-top:10px;"></h2>
-        <div id="mu-ach-list" style="display:flex; justify-content:center; gap:5px; margin:15px 0;"></div>
-        <button id="btn-mu-sub" class="btn" style="width:100%">Подписаться</button>
-        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Закрыть</button>
+        
+        <div style="display:flex; justify-content:center; gap:30px; font-size:13px; margin: 15px 0;">
+            <div><b id="mu-views-count" style="font-size:18px;">0</b><br><span style="color:var(--text-dim)">Просмотрено</span></div>
+            <div><b id="mu-subs-count" style="font-size:18px;">0</b><br><span style="color:var(--text-dim)">Подписчики</span></div>
+        </div>
+
+        <div id="mu-ach-list" style="display:flex; justify-content:center; gap:5px; margin:15px 0; flex-wrap:wrap;"></div>
+        <button id="btn-mu-sub" class="btn" style="width:100%; margin-bottom:5px;">Подписаться</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="closeModals()">Закрыть</button>
     </div></div>
 
     <script type="module">
@@ -417,57 +434,26 @@
             if(e.state && e.state.page) navigate(e.state.page, false);
             else navigate('home', false);
         });
-
-        // --- РЕЛИЗЫ И ГЛАВНАЯ ---
-        async function loadHome() {
-            const snap = await getDocs(collection(db, "projects"));
-            allRel = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            filterData();
-        }
-
-        window.filterData = () => {
-            const q = document.getElementById('main-search').value.toLowerCase();
-            const g = document.getElementById('filter-genre').value;
-            const s = document.getElementById('filter-sort').value;
-            let filtered = allRel.filter(p => (p.title||"").toLowerCase().includes(q) && (g === 'all' || p.genre === g));
-            
-            if(s === 'new') filtered.sort((a,b) => b.time - a.time);
-            if(s === 'pop') filtered.sort((a,b) => (b.commCount || 0) - (a.commCount || 0));
-            if(s === 'random') {
-                const randomProj = filtered[Math.floor(Math.random() * filtered.length)];
-                filtered = randomProj ? [randomProj] : [];
+        // --- БАЗОВЫЕ ФУНКЦИИ ---
+        window.openRelModal = (id = '') => {
+            document.getElementById('ed-rel-id').value = id;
+            if(id) {
+                const r = allRel.find(x => x.id === id);
+                ['title','genre','year','voiceover','authors','img','desc'].forEach(f => document.getElementById(`ad-${f}`).value = r[f] || '');
+            } else {
+                ['title','genre','year','voiceover','authors','img','desc'].forEach(f => document.getElementById(`ad-${f}`).value = '');
             }
-
-            const grid = document.getElementById('main-grid'); grid.innerHTML = '';
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                <div class="card" onclick="viewProj('${p.id}')">
-                    ${isAdmin ? `<div class="adm-tools"><button class="btn-sm btn-blue" onclick="event.stopPropagation(); openRelModal('${p.id}')">РЕД</button></div>` : ''}
-                    <img src="${esc(p.img)}">
-                    <div class="card-info">
-                        <div><span class="tag">${esc(p.genre)}</span><span class="year-tag">${esc(p.year)}</span></div>
-                        <div class="card-title">${esc(p.title)}</div>
-                        ${p.voiceover ? `<small style="color:var(--text-dim); margin-top:5px; display:block;">🎙 ${esc(p.voiceover)}</small>` : ''}
-                    </div>
-                </div>`;
-            });
+            document.getElementById('m-rel').style.display = 'flex';
         };
 
-        window.openRelModal = async (id = null) => {
-            document.getElementById('m-rel').style.display = 'flex';
-            document.getElementById('ed-rel-id').value = id || '';
-            if(id) {
-                const p = (await getDoc(doc(db, "projects", id))).data();
-                document.getElementById('ad-title').value = p.title || '';
-                document.getElementById('ad-genre').value = p.genre || 'Аниме';
-                document.getElementById('ad-year').value = p.year || '';
-                document.getElementById('ad-voiceover').value = p.voiceover || '';
-                document.getElementById('ad-authors').value = p.authors || '';
-                document.getElementById('ad-img').value = p.img || '';
-                document.getElementById('ad-desc').value = p.desc || '';
-            } else {
-                ['ad-title','ad-year','ad-voiceover','ad-authors','ad-img','ad-desc'].forEach(i => document.getElementById(i).value = '');
-            }
+        // ДОБАВЛЕНО: Функция удаления релиза (Запрос 1)
+        window.deleteRel = async (id) => {
+            if(!confirm("Вы точно хотите удалить этот релиз навсегда?")) return;
+            try {
+                await deleteDoc(doc(db, "releases", id));
+                showToast("Релиз успешно удален!");
+                loadHome();
+            } catch(e) { showToast("Ошибка удаления: " + e.message, 'error'); }
         };
 
         window.saveRel = async () => {
@@ -480,565 +466,594 @@
                 authors: document.getElementById('ad-authors').value,
                 img: document.getElementById('ad-img').value,
                 desc: document.getElementById('ad-desc').value,
-                time: Date.now()
+                timestamp: id ? undefined : Date.now(),
+                episodes: id ? allRel.find(x=>x.id===id).episodes : [],
+                likes: id ? (allRel.find(x=>x.id===id).likes || []) : [], // ДОБАВЛЕНО: Массивы для лайков/дизлайков
+                dislikes: id ? (allRel.find(x=>x.id===id).dislikes || []) : []
             };
-            if(id) await updateDoc(doc(db, "projects", id), data);
-            else { data.series = []; data.commCount = 0; await addDoc(collection(db, "projects"), data); }
-            closeModals(); loadHome();
+            if(!id) await addDoc(collection(db, "releases"), data);
+            else { delete data.timestamp; await updateDoc(doc(db, "releases", id), data); }
+            closeModals(); loadHome(); showToast("Успешно сохранено!");
         };
 
-        // --- ПРОСМОТР РЕЛИЗА, АВТОПЛЕЙ И ТАЙМЕР (5-е ИСПРАВЛЕНИЕ) ---
-        window.viewProj = async (id) => {
-            const d = await getDoc(doc(db, "projects", id)); curProj = {id:d.id, ...d.data()};
+        window.loadHome = async () => {
+            const snap = await getDocs(query(collection(db, "releases"), orderBy("timestamp", "desc")));
+            allRel = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            filterData();
+        };
+
+        window.filterData = () => {
+            let res = allRel;
+            const q = document.getElementById('main-search').value.toLowerCase();
+            const g = document.getElementById('filter-genre').value;
+            const s = document.getElementById('filter-sort').value;
+
+            if(q) res = res.filter(r => r.title.toLowerCase().includes(q));
+            if(g !== 'all') res = res.filter(r => r.genre === g);
+
+            if(s === 'pop') res.sort((a,b) => (b.views||0) - (a.views||0));
+            else if(s === 'random') res = res.sort(() => 0.5 - Math.random());
+            else res.sort((a,b) => b.timestamp - a.timestamp);
+
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = res.map(r => `
+                <div class="card" onclick="openView('${r.id}')">
+                    ${isAdmin ? `
+                        <div class="adm-tools">
+                            <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openRelModal('${r.id}')">Ред</button>
+                            <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); deleteRel('${r.id}')">Удал</button>
+                        </div>
+                    ` : ''}
+                    <img src="${r.img}" loading="lazy">
+                    <div class="card-info">
+                        <div>
+                            <span class="tag">${r.genre}</span>
+                            <span class="year-tag">${r.year}</span>
+                        </div>
+                        <div class="card-title">${r.title}</div>
+                        <div style="font-size:10px; color:var(--text-dim); margin-top:5px;"><i class="fas fa-eye"></i> ${r.views||0}</div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // --- ЛОГИКА ПРОСМОТРА РЕЛИЗА И СЕРИЙ ---
+        window.openView = async (id) => {
+            curProj = allRel.find(x => x.id === id);
             navigate('view');
             
-            if(auth.currentUser) {
-                clearTimeout(viewTimer);
-                viewTimer = setTimeout(async () => {
-                    await updateDoc(doc(db, "users", auth.currentUser.uid), { views: increment(1) });
-                    userData.views = (userData.views || 0) + 1;
-                    document.getElementById('u-views').innerText = userData.views;
-                    showToast("Просмотр успешно зачислен! (+1)", "success");
-                    checkViewAchievements();
-                }, 600000); 
+            // Обновляем просмотры
+            if(userData) {
+                updateDoc(doc(db, "releases", id), { views: increment(1) });
+                updateDoc(doc(db, "users", auth.currentUser.uid), { views: increment(1) });
             }
 
             document.getElementById('v-info').innerHTML = `
                 <div class="view-header">
-                    <img src="${esc(curProj.img)}" class="v-poster">
-                    <div class="v-details" style="flex:1;">
-                        <h1 class="view-title">${esc(curProj.title)}</h1>
-                        <p style="font-size:14px; line-height:1.6; opacity:0.9; margin-bottom:15px; white-space:pre-wrap;">${esc(curProj.desc)}</p>
-                        <div style="background:var(--input-bg); padding:10px 15px; border-radius:10px; font-size:13px; color:var(--text-dim); border:1px solid var(--border);">
-                            <b>Год:</b> <span style="color:white">${esc(curProj.year)}</span> | 
-                            <b>Жанр:</b> <span style="color:white">${esc(curProj.genre)}</span><br>
-                            ${curProj.authors ? `<b>Авторы:</b> <span style="color:white">${esc(curProj.authors)}</span><br>` : ''}
-                            ${curProj.voiceover ? `<b>Озвучка:</b> <span style="color:var(--accent)">${esc(curProj.voiceover)}</span>` : ''}
+                    <img src="${curProj.img}" class="v-poster">
+                    <div>
+                        <h1 class="view-title">${curProj.title}</h1>
+                        <p style="color:var(--text-dim); margin-bottom:15px; font-size:14px;">${curProj.year} • ${curProj.genre}</p>
+                        <p style="font-size:13px; line-height:1.6; margin-bottom:15px; color:#ddd;">${curProj.desc}</p>
+                        <div style="font-size:12px; color:var(--text-dim);">
+                            <b>Студия/Авторы:</b> ${curProj.authors} <br>
+                            <b style="color:var(--accent);">Озвучка:</b> ${curProj.voiceover}
                         </div>
                         ${isAdmin ? `<button class="btn btn-blue" style="margin-top:15px;" onclick="document.getElementById('m-ep').style.display='flex'">+ Добавить медиа</button>` : ''}
                     </div>
                 </div>
             `;
             
-            renderEpisodes(); renderComments();
+            updateLikesUI(); // ДОБАВЛЕНО: Обновление интерфейса лайков (Запрос 3)
+            renderEps();
+            loadComments();
         };
 
-        const dLink = (url) => {
-            if (!url) return '';
-            // 5-е: Автовоспроизведение без принудительного отключения звука.
-            if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                let id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
-                return `https://www.youtube.com/embed/${id}?autoplay=1`; 
-            }
-            if (!url.includes('drive.google.com')) return url;
-            let id = url.includes('/d/') ? url.split('/d/')[1].split('/')[0] : url.split('id=')[1].split('&')[0];
-            return `https://drive.google.com/file/d/${id}/preview`;
-        };
-
-        function renderEpisodes() {
-            const s = curProj.series || [];
-            const list = document.getElementById('v-ep-list'); list.innerHTML = '';
+        // ДОБАВЛЕНО: Функция для лайков и дизлайков (Запрос 3)
+        window.rateProj = async (type) => {
+            if(!userData) return showToast("Авторизуйтесь для оценки", "error");
             
-            if(s.length === 0) {
-                document.getElementById('v-tape').style.display = 'flex';
-                document.getElementById('v-iframe').style.display = 'none';
-                return;
+            const uid = auth.currentUser.uid;
+            let likes = curProj.likes || [];
+            let dislikes = curProj.dislikes || [];
+            
+            // Логика переключения
+            if(type === 'like') {
+                if(likes.includes(uid)) likes = likes.filter(id => id !== uid); // Убрать лайк
+                else { likes.push(uid); dislikes = dislikes.filter(id => id !== uid); } // Поставить лайк, убрать диз
+            } else {
+                if(dislikes.includes(uid)) dislikes = dislikes.filter(id => id !== uid); // Убрать дизлайк
+                else { dislikes.push(uid); likes = likes.filter(id => id !== uid); } // Поставить дизлайк, убрать лайк
             }
 
-            document.getElementById('v-tape').style.display = 'none';
-            document.getElementById('v-iframe').style.display = 'block';
+            curProj.likes = likes; curProj.dislikes = dislikes;
+            await updateDoc(doc(db, "releases", curProj.id), { likes, dislikes });
+            updateLikesUI();
+        };
 
-            s.forEach((ep, i) => {
-                const isTrailer = ep.type === 'trailer' || ep.type === 'Трейлер' || ep.type === 'Тизер';
-                list.innerHTML += `<button class="btn btn-outline" style="${isTrailer ? 'border-color:var(--admin);' : ''}" onclick="playEp(${i})">${isTrailer?'🎬 ':''}${esc(ep.name)}</button>`;
-            });
-
-            // 5-е: Автоматически включаем первое видео при открытии
-            playEp(0);
+        function updateLikesUI() {
+            const uid = userData ? auth.currentUser.uid : null;
+            const likes = curProj.likes || [];
+            const dislikes = curProj.dislikes || [];
+            
+            document.getElementById('v-like-cnt').innerText = likes.length;
+            document.getElementById('v-dislike-cnt').innerText = dislikes.length;
+            
+            document.getElementById('btn-like').classList.toggle('active', uid && likes.includes(uid));
+            document.getElementById('btn-dislike').classList.toggle('active', uid && dislikes.includes(uid));
         }
 
-        window.playEp = (idx) => {
-            const ep = curProj.series[idx];
-            document.getElementById('v-iframe').src = dLink(ep.url); 
+        window.renderEps = () => {
+            const list = document.getElementById('v-ep-list');
+            const eps = curProj.episodes || [];
+            document.getElementById('v-current-ep-title').style.display = 'none';
+
+            if(eps.length === 0) {
+                list.innerHTML = '';
+                document.getElementById('v-iframe').style.display = 'none';
+                document.getElementById('v-tape').style.display = 'flex';
+                return;
+            }
+            
+            document.getElementById('v-iframe').style.display = 'block';
+            document.getElementById('v-tape').style.display = 'none';
+
+            list.innerHTML = eps.map((ep, i) => `
+                <div style="display:flex; flex-direction:column; align-items:center; gap:5px; position:relative;">
+                    ${isAdmin ? `<button class="btn-sm" style="background:red; position:absolute; top:-10px; right:-10px; z-index:10;" onclick="delEp(${i})">X</button>` : ''}
+                    <button class="btn btn-outline ep-btn" onclick="playEp('${ep.url}', this, '${esc(ep.title || '')}')">${ep.name}</button>
+                </div>
+            `).join('');
+            
+            // Автозапуск первой серии
+            const firstBtn = list.querySelector('.ep-btn');
+            if(firstBtn && eps.length > 0) playEp(eps[0].url, firstBtn, eps[0].title || '');
         };
 
         window.saveEp = async () => {
-            const type = document.getElementById('ad-ep-type').value;
-            const name = document.getElementById('ad-ep-name').value;
-            const url = document.getElementById('ad-ep-url').value;
-            if(!url || !name) return showToast("Заполните все поля", "error");
-
-            const newS = [...(curProj.series || []), { type, name, url }];
-            await updateDoc(doc(db, "projects", curProj.id), { series: newS });
-            curProj.series = newS; closeModals(); renderEpisodes();
-            showToast("Медиа добавлено!");
+            const ep = {
+                type: document.getElementById('ad-ep-type').value,
+                name: document.getElementById('ad-ep-name').value,
+                title: document.getElementById('ad-ep-title').value, // ДОБАВЛЕНО: Название серии (Запрос 4)
+                url: document.getElementById('ad-ep-url').value
+            };
+            const eps = curProj.episodes || [];
+            eps.push(ep);
+            await updateDoc(doc(db, "releases", curProj.id), { episodes: eps });
+            curProj.episodes = eps;
+            closeModals(); renderEps(); showToast("Медиа добавлено!");
+            document.getElementById('ad-ep-name').value = '';
+            document.getElementById('ad-ep-title').value = '';
+            document.getElementById('ad-ep-url').value = '';
         };
 
-        // --- КОММЕНТАРИИ И РЕАКЦИИ ---
-        const reactionTypes = ['❤️', '🔥', '😢', '👍', '🤡'];
-        
-        async function renderComments() {
-            const list = document.getElementById('comm-list'); list.innerHTML = '';
-            const snap = await getDocs(query(collection(db, "comments"), where("projId", "==", curProj.id), orderBy("time", "desc")));
+        window.delEp = async (idx) => {
+            if(!confirm("Удалить медиа?")) return;
+            curProj.episodes.splice(idx, 1);
+            await updateDoc(doc(db, "releases", curProj.id), { episodes: curProj.episodes });
+            renderEps(); showToast("Удалено");
+        };
+
+        // ДОБАВЛЕНО: Функция воспроизведения с подсветкой и выводом названия (Запрос 4)
+        window.playEp = (url, btnElement, epTitle) => {
+            let src = url;
+            if(url.includes("drive.google.com")) src = url.replace(/\/view.*$/, "/preview");
+            else if(url.includes("youtube.com/watch")) src = url.replace("watch?v=", "embed/");
+            else if(url.includes("youtu.be/")) src = url.replace("youtu.be/", "youtube.com/embed/");
+            
+            document.getElementById('v-iframe').src = src;
+
+            // Убираем активный класс у всех кнопок и добавляем текущей
+            document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active-ep'));
+            if(btnElement) btnElement.classList.add('active-ep');
+
+            // Показываем название серии над плеером, если оно есть
+            const titleEl = document.getElementById('v-current-ep-title');
+            if(epTitle && epTitle.trim() !== '') {
+                titleEl.innerText = epTitle;
+                titleEl.style.display = 'block';
+            } else {
+                titleEl.style.display = 'none';
+            }
+        };
+
+        // --- КОММЕНТАРИИ ---
+        window.loadComments = async () => {
+            const snap = await getDocs(query(collection(db, `releases/${curProj.id}/comments`), orderBy("time", "desc")));
             document.getElementById('comm-count').innerText = snap.size;
-            
-            snap.forEach(d => {
+            document.getElementById('comm-list').innerHTML = snap.docs.map(d => {
                 const c = d.data();
-                const isOwner = auth.currentUser && auth.currentUser.uid === c.userId;
-                const reactions = c.reactions || {};
+                const text = c.text.replace(/@([\wа-яА-ЯёЁ]+)/g, '<a href="#" class="mention-link" onclick="openUserProfileByName(\'$1\'); return false;">@$1</a>');
                 
-                let reactHTML = '';
-                reactionTypes.forEach(r => {
-                    const count = (reactions[r] || []).length;
-                    const isActive = auth.currentUser && (reactions[r] || []).includes(auth.currentUser.uid);
-                    reactHTML += `<button class="react-btn ${isActive ? 'active' : ''}" onclick="toggleReact('${d.id}', '${r}')">${r} ${count}</button>`;
-                });
-
-                const tools = (isOwner || isAdmin) ? `<div style="margin-top:8px; display:flex; gap:10px;">
-                    ${isOwner ? `<button class="btn-sm btn-blue" onclick="editComm('${d.id}')">Редактировать</button>` : ''}
-                    <button class="btn-sm" style="background:red;" onclick="delComm('${d.id}')">Удалить</button>
-                </div>` : '';
-
-                list.innerHTML += `
-                    <div class="comm-item">
-                        <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="viewUserProfile('${c.userId}')">
-                        <div style="flex:1;">
-                            <b style="cursor:pointer; color:var(--accent);" onclick="viewUserProfile('${c.userId}')">${esc(c.user)}</b>
-                            <p id="comm-txt-${d.id}" style="font-size:14px; margin-top:5px; line-height:1.4; white-space:pre-wrap;">${esc(c.text)}</p>
-                            <div class="reaction-bar">${reactHTML}</div>
-                            ${tools}
+                return `
+                <div class="comm-item">
+                    <img src="${c.ava || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
+                    <div style="flex:1;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${c.nick}</b>
+                            <span style="font-size:10px; color:var(--text-dim);">${new Date(c.time).toLocaleString()}</span>
                         </div>
-                    </div>`;
-            });
-        }
-
-        window.toggleReact = async (commId, emoji) => {
-            if(!auth.currentUser) return showToast("Авторизуйтесь для оценки", "error");
-            const uid = auth.currentUser.uid;
-            const commRef = doc(db, "comments", commId);
-            const cDoc = await getDoc(commRef);
-            let reactions = cDoc.data().reactions || {};
-
-            Object.keys(reactions).forEach(k => { reactions[k] = reactions[k].filter(id => id !== uid); });
-            if(!reactions[emoji]) reactions[emoji] = [];
-            
-            const wasActive = cDoc.data().reactions && cDoc.data().reactions[emoji] && cDoc.data().reactions[emoji].includes(uid);
-            if(!wasActive) reactions[emoji].push(uid);
-
-            await updateDoc(commRef, { reactions });
-            renderComments();
+                        <p style="font-size:13px; margin-top:5px; word-break:break-word;">${text}</p>
+                        ${(isAdmin || (userData && c.uid === auth.currentUser.uid)) ? `<button class="btn-sm" style="background:transparent; color:red; margin-top:5px; padding:0;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
+                    </div>
+                </div>
+            `}).join('');
         };
 
         window.sendComment = async () => {
-            const txt = document.getElementById('comm-text').value; if(!txt || !auth.currentUser) return;
-            await addDoc(collection(db, "comments"), { projId: curProj.id, userId: auth.currentUser.uid, user: userData.nickname, ava: userData.avatar, text: txt, time: Date.now(), reactions: {} });
-            await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(1) });
-            document.getElementById('comm-text').value = ''; renderComments();
-        };
-
-        window.editComm = async (id) => {
-            const el = document.getElementById(`comm-txt-${id}`);
-            const newText = prompt("Редактировать комментарий:", el.innerText);
-            if(newText && newText.trim() !== "" && newText !== el.innerText) {
-                await updateDoc(doc(db, "comments", id), { text: newText });
-                renderComments();
-            }
+            const txt = document.getElementById('comm-text').value.trim();
+            if(!txt) return;
+            await addDoc(collection(db, `releases/${curProj.id}/comments`), {
+                uid: auth.currentUser.uid,
+                nick: userData.nickname,
+                ava: userData.avatar || '',
+                text: txt,
+                time: Date.now()
+            });
+            document.getElementById('comm-text').value = '';
+            loadComments(); showToast("Комментарий отправлен");
         };
 
         window.delComm = async (id) => {
-            if(confirm("Удалить этот комментарий?")) {
-                await deleteDoc(doc(db, "comments", id));
-                await updateDoc(doc(db, "projects", curProj.id), { commCount: increment(-1) });
-                renderComments();
+            if(!confirm("Удалить комментарий?")) return;
+            await deleteDoc(doc(db, `releases/${curProj.id}/comments`, id));
+            loadComments(); showToast("Удалено");
+        };
+
+        // --- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ И АВТОРИЗАЦИЯ ---
+        document.getElementById('btn-reg').onclick = async () => {
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, "users", cred.user.uid), {
+                    nickname: "User_" + Math.floor(Math.random()*10000),
+                    email: e, role: "user", views: 0, subscribers: 0,
+                    achievements: [{ name: "Новичок", desc: "Зарегистрировался на сайте", img: "👋", date: Date.now() }]
+                });
+                showToast("Регистрация успешна!");
+            } catch(err) { showToast(err.message, 'error'); }
+        };
+
+        document.getElementById('btn-login').onclick = async () => {
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+            try {
+                await signInWithEmailAndPassword(auth, e, p);
+                showToast("Вход выполнен!");
+                loginAttempts = 0;
+            } catch(err) { 
+                loginAttempts++;
+                if(loginAttempts >= 3) document.getElementById('reset-pass-block').style.display = 'block';
+                showToast("Ошибка входа!", 'error'); 
             }
         };
 
-        // --- КОМАНДА + TEAM PAGES С DRAG AND DROP (6-е ИСПРАВЛЕНИЕ) ---
-        async function loadTeam() {
-            const wrapper = document.getElementById('team-wrapper'); wrapper.innerHTML = '';
-            const snap = await getDocs(collection(db, "team"));
-            let teamData = snap.docs.map(d => ({id:d.id, ...d.data()}));
+        document.getElementById('btn-logout').onclick = () => signOut(auth);
+
+        window.saveProfile = async () => {
+            const nick = document.getElementById('ed-nick').value;
+            const ava = document.getElementById('ed-ava').value;
             
-            let categories = {};
-            teamData.forEach(m => {
-                let cat = m.category || 'Основной состав';
-                if(!categories[cat]) categories[cat] = [];
-                categories[cat].push(m);
-            });
+            const q = query(collection(db, "users"), where("nickname", "==", nick));
+            const snap = await getDocs(q);
+            if(!snap.empty && nick !== userData.nickname) return showToast("Этот никнейм уже занят!", "error");
 
-            Object.keys(categories).forEach(cat => {
-                const catId = `cat-${cat.replace(/\s/g, '')}`;
-                let gridHTML = categories[cat].map(m => `
-                    <div class="card" onclick="viewTM('${m.id}')" data-id="${m.id}">
-                        <div class="drag-handle">☰</div>
-                        ${isAdmin ? `<div class="adm-tools">
-                            <button class="btn-sm btn-blue" onclick="event.stopPropagation(); openTeamModal('${m.id}')">РЕД</button>
-                            <button class="btn-sm" style="background:red" onclick="event.stopPropagation(); deleteTeamMember('${m.id}')">УД</button>
-                        </div>` : ''}
-                        <img src="${esc(m.img)}">
-                        <div class="card-info"><b style="font-size:14px;">${esc(m.name)}</b><br><small style="color:var(--text-dim);">${esc(m.role)}</small></div>
-                    </div>
-                `).join('');
-
-                wrapper.innerHTML += `
-                    <div class="team-container ${isAdmin ? 'admin-mode' : ''}">
-                        <div class="team-container-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'grid' : 'none'">
-                            <span>${esc(cat)} ▼</span>
-                        </div>
-                        <div class="grid" id="${catId}" style="display:grid; min-height:50px;">${gridHTML}</div>
-                    </div>
-                `;
-
-                // Инициализация Drag and Drop для админов
-                if(isAdmin) {
-                    new Sortable(document.getElementById(catId), {
-                        group: 'team-shared',
-                        animation: 150,
-                        handle: '.drag-handle',
-                        ghostClass: 'sortable-ghost',
-                        onEnd: async function (evt) {
-                            showToast("Порядок сохранен локально");
-                        }
-                    });
-                }
-            });
-        }
-
-        window.openTeamModal = async (id = null) => {
-            document.getElementById('m-team').style.display = 'flex';
-            document.getElementById('ed-team-id').value = id || '';
-            if(id) {
-                const m = (await getDoc(doc(db, "team", id))).data();
-                document.getElementById('ad-m-name').value = m.name || '';
-                document.getElementById('ad-m-role').value = m.role || '';
-                document.getElementById('ad-m-img').value = m.img || '';
-                document.getElementById('ad-m-cat').value = m.category || '';
-            } else {
-                ['ad-m-name','ad-m-role','ad-m-img','ad-m-cat'].forEach(i => document.getElementById(i).value = '');
-            }
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: nick, avatar: ava });
+            showToast("Профиль обновлен!"); closeModals();
+            userData.nickname = nick; userData.avatar = ava;
+            document.getElementById('u-nick').innerText = nick;
+            document.getElementById('u-ava').src = ava || 'https://api.dicebear.com/7.x/identicon/svg';
         };
 
-        window.saveTeam = async () => {
-            const id = document.getElementById('ed-team-id').value;
-            const data = { 
-                name: document.getElementById('ad-m-name').value, 
-                role: document.getElementById('ad-m-role').value, 
-                img: document.getElementById('ad-m-img').value,
-                category: document.getElementById('ad-m-cat').value || 'Основной состав'
-            };
-            if(id) await updateDoc(doc(db, "team", id), data); else await addDoc(collection(db, "team"), data);
-            closeModals(); loadTeam();
-        };
-        
-        window.deleteTeamMember = async (id) => {
-            if(confirm("Удалить участника?")) {
-                await deleteDoc(doc(db, "team", id));
-                loadTeam();
-            }
-        }
-
-        window.viewTM = async (id) => {
-            curTM = {id}; const d = await getDoc(doc(db, "team", id)); Object.assign(curTM, d.data());
-            const pDoc = await getDoc(doc(db, "teamPages", id));
-            navigate('team-page');
-            const box = document.getElementById('team-page-view');
-            
-            if(pDoc.exists()) {
-                let bio = pDoc.data().bio;
-                const mentions = bio.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
-                for(let m of mentions) {
-                    const email = m.replace('@', '');
-                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
-                    if(!uSnap.empty) {
-                        const uDoc = uSnap.docs[0];
-                        bio = bio.replace(m, `<a href="#" class="mention-link" onclick="viewUserProfile('${uDoc.id}'); return false;">@${esc(uDoc.data().nickname)}</a>`);
-                    }
-                }
-                box.innerHTML = `
-                    <div style="display:flex; gap:20px; align-items:center; border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:20px;">
-                        <img src="${esc(curTM.img)}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px solid var(--accent);">
-                        <div><h2 style="margin:0; font-size:2rem;">${esc(curTM.name)}</h2><span style="color:var(--text-dim); font-weight:bold; font-size:14px;">${esc(curTM.role)}</span></div>
-                    </div>
-                    <div style="line-height:1.6; font-size:15px; opacity:0.9; white-space:pre-wrap;">${bio}</div>
-                    ${pDoc.data().social ? `<div style="margin-top:20px; padding:15px; background:var(--input-bg); border-radius:10px; border:1px solid var(--border);"><b>Связь:</b> ${esc(pDoc.data().social)}</div>` : ''}
-                `;
-            } else {
-                box.innerHTML = `<h2>${esc(curTM.name)}</h2><p style="margin-top:10px; color:var(--text-dim);">Страница участника пока не оформлена.</p>`;
-            }
-            if(isAdmin) document.getElementById('adm-tp-controls').style.display = 'flex';
-        };
-
-        window.openTPModal = async () => {
-            const pDoc = await getDoc(doc(db, "teamPages", curTM.id));
-            if(pDoc.exists()) {
-                document.getElementById('tp-bio').value = pDoc.data().bio;
-                document.getElementById('tp-social').value = pDoc.data().social;
-            } else {
-                document.getElementById('tp-bio').value = ''; document.getElementById('tp-social').value = '';
-            }
-            document.getElementById('m-tp-edit').style.display='flex';
-        };
-
-        window.saveTP = async () => {
-            await setDoc(doc(db, "teamPages", curTM.id), { bio: document.getElementById('tp-bio').value, social: document.getElementById('tp-social').value });
-            closeModals(); viewTM(curTM.id);
-        };
-        
-        window.deleteTP = async () => {
-            if(confirm("Удалить био участника?")) { await deleteDoc(doc(db, "teamPages", curTM.id)); viewTM(curTM.id); }
-        };
-
-        // --- ПРОФИЛИ, ПОДПИСКИ, АЧИВКИ ---
-        window.viewUserProfile = async (uid) => {
-            const d = await getDoc(doc(db, "users", uid));
-            if(d.exists()) {
-                const u = d.data();
+        // ДОБАВЛЕНО: Исправлено модальное окно чужого профиля (Запрос 2)
+        window.openUserProfile = async (uid) => {
+            if(userData && uid === auth.currentUser.uid) { navigate('profile'); return; }
+            const snap = await getDoc(doc(db, "users", uid));
+            if(snap.exists()) {
+                const u = snap.data();
                 document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
                 document.getElementById('mu-nick').innerText = u.nickname;
                 
-                const achList = document.getElementById('mu-ach-list'); achList.innerHTML = '';
-                (u.achievements || []).forEach(a => {
-                    if(!a.hidden) achList.innerHTML += `<div title="${esc(a.name)}" style="font-size:24px;">${a.img}</div>`;
-                });
+                // Отображение счетчиков (Запрос 2)
+                document.getElementById('mu-views-count').innerText = u.views || 0;
+                document.getElementById('mu-subs-count').innerText = u.subscribers || 0;
 
+                // Кнопка подписки (Запрос 2)
                 const subBtn = document.getElementById('btn-mu-sub');
-                if(auth.currentUser && auth.currentUser.uid !== uid) {
+                if(userData) {
+                    const amISubbed = (u.subscribersList || []).includes(auth.currentUser.uid);
+                    subBtn.innerText = amISubbed ? "Отписаться" : "Подписаться";
+                    subBtn.className = amISubbed ? "btn btn-outline" : "btn";
+                    subBtn.onclick = () => subscribeToUser(uid, amISubbed);
                     subBtn.style.display = 'block';
-                    const isSubbed = (u.subscribersList || []).includes(auth.currentUser.uid);
-                    subBtn.innerText = isSubbed ? "Отписаться" : "Подписаться";
-                    subBtn.style.background = isSubbed ? "var(--border)" : "var(--accent)";
-                    
-                    subBtn.onclick = async () => {
-                        const targetRef = doc(db, "users", uid);
-                        const myRef = doc(db, "users", auth.currentUser.uid);
-                        if(isSubbed) {
-                            await updateDoc(targetRef, { subscribers: increment(-1), subscribersList: arrayRemove(auth.currentUser.uid) });
-                            await updateDoc(myRef, { follows: arrayRemove(uid) });
-                            showToast("Вы отписались");
-                        } else {
-                            await updateDoc(targetRef, { subscribers: increment(1), subscribersList: arrayUnion(auth.currentUser.uid) });
-                            await updateDoc(myRef, { follows: arrayUnion(uid) });
-                            showToast("Успешная подписка!", "success");
-                        }
-                        closeModals();
-                    };
-                } else { subBtn.style.display = 'none'; }
+                } else {
+                    subBtn.style.display = 'none';
+                }
+
+                // Кликабельные ачивки (Запрос 2)
+                const achs = u.achievements || [];
+                document.getElementById('mu-ach-list').innerHTML = achs.filter(a => !a.hidden).map(a => `
+                    <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:24px; cursor:pointer; border:1px solid var(--border);" title="${a.name}" onclick='viewAchExt(${JSON.stringify(a)})'>
+                        ${a.img}
+                    </div>
+                `).join('');
+                
                 document.getElementById('m-user-profile').style.display = 'flex';
             }
         };
 
-        window.showMySubscribers = async () => {
-            if(!userData.subscribersList || userData.subscribersList.length === 0) return showToast("У вас пока нет подписчиков");
-            const list = document.getElementById('subs-list'); list.innerHTML = '';
-            
-            for(let uid of userData.subscribersList) {
-                const uDoc = await getDoc(doc(db, "users", uid));
-                if(uDoc.exists()) {
-                    list.innerHTML += `<div style="padding:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;"><img src="${uDoc.data().avatar || 'https://api.dicebear.com/7.x/identicon/svg'}" style="width:30px;height:30px;border-radius:50%;"><b style="cursor:pointer" onclick="viewUserProfile('${uid}')">${esc(uDoc.data().nickname)}</b></div>`;
-                }
-            }
-            document.getElementById('m-subs').style.display = 'flex';
+        window.openUserProfileByName = async (nick) => {
+            const snap = await getDocs(query(collection(db, "users"), where("nickname", "==", nick)));
+            if(!snap.empty) openUserProfile(snap.docs[0].id);
         };
 
-        // ИНВЕНТАРЬ И АЧИВКИ С ИНФОРМАЦИЕЙ
+        // ДОБАВЛЕНО: Функция подписки (Запрос 2)
+        window.subscribeToUser = async (targetUid, isSubbed) => {
+            if(!userData) return;
+            try {
+                const targetRef = doc(db, "users", targetUid);
+                if(isSubbed) {
+                    await updateDoc(targetRef, { 
+                        subscribers: increment(-1), 
+                        subscribersList: arrayRemove(auth.currentUser.uid) 
+                    });
+                } else {
+                    await updateDoc(targetRef, { 
+                        subscribers: increment(1), 
+                        subscribersList: arrayUnion(auth.currentUser.uid) 
+                    });
+                }
+                showToast(isSubbed ? "Вы отписались" : "Вы подписались!");
+                openUserProfile(targetUid); // Обновляем окно
+            } catch(e) { showToast("Ошибка: " + e.message, "error"); }
+        };
+
+        // ДОБАВЛЕНО: Просмотр ачивки из чужого профиля (Запрос 2)
+        window.viewAchExt = (ach) => {
+            document.getElementById('ach-v-img').innerText = ach.img;
+            document.getElementById('ach-v-name').innerText = ach.name;
+            document.getElementById('ach-v-desc').innerText = ach.desc;
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(ach.date).toLocaleDateString()}<br><b>Способ получения:</b> ${ach.giver || 'Система/Студия'}`;
+            document.getElementById('btn-ach-del').style.display = 'none';
+            document.getElementById('m-user-profile').style.display = 'none'; // Скрываем профиль
+            document.getElementById('m-ach-view').style.display = 'flex';
+        };
+
+        // --- АЧИВКИ ---
         window.giveAch = async () => {
             const email = document.getElementById('ga-uid').value;
             const q = query(collection(db, "users"), where("email", "==", email));
             const snap = await getDocs(q);
-            if(snap.empty) return showToast("Пользователь не найден.", "error");
+            if(snap.empty) return showToast("Пользователь не найден!", "error");
             
-            const ach = { 
-                name: document.getElementById('ga-name').value, 
-                desc: document.getElementById('ga-desc').value, 
-                img: document.getElementById('ga-img').value || '🏆', 
-                date: Date.now(), 
-                issuedBy: userData.nickname, // 4-е: Сохраняем имя того, кто выдал
-                hidden: false 
-            };
-            
-            await updateDoc(doc(db, "users", snap.docs[0].id), { achievements: arrayUnion(ach) });
-            showToast("Ачивка успешно выдана!"); closeModals();
+            const uRef = doc(db, "users", snap.docs[0].id);
+            const uData = snap.docs[0].data();
+            const achs = uData.achievements || [];
+            achs.push({
+                name: document.getElementById('ga-name').value,
+                desc: document.getElementById('ga-desc').value,
+                img: document.getElementById('ga-img').value,
+                date: Date.now(),
+                hidden: false,
+                giver: userData.nickname
+            });
+            await updateDoc(uRef, { achievements: achs });
+            showToast("Достижение выдано!"); closeModals();
+        };
+
+        window.renderAchProfile = () => {
+            if(!userData) return;
+            const achs = userData.achievements || [];
+            document.getElementById('u-ach').innerHTML = achs.filter(a => !a.hidden).map((a, i) => `
+                <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:24px; cursor:pointer; border:1px solid var(--border);" title="${a.name}" onclick="viewAch(${i}, true)">
+                    ${a.img}
+                </div>
+            `).join('') || '<p style="font-size:12px; color:var(--text-dim);">Пока нет достижений.</p>';
         };
 
         window.openAchInventory = () => {
-            const list = document.getElementById('ach-inv-list'); list.innerHTML = '';
-            (userData.achievements || []).forEach((a, i) => {
-                list.innerHTML += `<div style="text-align:center; background:var(--input-bg); padding:10px; border-radius:10px; cursor:pointer; opacity:${a.hidden?0.4:1}; border:1px solid var(--border);"><div style="font-size:30px;" onclick="viewAch(${i})">${a.img}</div><div style="font-size:10px; margin-top:5px; color:var(--accent);" onclick="toggleAch(${i})">${a.hidden?'Скрыта':'Показать'}</div></div>`;
-            });
+            const achs = userData.achievements || [];
+            document.getElementById('ach-inv-list').innerHTML = achs.map((a, i) => `
+                <div style="background:var(--input-bg); padding:15px; border-radius:10px; text-align:center; cursor:pointer; border:1px solid ${a.hidden ? 'red' : 'var(--accent)'}; opacity: ${a.hidden ? '0.5' : '1'}; transition: 0.2s;" onclick="toggleAchVisibility(${i})">
+                    <div style="font-size:30px;">${a.img}</div>
+                    <div style="font-size:10px; margin-top:5px; font-weight:bold;">${a.name}</div>
+                    <div style="font-size:9px; color:var(--text-dim); margin-top:5px; text-decoration:underline;" onclick="event.stopPropagation(); viewAch(${i}, false)">Подробнее</div>
+                </div>
+            `).join('');
             document.getElementById('m-ach-inv').style.display = 'flex';
         };
 
-        window.toggleAch = async (i) => {
-            userData.achievements[i].hidden = !userData.achievements[i].hidden;
+        window.toggleAchVisibility = async (idx) => {
+            userData.achievements[idx].hidden = !userData.achievements[idx].hidden;
             await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
             openAchInventory(); renderAchProfile();
         };
 
-        // 4-е: Просмотр ачивки с датой и автором
-        window.viewAch = (i) => {
-            viewAchIdx = i; const a = userData.achievements[i];
+        window.viewAch = (idx, fromProfile) => {
+            viewAchIdx = idx;
+            const a = userData.achievements[idx];
             document.getElementById('ach-v-img').innerText = a.img;
             document.getElementById('ach-v-name').innerText = a.name;
             document.getElementById('ach-v-desc').innerText = a.desc;
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(a.date).toLocaleDateString()}<br><b>Способ получения:</b> ${a.giver || 'Система/Студия'}`;
             
-            const d = a.date ? new Date(a.date).toLocaleDateString() : 'Ранее';
-            const by = a.issuedBy || 'Система';
-            
-            document.getElementById('ach-v-meta').innerHTML = `<i class="fas fa-user-shield"></i> Выдал(а): <b>${by}</b> | <i class="fas fa-calendar-alt"></i> Дата: <b>${d}</b>`;
-            
-            document.getElementById('btn-ach-del').style.display = 'block'; 
+            document.getElementById('btn-ach-del').style.display = 'block';
+            document.getElementById('m-ach-inv').style.display = 'none';
             document.getElementById('m-ach-view').style.display = 'flex';
         };
 
         window.deleteAchievement = async () => {
-            if(confirm("Удалить эту ачивку навсегда?")) {
-                userData.achievements.splice(viewAchIdx, 1);
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
-                closeModals(); renderAchProfile();
-            }
+            if(!confirm("Удалить достижение НАВСЕГДА? Это действие нельзя отменить.")) return;
+            userData.achievements.splice(viewAchIdx, 1);
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
+            showToast("Достижение удалено.");
+            closeModals(); renderAchProfile();
         };
 
-        function renderAchProfile() {
-            const box = document.getElementById('u-ach'); box.innerHTML = '';
-            (userData.achievements || []).forEach((a, i) => {
-                if(!a.hidden) {
-                    box.innerHTML += `<div style="width:45px;height:45px;border-radius:50%;background:var(--input-bg);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:1px solid var(--border);" onclick="viewAch(${i})">${a.img}</div>`; 
-                }
-            });
-            if(box.innerHTML === '') box.innerHTML = '<span style="font-size:12px; color:var(--text-dim);">Достижений нет</span>';
-        }
-
-        async function checkViewAchievements() {
-            if(!userData) return;
-            let achs = userData.achievements || [];
-            let newAch = null;
-
-            if(userData.views >= 10 && !achs.find(a => a.name === "Начинающий зритель")) {
-                newAch = { name: "Начинающий зритель", desc: "Посмотрел 10 релизов", img: "🍿", hidden: false, date: Date.now(), issuedBy: "Система" };
-            } else if(userData.views >= 50 && !achs.find(a => a.name === "Киноман")) {
-                newAch = { name: "Киноман", desc: "Посмотрел 50 релизов", img: "🎬", hidden: false, date: Date.now(), issuedBy: "Система" };
-            }
-
-            if(newAch) {
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: arrayUnion(newAch) });
-                userData.achievements.push(newAch);
-                showToast(`Получено достижение: ${newAch.img} ${newAch.name}!`, "success");
-            }
-        }
-
-        // --- ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ---
-        window.openPrivacy = async () => {
-            document.getElementById('m-privacy').style.display = 'flex';
-            const d = await getDoc(doc(db, "settings", "privacy"));
-            const txt = d.exists() ? d.data().text : "Политика конфиденциальности пока не заполнена.";
-            document.getElementById('priv-text').innerText = txt;
-            document.getElementById('priv-edit').value = txt;
+        // --- СОСТАВ КОМАНДЫ ---
+        window.loadTeam = async () => {
+            const snap = await getDocs(query(collection(db, "team"), orderBy("order")));
+            const t = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            if(isAdmin) {
-                document.getElementById('priv-adm-btns').style.display = 'block';
-            }
-        };
+            const cats = {};
+            t.forEach(m => {
+                const c = m.cat || 'Без категории';
+                if(!cats[c]) cats[c] = [];
+                cats[c].push(m);
+            });
 
-        window.editPriv = () => {
-            document.getElementById('priv-text').style.display = 'none';
-            document.getElementById('priv-edit').style.display = 'block';
-            document.getElementById('priv-btn-edit').style.display = 'none';
-            document.getElementById('priv-btn-save').style.display = 'block';
-        };
+            const w = document.getElementById('team-wrapper');
+            w.innerHTML = '';
 
-        window.savePriv = async () => {
-            await setDoc(doc(db, "settings", "privacy"), { text: document.getElementById('priv-edit').value });
-            closeModals();
-        };
+            Object.keys(cats).forEach(cat => {
+                const cDiv = document.createElement('div');
+                cDiv.className = 'team-container';
+                cDiv.innerHTML = `<div class="team-container-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'grid' : 'none'">${cat} <i class="fas fa-chevron-down" style="font-size:12px;"></i></div>
+                                  <div class="grid" id="cat-${cat.replace(/\s/g,'')}"></div>`;
+                w.appendChild(cDiv);
+                
+                const grid = cDiv.querySelector('.grid');
+                grid.innerHTML = cats[cat].map(m => `
+                    <div class="card" data-id="${m.id}" onclick="openTeamPage('${m.id}')">
+                        <div class="drag-handle"><i class="fas fa-grip-lines"></i> Перетащить</div>
+                        ${isAdmin ? `<div class="adm-tools">
+                            <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openTeamModal('${m.id}')">Ред</button>
+                            <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); delTeam('${m.id}')">Удал</button>
+                        </div>` : ''}
+                        <img src="${m.img}" loading="lazy">
+                        <div class="card-info" style="text-align:center;">
+                            <div class="card-title" style="font-size:16px;">${m.name}</div>
+                            <div style="color:var(--accent); font-size:12px; margin-top:5px; font-weight:bold;">${m.role}</div>
+                        </div>
+                    </div>
+                `).join('');
 
-        // --- AUTH ---
-        document.getElementById('btn-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value)
-            .then(() => showToast("Успешный вход!", "success"))
-            .catch(e => {
-                loginAttempts++;
-                if(loginAttempts >= 3) {
-                    document.getElementById('reset-pass-block').style.display = 'block';
-                    showToast("Слишком много ошибок. Восстановите пароль.", "error");
-                } else {
-                    showToast("Неверный логин или пароль", "error");
+                if(isAdmin) {
+                    new Sortable(grid, {
+                        handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost',
+                        onEnd: async () => {
+                            const items = Array.from(grid.children);
+                            for(let i=0; i<items.length; i++) {
+                                await updateDoc(doc(db, "team", items[i].dataset.id), { order: i });
+                            }
+                            showToast("Порядок сохранен");
+                        }
+                    });
                 }
             });
+
+            if(isAdmin) document.body.classList.add('admin-mode');
+            else document.body.classList.remove('admin-mode');
         };
 
-        document.getElementById('btn-reg').onclick = async () => {
-            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-            if(p.length < 6) return showToast("Пароль минимум 6 символов", "error");
-            try {
-                const r = await createUserWithEmailAndPassword(auth, e, p);
-                const firstAch = { name: "Новобранец", desc: "Зарегистрировался на проекте", img: "👋", hidden: false, date: Date.now(), issuedBy: "Система" };
-                await setDoc(doc(db, "users", r.user.uid), { email: e, nickname: e.split('@')[0], role: "user", achievements: [firstAch], views: 0, subscribers: 0, subscribersList: [] });
-                showToast("Успешная регистрация!", "success");
-                setTimeout(() => location.reload(), 1500);
-            } catch(error) { showToast("Ошибка формата почты или пользователь существует", "error"); }
+        window.openTeamModal = async (id = '') => {
+            document.getElementById('ed-team-id').value = id;
+            if(id) {
+                const snap = await getDoc(doc(db, "team", id));
+                const d = snap.data();
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = d[f] || '');
+            } else {
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = '');
+            }
+            document.getElementById('m-team').style.display = 'flex';
         };
 
-        window.resetPassword = () => {
-            const e = document.getElementById('email').value;
-            if(!e) return showToast("Введите Email для восстановления", "error");
-            sendPasswordResetEmail(auth, e).then(() => showToast("Письмо отправлено на почту!", "success")).catch(()=>showToast("Ошибка отправки", "error"));
+        window.saveTeam = async () => {
+            const id = document.getElementById('ed-team-id').value;
+            const data = {
+                name: document.getElementById('ad-m-name').value,
+                role: document.getElementById('ad-m-role').value,
+                img: document.getElementById('ad-m-img').value,
+                cat: document.getElementById('ad-m-cat').value || 'Без категории'
+            };
+            if(!id) {
+                data.order = 999;
+                await addDoc(collection(db, "team"), data);
+            } else {
+                await updateDoc(doc(db, "team", id), data);
+            }
+            closeModals(); loadTeam(); showToast("Участник сохранен!");
         };
 
-        window.changeUserEmail = async () => {
-            const newEmail = document.getElementById('ed-new-email').value;
-            if(!newEmail) return;
-            try {
-                await updateEmail(auth.currentUser, newEmail);
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { email: newEmail });
-                showToast("Почта успешно изменена!", "success");
-            } catch(e) { showToast("Ошибка. Попробуйте переавторизоваться.", "error"); }
+        window.delTeam = async (id) => {
+            if(!confirm("Удалить участника?")) return;
+            await deleteDoc(doc(db, "team", id));
+            loadTeam(); showToast("Удален");
         };
 
-        window.changeUserPass = async () => {
-            const newPass = document.getElementById('ed-new-pass').value;
-            if(newPass.length < 6) return showToast("Минимум 6 символов", "error");
-            try {
-                await updatePassword(auth.currentUser, newPass);
-                showToast("Пароль успешно изменен!", "success");
-            } catch(e) { showToast("Ошибка. Попробуйте переавторизоваться.", "error"); }
+        // --- ЛИЧНЫЕ СТРАНИЦЫ УЧАСТНИКОВ ---
+        window.openTeamPage = async (id) => {
+            curTM = {id, ...(await getDoc(doc(db, "team", id))).data()};
+            navigate('team-page');
+            document.getElementById('adm-tp-controls').style.display = isAdmin ? 'flex' : 'none';
+            
+            document.getElementById('team-page-view').innerHTML = `
+                <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
+                    <img src="${curTM.img}" style="width:250px; height:350px; border-radius:15px; object-fit:cover; border:2px solid var(--accent);">
+                    <div style="flex:1; min-width:300px;">
+                        <h1 style="font-size:2.5rem; margin-bottom:10px;">${curTM.name}</h1>
+                        <h3 style="color:var(--accent); margin-bottom:20px;">${curTM.role}</h3>
+                        <div style="background:var(--input-bg); padding:20px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px;">
+                            <h4 style="margin-bottom:10px; color:var(--text-dim);">О себе:</h4>
+                            <p style="line-height:1.6; font-size:14px; white-space:pre-wrap;">${curTM.bio || 'Информация пока не добавлена.'}</p>
+                        </div>
+                        ${curTM.social ? `<a href="${curTM.social}" target="_blank" class="btn btn-outline" style="text-decoration:none;"><i class="fas fa-link"></i> Ссылки / Соцсети</a>` : ''}
+                    </div>
+                </div>
+            `;
         };
 
-        window.saveProfile = async () => {
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: document.getElementById('ed-nick').value, avatar: document.getElementById('ed-ava').value });
-            showToast("Профиль обновлен!", "success");
-            setTimeout(() => location.reload(), 1000);
+        window.openTPModal = () => {
+            document.getElementById('tp-bio').value = curTM.bio || '';
+            document.getElementById('tp-social').value = curTM.social || '';
+            document.getElementById('m-tp-edit').style.display = 'flex';
         };
 
-        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
+        window.saveTP = async () => {
+            const bio = document.getElementById('tp-bio').value;
+            const soc = document.getElementById('tp-social').value;
+            await updateDoc(doc(db, "team", curTM.id), { bio: bio, social: soc });
+            closeModals(); openTeamPage(curTM.id); showToast("Страница обновлена");
+        };
 
-        onAuthStateChanged(auth, async (u) => {
-            if(u) {
-                const d = await getDoc(doc(db, "users", u.uid)); userData = d.data();
-                isAdmin = userData.role === 'admin';
-                document.getElementById('auth-ui').style.display = 'none';
-                document.getElementById('user-ui').style.display = 'block';
-                
-                document.getElementById('comm-form').style.display = 'block';
-                document.getElementById('comm-auth-msg').style.display = 'none';
+        // --- AUTH & INIT ---
+        onAuthStateChanged(auth, async (user) => {
+            if(user) {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if(snap.exists()) {
+                    userData = snap.data();
+                    isAdmin = userData.role === "admin";
+                    
+                    document.getElementById('auth-ui').style.display = 'none';
+                    document.getElementById('user-ui').style.display = 'block';
+                    document.getElementById('comm-form').style.display = 'block';
+                    document.getElementById('comm-auth-msg').style.display = 'none';
 
-                document.getElementById('u-nick').innerText = userData.nickname;
-                document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-                document.getElementById('u-role').innerText = isAdmin ? "АДМИН" : "ПОЛЬЗОВАТЕЛЬ";
-                document.getElementById('u-views').innerText = userData.views || 0;
-                document.getElementById('u-subs').innerText = userData.subscribers || 0;
-                
-                renderAchProfile();
-                
-                if(isAdmin) {
-                    document.getElementById('adm-btn-rel').style.display = 'block';
-                    document.getElementById('adm-btn-team').style.display = 'block';
-                    document.getElementById('adm-ach-panel').style.display = 'block';
+                    document.getElementById('u-nick').innerText = userData.nickname;
+                    document.getElementById('ed-nick').value = userData.nickname; // Заполняем поле редактирования
+                    document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+                    document.getElementById('ed-ava').value = userData.avatar || ''; // Заполняем поле редактирования
+                    document.getElementById('u-role').innerText = isAdmin ? "АДМИН" : "ПОЛЬЗОВАТЕЛЬ";
+                    document.getElementById('u-views').innerText = userData.views || 0;
+                    document.getElementById('u-subs').innerText = userData.subscribers || 0;
+                    
+                    renderAchProfile();
+                    
+                    if(isAdmin) {
+                        document.getElementById('adm-btn-rel').style.display = 'block';
+                        document.getElementById('adm-btn-team').style.display = 'block';
+                        document.getElementById('adm-ach-panel').style.display = 'block';
+                    }
                 }
             } else {
+                userData = null; isAdmin = false;
                 document.getElementById('auth-ui').style.display = 'block';
                 document.getElementById('user-ui').style.display = 'none';
                 document.getElementById('comm-form').style.display = 'none';
                 document.getElementById('comm-auth-msg').style.display = 'block';
+                
+                document.getElementById('adm-btn-rel').style.display = 'none';
+                document.getElementById('adm-btn-team').style.display = 'none';
+                document.getElementById('adm-ach-panel').style.display = 'none';
             }
             const hashPage = window.location.hash.replace('#', '') || 'home';
             navigate(hashPage, false);
