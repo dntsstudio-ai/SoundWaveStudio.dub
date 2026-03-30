@@ -1015,6 +1015,127 @@
             closeModals(); openTeamPage(curTM.id); showToast("Страница обновлена");
         };
 
+        // --- ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ---
+        window.openPrivacy = async () => {
+            document.getElementById('m-privacy').style.display = 'flex';
+            const d = await getDoc(doc(db, "settings", "privacy"));
+            const txt = d.exists() ? d.data().text : "Политика конфиденциальности пока не заполнена.";
+            
+            document.getElementById('priv-text').innerText = txt;
+            document.getElementById('priv-edit').value = txt;
+            
+            // Сбрасываем вид (показываем текст, прячем редактор)
+            document.getElementById('priv-text').style.display = 'block';
+            document.getElementById('priv-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'none';
+            
+            // Если админ, показываем кнопку "Редактировать"
+            if(isAdmin) {
+                document.getElementById('priv-adm-btns').style.display = 'block';
+                document.getElementById('priv-btn-edit').style.display = 'block';
+            }
+        };
+
+        window.editPriv = () => {
+            document.getElementById('priv-text').style.display = 'none';
+            document.getElementById('priv-edit').style.display = 'block';
+            document.getElementById('priv-btn-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'block';
+        };
+
+        window.savePriv = async () => {
+            await setDoc(doc(db, "settings", "privacy"), { text: document.getElementById('priv-edit').value });
+            closeModals();
+            showToast("Политика конфиденциальности сохранена!", "success");
+        };
+
+
+        // --- ПРОСМОТР СПИСКА ПОДПИСЧИКОВ ---
+        window.showSubscribers = async (targetUid) => {
+            // Если ID не передан, показываем подписчиков текущего пользователя
+            const uid = targetUid || auth.currentUser.uid; 
+            const uDoc = await getDoc(doc(db, "users", uid));
+            
+            if(!uDoc.exists()) return;
+            const subs = uDoc.data().subscribersList || [];
+            
+            if(subs.length === 0) return showToast("Пока нет подписчиков");
+            
+            const list = document.getElementById('subs-list'); 
+            list.innerHTML = ''; // Очищаем старый список
+            
+            for(let subId of subs) {
+                const subDoc = await getDoc(doc(db, "users", subId));
+                if(subDoc.exists()) {
+                    list.innerHTML += `
+                    <div style="padding:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+                        <img src="${subDoc.data().avatar || 'https://api.dicebear.com/7.x/identicon/svg'}" style="width:30px;height:30px;border-radius:50%; object-fit:cover;">
+                        <b style="cursor:pointer; color:var(--accent);" onclick="closeModals(); openUserProfile('${subId}')">${esc(subDoc.data().nickname)}</b>
+                    </div>`;
+                }
+            }
+            // Закрываем окно профиля и открываем окно подписчиков
+            document.getElementById('m-user-profile').style.display = 'none';
+            document.getElementById('m-subs').style.display = 'flex';
+        };
+
+
+        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ ПРОФИЛЯ (Клик по подписчикам) ---
+        const originalOpenUserProfile = window.openUserProfile;
+        window.openUserProfile = async (uid) => {
+            // Вызываем старую логику
+            await originalOpenUserProfile(uid);
+            
+            // Делаем блок "Подписчики" в чужом профиле кликабельным
+            const subsBlock = document.getElementById('mu-subs-count').parentElement;
+            subsBlock.style.cursor = 'pointer';
+            subsBlock.onclick = () => showSubscribers(uid);
+        };
+        
+        // Для своего профиля тоже обновим вызов
+        window.showMySubscribers = () => {
+            showSubscribers(auth.currentUser.uid);
+        };
+
+
+        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ КОММЕНТАРИЕВ (Упоминания @email -> @nickname) ---
+        window.loadComments = async () => {
+            const snap = await getDocs(query(collection(db, `releases/${curProj.id}/comments`), orderBy("time", "desc")));
+            document.getElementById('comm-count').innerText = snap.size;
+            
+            let html = '';
+            for (let d of snap.docs) {
+                const c = d.data();
+                let text = esc(c.text);
+                
+                // Ищем email-ы с собачкой (например @test@mail.ru)
+                const mentions = text.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+                for(let m of mentions) {
+                    const email = m.replace('@', ''); // Убираем первую собачку для поиска
+                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+                    if(!uSnap.empty) {
+                        const uDoc = uSnap.docs[0];
+                        // Заменяем email на кликабельный никнейм
+                        text = text.replace(m, `<a href="#" class="mention-link" onclick="openUserProfile('${uDoc.id}'); return false;">@${esc(uDoc.data().nickname)}</a>`);
+                    }
+                }
+                
+                html += `
+                <div class="comm-item">
+                    <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
+                    <div style="flex:1;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${esc(c.nick)}</b>
+                            <span style="font-size:10px; color:var(--text-dim);">${new Date(c.time).toLocaleString()}</span>
+                        </div>
+                        <p style="font-size:13px; margin-top:5px; word-break:break-word;">${text}</p>
+                        ${(isAdmin || (userData && c.uid === auth.currentUser.uid)) ? `<button class="btn-sm" style="background:transparent; color:red; margin-top:5px; padding:0;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
+                    </div>
+                </div>`;
+            }
+            document.getElementById('comm-list').innerHTML = html;
+        };
+
         // --- AUTH & INIT ---
         onAuthStateChanged(auth, async (user) => {
             if(user) {
