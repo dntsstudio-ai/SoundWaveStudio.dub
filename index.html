@@ -212,10 +212,19 @@
         </section>
         
         <section id="profile" class="section">
-            <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
-                <input type="email" id="email" placeholder="Email">
-                <input type="password" id="pass" placeholder="Пароль">
-                <button class="btn" style="width:100%" id="btn-login">Войти</button>
+    <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
+    <form onsubmit="return false;">
+        <input type="text" style="display:none" autocomplete="username">
+        
+        <input type="email" id="email" placeholder="Email" autocomplete="username">
+        <input type="password" id="pass" placeholder="Пароль" autocomplete="current-password">
+        <button class="btn" style="width:100%" id="btn-login" type="button">Войти</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg" type="button">Регистрация</button>
+    </form>
+    <div id="reset-pass-block" style="display:none; margin-top:15px;">
+        <a href="#" style="color:var(--text-dim); font-size:12px;" onclick="resetPassword(); return false;">Забыли пароль?</a>
+    </div>
+</div>
                 <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg">Регистрация</button>
                 <div id="reset-pass-block" style="display:none; margin-top:15px;">
                     <a href="#" style="color:var(--text-dim); font-size:12px;" onclick="resetPassword(); return false;">Забыли пароль?</a>
