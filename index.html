@@ -20,834 +20,1174 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
         body { 
             background-color: var(--bg); 
-            color: var(--text); 
-            line-height: 1.6;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='150' height='150' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='20' y='40' fill='rgba(255,46,46,0.15)' font-weight='bold' font-size='24' font-family='sans-serif'%3EX%3C/text%3E%3Ctext x='90' y='90' fill='rgba(255,46,46,0.15)' font-weight='bold' font-size='24' font-family='sans-serif'%3EO%3C/text%3E%3Ctext x='40' y='130' fill='rgba(255,46,46,0.15)' font-weight='bold' font-size='16' font-family='sans-serif'%3ESWS%3C/text%3E%3C/svg%3E");
+            color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; 
         }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         
+        .container { max-width: 1100px; margin: 0 auto; width: 100%; padding: 0 15px; flex: 1; position: relative; z-index: 2; }
+
         header { 
-            padding: 20px 0; border-bottom: 1px solid var(--border); 
-            position: sticky; top: 0; background: rgba(11, 11, 13, 0.9);
-            backdrop-filter: blur(10px); z-index: 100;
+            background: rgba(11, 11, 13, 0.95); backdrop-filter: blur(12px);
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; 
         }
-        .nav-flex { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: 800; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; }
         .logo span { color: var(--accent); }
-
-        .btn { 
-            background: var(--accent); color: white; border: none; padding: 10px 20px; 
-            border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; 
-            transition: var(--ts); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
-        }
-        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-        .btn-outline { background: transparent; border: 1px solid var(--border); }
-        .btn-outline:hover { background: var(--border); }
-
-        .modal { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
-            display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
-            backdrop-filter: blur(5px);
-        }
-        .modal-content { 
-            background: var(--card-bg); padding: 30px; border-radius: 20px; 
-            width: 100%; max-width: 500px; position: relative; border: 1px solid var(--border);
-            max-height: 90vh; overflow-y: auto;
-        }
-
-        input, textarea, select { 
-            width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 10px; color: white; margin-bottom: 15px; font-size: 14px; outline: none;
-        }
-        input:focus { border-color: var(--accent); }
-
-        .rel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; margin-top: 30px; }
-        .rel-card { 
-            background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--border);
-            transition: var(--ts); cursor: pointer; position: relative;
-        }
-        .rel-card:hover { transform: translateY(-10px); border-color: var(--accent); }
-        .rel-img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
-        .rel-info { padding: 15px; }
-        .rel-title { font-weight: 700; font-size: 16px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .section-title { font-size: 28px; font-weight: 800; margin: 40px 0 20px; display: flex; align-items: center; gap: 15px; }
-        .section-title::after { content: ''; height: 2px; flex: 1; background: var(--border); }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 13px; padding: 8px 10px; cursor: pointer; transition: var(--ts); }
+        .nav-link:hover { color: white; }
+        .nav-link.active { color: var(--accent); }
 
-        .team-section { margin-bottom: 50px; }
-        .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
-        .team-card { 
-            background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center;
-            border: 1px solid var(--border); transition: var(--ts); cursor: pointer;
+        .search-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; margin-top: 10px; }
+        .search-input { flex: 1; min-width: 200px; }
+        .filter-select { width: auto; min-width: 140px; }
+
+        .section { display: none; padding: 20px 0; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); cursor: pointer; display: flex; flex-direction: column; height: fit-content; }
+        .card:hover { transform: translateY(-3px); border-color: #444; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .card img { width: 100%; height: 250px; object-fit: cover; }
+        .card-info { padding: 12px; font-size: 13px; flex: 1; display: flex; flex-direction: column; }
+        .card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: bold; margin-top: 5px; line-height: 1.3; }
+        .tag { font-size: 9px; background: var(--accent); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; margin-right: 5px; color: white; }
+        .year-tag { font-size: 9px; background: #333; padding: 2px 6px; border-radius: 4px; display: inline-block; color: white; }
+
+        /* PLAYER & VIEW HEADER */
+        .view-header { display: flex; gap: 20px; background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .v-poster { width: 220px; height: 320px; border-radius: 10px; flex-shrink: 0; object-fit: cover; border: 1px solid var(--border); }
+        .view-title { margin-bottom: 10px; color: var(--accent); font-size: 2rem; word-break: break-word; }
+        @media (max-width: 700px) { 
+            .view-header { flex-direction: column; align-items: center; text-align: center; } 
+            .v-poster { width: 180px; height: 260px; }
         }
-        .team-card:hover { border-color: var(--accent); background: var(--input-bg); }
-        .team-ava { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 2px solid var(--border); }
+        
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        .video-box iframe, .video-box video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .no-episodes { position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 10; flex-direction: column; overflow: hidden; }
+        
+        /* Стили для активной серии */
+        .ep-btn.active-ep { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .mention-link { color: var(--accent); font-weight: bold; cursor: pointer; text-decoration: none; }
-        .mention-link:hover { text-decoration: underline; }
+        /* TOASTS */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--card-bg); border-left: 4px solid var(--accent); color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); font-size: 13px; font-weight: 500; animation: slideIn 0.3s ease forwards; max-width: 300px; }
+        .toast.success { border-left-color: #22c55e; }
+        .toast.error { border-left-color: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
-        #toast { 
-            position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; 
-            border-radius: 10px; background: #22c55e; color: white; 
-            display: none; z-index: 2000; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        /* MODALS & FORMS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; position: relative; }
+        
+        input, select, textarea { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 14px; transition: border 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 12px; transition: var(--ts); }
+        .btn:hover { filter: brightness(1.1); }
+        .btn-blue { background: var(--admin); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: white; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
 
-        /* Системные стили */
-        .hidden { display: none !important; }
-        .admin-badge { background: var(--admin); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900; }
+        /* EXTENDED PROFILE */
+        #user-ui { display:none; max-width: 700px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; flex-wrap: wrap; }
+        .profile-header img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
+        .profile-info { flex: 1; text-align: left; }
+        
+        /* COMMENTS, MENTIONS & REACTIONS */
+        .mention-link { color: var(--admin); text-decoration: none; font-weight: bold; padding: 2px 5px; background: rgba(56, 151, 240, 0.1); border-radius: 4px; }
+        .comm-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .comm-ava { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .reaction-bar { display: flex; gap: 8px; margin-top: 10px; }
+        .react-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--text-dim); transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+        .react-btn:hover, .react-btn.active { background: rgba(255,46,46,0.1); color: white; border-color: var(--accent); }
+        .unauth-msg { text-align: center; padding: 20px; background: rgba(255, 46, 46, 0.05); border-radius: 12px; border: 1px solid rgba(255, 46, 46, 0.2); }
+
+        /* ADM TOOLS & TEAM DRAG N DROP */
+        .adm-tools { position: absolute; top: 5px; right: 5px; display: flex; gap: 4px; z-index: 10; }
+        .btn-sm { padding: 4px 8px; font-size: 10px; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; }
+        
+        .team-container { background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .team-container-header { display: flex; justify-content: space-between; cursor: pointer; font-weight: bold; margin-bottom: 15px; color: var(--accent); font-size: 18px; }
+        .drag-handle { cursor: grab; background: rgba(255,255,255,0.1); padding: 5px; text-align: center; font-size: 10px; border-radius: 4px; margin-bottom: 5px; display: none; }
+        .admin-mode .drag-handle { display: block; }
+        .sortable-ghost { opacity: 0.3; border: 2px dashed var(--accent); }
     </style>
 </head>
 <body>
 
-    <div id="toast"></div>
+    <div id="toast-container"></div>
 
     <header>
-        <div class="container nav-flex">
-            <a href="#" onclick="navigate('home')" class="logo">SOUND<span>WAVE</span></a>
-            <nav style="display:flex; gap:15px; align-items:center;">
-                <div id="auth-ui" style="display:none; gap:10px;">
-                    <button class="btn btn-outline" onclick="openModal('m-auth')">Войти</button>
-                </div>
-                <div id="user-ui" style="display:none; gap:15px; align-items:center;">
-                    <button class="btn btn-outline" id="adm-btn-rel" style="display:none;" onclick="openModal('m-rel-add')"><i class="fas fa-plus"></i> Релиз</button>
-                    <button class="btn btn-outline" id="adm-btn-team" style="display:none;" onclick="openModal('m-team-add')"><i class="fas fa-user-plus"></i> Состав</button>
-                    <div style="cursor:pointer; display:flex; align-items:center; gap:10px;" onclick="openModal('m-profile')">
-                        <img id="u-ava" src="" style="width:35px; height:35px; border-radius:50%; object-fit:cover; border:1px solid var(--border);">
-                        <span id="u-nick" style="font-weight:600; font-size:14px;"></span>
-                    </div>
-                </div>
-            </nav>
-        </div>
+        <div class="logo" onclick="navigate('home')">SOUND<span> WAVE</span> STUDIO</div>
+        <nav>
+            <a id="n-home" class="nav-link active" onclick="navigate('home')">Релизы</a>
+            <a id="n-team" class="nav-link" onclick="navigate('team')">Состав</a>
+            <a id="n-profile" class="nav-link" onclick="navigate('profile')">Профиль</a>
+        </nav>
     </header>
 
-    <main class="container" id="page-home">
-        <div class="section-title">Свежие релизы</div>
-        <div class="rel-grid" id="rel-list"></div>
-    </main>
+    <main class="container">
+        <section id="home" class="section active">
+            <div class="search-bar">
+                <input type="search" id="main-search" oninput="filterData()" placeholder="Поиск..." autocomplete="off" name="search_dummy_field" data-lpignore="true">
+                <select id="filter-genre" class="filter-select" onchange="filterData()">
+                    <option value="all">Все жанры</option>
+                    <option value="Аниме">Аниме</option>
+                    <option value="Сериал">Сериалы</option>
+                    <option value="Фильм">Фильмы</option>
+                    <option value="Мультфильм">Мультфильмы</option>
+                    <option value="Трейлер">Трейлеры</option>
+                    <option value="Тизер">Тизеры</option>
+                </select>
+                <select id="filter-sort" class="filter-select" onchange="filterData()">
+                    <option value="new">Новинки</option>
+                    <option value="pop">Популярные</option>
+                    <option value="random">Случайный релиз</option>
+                </select>
+                <button id="adm-btn-rel" class="btn btn-blue" style="display:none;" onclick="openRelModal()">+ Добавить релиз</button>
+            </div>
+            <div class="grid" id="main-grid"></div>
+        </section>
 
-    <main class="container hidden" id="page-team">
-        <div class="section-title">Наша команда</div>
-        <div id="team-list"></div>
-    </main>
+        <section id="team" class="section">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h2>Команда</h2>
+                <div style="display:flex; gap:10px;">
+                    <button id="adm-btn-team" class="btn btn-blue" style="display:none;" onclick="openTeamModal()">+ Участник</button>
+                </div>
+            </div>
+            <div id="team-wrapper"></div>
+        </section>
 
-    <main class="container hidden" id="page-view">
-        <div id="rel-view"></div>
+        <section id="team-page" class="section">
+            <button class="btn btn-outline" onclick="navigate('team')" style="margin-bottom:20px;">← Назад</button>
+            <div id="team-page-view" style="background:var(--card-bg); padding:30px; border-radius:20px; border:1px solid var(--border);"></div>
+            <div id="adm-tp-controls" style="display:none; margin-top:20px; gap:10px;">
+                <button class="btn btn-blue" onclick="openTPModal()">Редактировать страницу</button>
+                <button class="btn btn-outline" style="color:red; border-color:red;" onclick="deleteTP()">Удалить страницу</button>
+            </div>
+        </section>
+
+        <section id="view" class="section">
+            <button class="btn btn-outline" onclick="navigate('home')" style="margin-bottom:20px;">← К релизам</button>
+            <div id="v-info"></div>
+            
+            <div style="display:flex; gap:10px; margin-bottom: 15px; overflow-x:auto;" id="v-ep-list"></div>
+
+            <h3 id="v-current-ep-title" style="margin-bottom: 15px; color: var(--accent); display:none; font-size: 1.2rem;"></h3>
+
+            <div class="video-box" id="v-player-container">
+                <div id="v-tape" class="no-episodes" style="display:none;">
+                    <h2 style="margin:0; color:white;">Серий пока нет 😔</h2>
+                    <p style="opacity:0.8; font-size:14px; margin-top:5px; color:white;">Но скоро они появятся!</p>
+                </div>
+                <iframe id="v-iframe" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
+
+            <div id="v-likes-bar" style="display:flex; gap:15px; margin-bottom: 20px; background: var(--card-bg); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border); width: fit-content;">
+                <button id="btn-like" class="react-btn" onclick="rateProj('like')"><i class="fas fa-thumbs-up"></i> <span id="v-like-cnt">0</span></button>
+                <button id="btn-dislike" class="react-btn" onclick="rateProj('dislike')"><i class="fas fa-thumbs-down"></i> <span id="v-dislike-cnt">0</span></button>
+            </div>
+
+            <div style="background:var(--card-bg); padding:20px; border-radius:15px; border: 1px solid var(--border);">
+                <h4>Комментарии (<span id="comm-count">0</span>)</h4>
+                <div id="comm-auth-msg" class="unauth-msg">
+                    <p style="margin-bottom:10px; font-weight:bold;">Чтобы оставить комментарий, необходимо авторизоваться.</p>
+                    <button class="btn btn-blue" onclick="navigate('profile')">Войти / Регистрация</button>
+                </div>
+                <div id="comm-form" style="display:none; margin-top:15px;">
+                    <textarea id="comm-text" placeholder="Напишите свое мнение..." rows="3"></textarea>
+                    <button class="btn" onclick="sendComment()">Отправить</button>
+                </div>
+                <div id="comm-list" style="margin-top:20px;"></div>
+            </div>
+        </section>
         
-        <div style="margin-top:50px; border-top:1px solid var(--border); padding-top:30px;">
-            <h3>Комментарии</h3>
-            <div id="comm-auth-msg" style="margin-top:15px; color:var(--text-dim);">Войдите, чтобы оставить комментарий.</div>
-            <div id="comm-form" style="display:none; margin-top:20px;">
-                <textarea id="comm-text" placeholder="Ваш комментарий... Можно упомянуть @почта_пользователя" rows="3"></textarea>
-                <button class="btn" onclick="sendComm()">Отправить</button>
-            </div>
-            <div id="comm-list" style="margin-top:30px; display:grid; gap:20px;"></div>
-        </div>
-    </main>
-
-    <main class="container hidden" id="page-team-page">
-        <div id="team-page-view"></div>
-        <div id="adm-tp-controls" style="display:none; margin-top:20px; gap:10px;">
-            <button class="btn btn-outline" onclick="editTeamPage()">Редактировать страницу</button>
-        </div>
-    </main>
-
-    <div class="modal" id="m-auth">
-        <div class="modal-content">
-            <h2 style="margin-bottom:20px;">Вход / Регистрация</h2>
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="pass" placeholder="Пароль">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button class="btn" id="btn-login">Войти</button>
-                <button class="btn btn-outline" id="btn-reg">Создать аккаунт</button>
-            </div>
-        </div>
+        <section id="profile" class="section">
+    <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
+    <form onsubmit="return false;">
+        <input type="text" style="display:none" autocomplete="username">
+        
+        <input type="email" id="email" placeholder="Email" autocomplete="username">
+        <input type="password" id="pass" placeholder="Пароль" autocomplete="current-password">
+        <button class="btn" style="width:100%" id="btn-login" type="button">Войти</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg" type="button">Регистрация</button>
+    </form>
+    <div id="reset-pass-block" style="display:none; margin-top:15px;">
+        <a href="#" style="color:var(--text-dim); font-size:12px;" onclick="resetPassword(); return false;">Забыли пароль?</a>
     </div>
-
-    <div class="modal" id="m-profile">
-        <div class="modal-content">
-            <div style="display:flex; align-items:center; gap:20px; margin-bottom:25px;">
-                <img id="ed-ava-pre" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--accent);">
-                <div>
-                    <h2 id="u-nick-title">Профиль</h2>
-                    <span id="u-role" class="admin-badge"></span>
+</div>
+                <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg">Регистрация</button>
+                <div id="reset-pass-block" style="display:none; margin-top:15px;">
+                    <a href="#" style="color:var(--text-dim); font-size:12px;" onclick="resetPassword(); return false;">Забыли пароль?</a>
                 </div>
             </div>
-            
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px; text-align:center; background:var(--input-bg); padding:15px; border-radius:12px;">
-                <div><div style="font-size:12px; color:var(--text-dim);">Просмотров</div><b id="u-views">0</b></div>
-                <div><div style="font-size:12px; color:var(--text-dim);">Подписчиков</div><b id="u-subs">0</b></div>
-            </div>
 
-            <label style="font-size:12px; color:var(--text-dim);">Никнейм</label>
-            <input type="text" id="ed-nick">
-            <label style="font-size:12px; color:var(--text-dim);">Ссылка на аватар (поддерживается Google Диск)</label>
-            <input type="text" id="ed-ava" oninput="document.getElementById('ed-ava-pre').src = this.value">
-            
-            <div style="margin-bottom:20px;">
-                <div style="font-size:12px; color:var(--text-dim); margin-bottom:10px;">Ваши достижения</div>
-                <div id="u-ach" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
-            </div>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button class="btn" onclick="saveProfile()">Сохранить</button>
-                <button class="btn btn-outline" id="btn-logout">Выйти</button>
-            </div>
-            
-            <div id="adm-ach-panel" style="display:none; margin-top:25px; padding-top:20px; border-top:1px solid var(--border);">
-                <h4>Выдать достижение (Админ)</h4>
-                <input type="email" id="ach-target" placeholder="Email пользователя">
-                <div style="display:grid; grid-template-columns: 1fr 2fr; gap:10px;">
-                    <input type="text" id="ach-img" placeholder="Emoji">
-                    <input type="text" id="ach-name" placeholder="Название">
+            <div id="user-ui">
+                <div class="profile-header">
+                    <img id="u-ava" src="">
+                    <div class="profile-info">
+                        <h2 id="u-nick" style="margin-bottom:5px; font-size:2rem;"></h2>
+                        <div id="u-role" style="color:var(--accent); font-size:12px; font-weight:bold; margin-bottom:10px; letter-spacing:1px;"></div>
+                        <div style="display:flex; gap:25px; font-size:13px;">
+                            <div><b id="u-views" style="font-size:18px;">0</b><br><span style="color:var(--text-dim)">Просмотрено</span></div>
+                            <div style="cursor:pointer;" onclick="showMySubscribers()"><b id="u-subs" style="font-size:18px;">0</b><br><span style="color:var(--text-dim)">Подписчики (показать)</span></div>
+                        </div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; min-width:200px;">
+                        <button class="btn btn-outline" onclick="document.getElementById('m-prof').style.display='flex'">Настройки аккаунта</button>
+                        <button class="btn btn-outline" onclick="openAchInventory()">Инвентарь достижений</button>
+                        <button class="btn btn-outline" id="btn-logout" style="color:var(--accent); border-color:var(--accent);">Выйти</button>
+                    </div>
                 </div>
-                <textarea id="ach-desc" placeholder="Описание ачивки"></textarea>
-                <button class="btn btn-outline" style="width:100%" onclick="giveAch()">Выдать ачивку</button>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="m-rel-add">
-        <div class="modal-content">
-            <h2 id="rel-modal-title">Добавить релиз</h2>
-            <input type="text" id="ad-title" placeholder="Название">
-            <input type="text" id="ad-img" placeholder="Ссылка на постер (Google Диск)">
-            <input type="text" id="ad-year" placeholder="Год">
-            <input type="text" id="ad-genre" placeholder="Жанр">
-            <textarea id="ad-desc" placeholder="Описание"></textarea>
-            <input type="text" id="ad-video" placeholder="ID видео из ВК (например: -217513267_456239126)">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button class="btn" onclick="saveRel()">Сохранить</button>
-                <button class="btn btn-outline" onclick="closeModals()">Отмена</button>
-            </div>
-            <button class="btn btn-outline" id="btn-rel-del" style="width:100%; margin-top:10px; color:var(--accent); display:none;" onclick="deleteRel()">Удалить релиз</button>
-        </div>
-    </div>
 
-    <div class="modal" id="m-team-add">
-        <div class="modal-content">
-            <h2 id="team-modal-title">Добавить участника</h2>
-            <input type="text" id="ad-m-name" placeholder="Имя / Ник">
-            <input type="text" id="ad-m-role" placeholder="Роль (например: Актер озвучки)">
-            <input type="text" id="ad-m-img" placeholder="Ссылка на фото (Google Диск)">
-            <select id="ad-m-cat">
-                <option value="voice">Голоса (Актеры)</option>
-                <option value="tech">Тех. часть (Звук/Перевод)</option>
-                <option value="admin">Администрация</option>
-            </select>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button class="btn" onclick="saveTeam()">Сохранить</button>
-                <button class="btn btn-outline" onclick="closeModals()">Отмена</button>
+                <div style="margin-bottom:30px;">
+                    <h4 style="font-size:16px; margin-bottom:15px;">Публичные достижения</h4>
+                    <div id="u-ach" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+                </div>
+                
+                <div id="adm-ach-panel" style="display:none; padding-top:20px; border-top:1px solid var(--border);">
+                    <p style="font-size:11px; color:var(--text-dim); margin-bottom:10px;">АДМИН-ПАНЕЛЬ</p>
+                    <button class="btn btn-blue" onclick="document.getElementById('m-give-ach').style.display='flex'">Выдать ачивку пользователю</button>
+                </div>
             </div>
-            <button class="btn btn-outline" id="btn-team-del" style="width:100%; margin-top:10px; color:var(--accent); display:none;" onclick="deleteTeam()">Удалить участника</button>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <div class="modal" id="m-ach-view">
-        <div class="modal-content" style="text-align:center;">
-            <div id="ach-v-img" style="font-size:60px; margin-bottom:15px;"></div>
-            <h2 id="ach-v-name"></h2>
-            <p id="ach-v-desc" style="margin:15px 0; color:var(--text-dim);"></p>
-            <div id="ach-v-meta" style="font-size:12px; opacity:0.7; margin-bottom:20px;"></div>
-            <div style="display:grid; gap:10px;">
-                <button class="btn btn-outline" onclick="closeModals()">Закрыть</button>
-                <button class="btn btn-outline" id="btn-ach-del" style="color:var(--accent);" onclick="deleteAch()">Удалить ачивку</button>
-            </div>
+    <footer>
+        <div class="soc-links" style="display:flex; justify-content:center; gap:20px; margin-bottom:15px;">
+            <a href="https://vk.ru/soundwavestudiosws" target="_blank" style="color:white; font-size:20px; opacity:0.6;"><i class="fab fa-vk"></i></a>
+            <a href="https://t.me/soundwavestudiosws" target="_blank" style="color:white; font-size:20px; opacity:0.6;"><i class="fab fa-telegram-plane"></i></a>
+            <a href="https://www.youtube.com/@SoundWaveDUB" target="_blank" style="color:white; font-size:20px; opacity:0.6;"><i class="fab fa-youtube"></i></a>
         </div>
-    </div>
+        <p class="copy-text" style="font-size:12px; color:var(--text-dim); cursor:pointer; text-align:center;" onclick="openPrivacy()">© 2024-2026 Sound Wave Studio. Все права защищены.</p>
+    </footer>
 
-    <div class="modal" id="m-user-profile">
-        <div class="modal-content">
-            <div style="text-align:center; margin-bottom:20px;">
-                <img id="mu-ava" src="" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--accent); margin-bottom:10px;">
-                <h2 id="mu-nick"></h2>
-                <div id="mu-role" class="admin-badge"></div>
-            </div>
-            <div id="mu-ach-list"></div>
-            <button id="mu-sub-btn" class="btn" style="width:100%; margin-top:20px;"></button>
-            <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModals()">Закрыть</button>
+    <div id="m-rel" class="modal"><div class="modal-content">
+        <h3>Управление релизом</h3>
+        <input type="hidden" id="ed-rel-id">
+        <input type="text" id="ad-title" placeholder="Название">
+        <select id="ad-genre">
+            <option value="Аниме">Аниме</option><option value="Сериал">Сериал</option>
+            <option value="Фильм">Фильм</option><option value="Мультфильм">Мультфильм</option>
+            <option value="Трейлер">Трейлер</option><option value="Тизер">Тизер</option>
+        </select>
+        <input type="text" id="ad-year" placeholder="Год выпуска">
+        <input type="text" id="ad-voiceover" placeholder="Озвучка (Например: Sound Wave Studio)">
+        <input type="text" id="ad-authors" placeholder="Студия / Авторы">
+        <input type="text" id="ad-img" placeholder="URL постера">
+        <textarea id="ad-desc" placeholder="Описание сюжета..." rows="4"></textarea>
+        <button class="btn btn-blue" style="width:100%" onclick="saveRel()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-ep" class="modal"><div class="modal-content">
+        <h3>Добавить медиа</h3>
+        <select id="ad-ep-type">
+            <option value="series">Серия</option><option value="trailer">Трейлер / Тизер</option>
+        </select>
+        <input type="text" id="ad-ep-name" placeholder="Номер/Тип (Серия 1 / Официальный трейлер)">
+        <input type="text" id="ad-ep-title" placeholder="Название серии (например: Возвращение героя) - необязательно">
+        <input type="text" id="ad-ep-url" placeholder="URL (Google Drive или YouTube)">
+        <button class="btn btn-blue" style="width:100%" onclick="saveEp()">Добавить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-team" class="modal"><div class="modal-content">
+        <h3>Добавить участника</h3>
+        <input type="hidden" id="ed-team-id">
+        <input type="text" id="ad-m-name" placeholder="Никнейм">
+        <input type="text" id="ad-m-role" placeholder="Роль">
+        <input type="text" id="ad-m-img" placeholder="URL фото">
+        <input type="text" id="ad-m-cat" placeholder="Категория (оставьте пустым для 'Без категории')">
+        <button class="btn btn-blue" style="width:100%" onclick="saveTeam()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-prof" class="modal"><div class="modal-content">
+        <h3>Настройки аккаунта</h3>
+        <input type="text" id="ed-nick" placeholder="Новый никнейм">
+        <input type="text" id="ed-ava" placeholder="URL нового аватара">
+        <button class="btn" style="width:100%; margin-bottom:15px;" onclick="saveProfile()">Сохранить профиль</button>
+        <hr style="border-color:var(--border); margin-bottom:15px;">
+        <input type="email" id="ed-new-email" placeholder="Новый Email">
+        <button class="btn btn-outline" style="width:100%; margin-bottom:10px;" onclick="changeUserEmail()">Сменить почту</button>
+        <input type="password" id="ed-new-pass" placeholder="Новый пароль">
+        <button class="btn btn-outline" style="width:100%;" onclick="changeUserPass()">Сменить пароль</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:15px; border-color:red; color:red;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-subs" class="modal"><div class="modal-content">
+        <h3>Ваши подписчики</h3>
+        <div id="subs-list" style="margin-top:15px; max-height:300px; overflow-y:auto;"></div>
+        <button class="btn btn-outline" style="width:100%; margin-top:15px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-tp-edit" class="modal"><div class="modal-content">
+        <textarea id="tp-bio" rows="8" placeholder="Био участника..."></textarea>
+        <input type="text" id="tp-social" placeholder="Соцсети">
+        <button class="btn btn-blue" style="width:100%" onclick="saveTP()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-give-ach" class="modal"><div class="modal-content">
+        <h3>Выдать ачивку</h3>
+        <input type="text" id="ga-uid" placeholder="Email пользователя">
+        <input type="text" id="ga-name" placeholder="Название">
+        <input type="text" id="ga-desc" placeholder="Описание">
+        <input type="text" id="ga-img" placeholder="Эмодзи (Например: 🏆)">
+        <button class="btn btn-blue" style="width:100%;" onclick="giveAch()">Выдать</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-ach-inv" class="modal"><div class="modal-content">
+        <h3>Инвентарь достижений</h3>
+        <p style="font-size:11px; color:var(--text-dim);">Нажмите на ачивку, чтобы скрыть или показать её.</p>
+        <div id="ach-inv-list" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:15px;"></div>
+        <button class="btn btn-outline" style="width:100%; margin-top:15px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-ach-view" class="modal"><div class="modal-content" style="text-align:center;">
+        <div id="ach-v-img" style="font-size:50px;"></div>
+        <h2 id="ach-v-name" style="margin: 10px 0;"></h2>
+        <p id="ach-v-desc" style="font-size:14px; margin-bottom: 20px; line-height:1.5;"></p>
+        <div id="ach-v-meta" style="font-size:12px; color:var(--text-dim); background:var(--input-bg); padding:10px; border-radius:8px; margin-bottom:15px; border:1px solid var(--border);"></div>
+        <button id="btn-ach-del" class="btn" style="background:red; width:100%; display:none; margin-bottom: 5px;" onclick="deleteAchievement()">Удалить навсегда</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-privacy" class="modal"><div class="modal-content" style="max-width:700px;">
+        <h3>Политика конфиденциальности</h3>
+        <div id="priv-text" style="font-size:13px; line-height:1.6; margin:15px 0; max-height:400px; overflow-y:auto; white-space:pre-wrap;"></div>
+        <textarea id="priv-edit" style="display:none; height:300px; width:100%;"></textarea>
+        <div id="priv-adm-btns" style="display:none; margin-top:10px;">
+            <button id="priv-btn-edit" class="btn btn-blue" style="width:100%" onclick="editPriv()">Редактировать</button>
+            <button id="priv-btn-save" class="btn btn-blue" style="display:none; width:100%; background:green;" onclick="savePriv()">Сохранить политику</button>
         </div>
-    </div>
+        <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-user-profile" class="modal"><div class="modal-content" style="text-align:center;">
+        <img id="mu-ava" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--accent);">
+        <h2 id="mu-nick" style="margin-top:10px;"></h2>
+        
+        <div style="display:flex; justify-content:center; gap:30px; font-size:13px; margin: 15px 0;">
+            <div><b id="mu-views-count" style="font-size:18px;">0</b><br><span style="color:var(--text-dim)">Просмотрено</span></div>
+            <div><b id="mu-subs-count" style="font-size:18px;">0</b><br><span style="color:var(--text-dim)">Подписчики</span></div>
+        </div>
+
+        <div id="mu-ach-list" style="display:flex; justify-content:center; gap:5px; margin:15px 0; flex-wrap:wrap;"></div>
+        <button id="btn-mu-sub" class="btn" style="width:100%; margin-bottom:5px;">Подписаться</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="closeModals()">Закрыть</button>
+    </div></div>
 
     <script type="module">
-        // ИСПРАВЛЕННЫЕ ИМПОРТЫ (Добавлены increment, arrayUnion, arrayRemove)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { 
-            getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, 
-            deleteDoc, query, where, orderBy, setDoc, increment, arrayUnion, arrayRemove 
-        } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { 
-            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut 
-        } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, updatePassword, updateEmail } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
-            // ТУТ ДОЛЖНЫ БЫТЬ ТВОИ ДАННЫЕ FIREBASE
-            apiKey: "AIzaSy...",
-            authDomain: "sws-db.firebaseapp.com",
-            projectId: "sws-db",
-            storageBucket: "sws-db.appspot.com",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
+            authDomain: "my-dub-site.firebaseapp.com",
+            projectId: "my-dub-site",
+            storageBucket: "my-dub-site.firebasestorage.app",
+            messagingSenderId: "302896869866",
+            appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ (Добавлена allTeam)
-        let isAdmin = false, userData = null, allRel = [], allTeam = [], curProj = null, curTM = null, viewAchIdx = -1;
+        let isAdmin = false, userData = null, allRel = [], curProj = null, curTM = null, viewAchIdx = -1;
+        let loginAttempts = 0, viewTimer = null;
 
-        // ФУНКЦИЯ ДЛЯ GOOGLE ДИСКА
-        const fixDriveUrl = (url) => {
-            if (!url || !url.includes('drive.google.com')) return url;
-            let id = '';
-            if (url.includes('/d/')) {
-                id = url.split('/d/')[1].split('/')[0];
-            } else if (url.includes('id=')) {
-                id = url.split('id=')[1].split('&')[0];
-            }
-            return id ? `https://drive.google.com/uc?export=view&id=${id}` : url;
+        const esc = (s) => s ? s.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+
+        window.showToast = (msg, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`; t.innerHTML = msg;
+            container.appendChild(t);
+            setTimeout(() => { t.style.animation = 'fadeOut 0.3s forwards'; setTimeout(()=>t.remove(),300); }, 4000);
         };
 
-        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-        window.esc = (t) => {
-            const e = document.createElement('div');
-            e.innerText = t;
-            return e.innerHTML;
-        };
+        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
 
-        window.showToast = (m, type="success") => {
-            const t = document.getElementById('toast');
-            t.innerText = m;
-            t.style.background = type === "success" ? "#22c55e" : "#ef4444";
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
-        };
-
-        window.openModal = (id) => {
-            document.getElementById(id).style.display = 'flex';
-            if(id === 'm-profile') renderAchProfile();
-        };
-
-        window.closeModals = () => {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-            curProj = null; curTM = null;
-        };
-        // РОУТИНГ (Переключение страниц)
-        window.navigate = (page, updateHash = true) => {
-            document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
-            const target = document.getElementById('page-' + page);
-            if(target) target.classList.remove('hidden');
+        window.navigate = (id, pushHistory = true) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id)?.classList.add('active');
+            document.getElementById('n-'+id)?.classList.add('active');
             
-            if(updateHash) window.location.hash = page;
-            window.scrollTo(0,0);
-
-            if(page === 'home') loadHome();
-            if(page === 'team') loadTeam();
+            if(pushHistory) history.pushState({page: id}, "", "#" + id);
+            
+            if(id !== 'view') {
+                const iframe = document.getElementById('v-iframe');
+                if(iframe) iframe.src = '';
+                clearTimeout(viewTimer);
+            }
+            if(id === 'home') loadHome();
+            if(id === 'team') loadTeam();
         };
 
-        // ЗАГРУЗКА РЕЛИЗОВ
+        window.addEventListener('popstate', (e) => {
+            if(e.state && e.state.page) navigate(e.state.page, false);
+            else navigate('home', false);
+        });
+        // --- БАЗОВЫЕ ФУНКЦИИ ---
+        window.openRelModal = (id = '') => {
+            document.getElementById('ed-rel-id').value = id;
+            if(id) {
+                const r = allRel.find(x => x.id === id);
+                ['title','genre','year','voiceover','authors','img','desc'].forEach(f => document.getElementById(`ad-${f}`).value = r[f] || '');
+            } else {
+                ['title','genre','year','voiceover','authors','img','desc'].forEach(f => document.getElementById(`ad-${f}`).value = '');
+            }
+            document.getElementById('m-rel').style.display = 'flex';
+        };
+
+        // ДОБАВЛЕНО: Функция удаления релиза (Запрос 1)
+        window.deleteRel = async (id) => {
+            if(!confirm("Вы точно хотите удалить этот релиз навсегда?")) return;
+            try {
+                await deleteDoc(doc(db, "releases", id));
+                showToast("Релиз успешно удален!");
+                loadHome();
+            } catch(e) { showToast("Ошибка удаления: " + e.message, 'error'); }
+        };
+
+        window.saveRel = async () => {
+            const id = document.getElementById('ed-rel-id').value;
+            const data = {
+                title: document.getElementById('ad-title').value,
+                genre: document.getElementById('ad-genre').value,
+                year: document.getElementById('ad-year').value,
+                voiceover: document.getElementById('ad-voiceover').value,
+                authors: document.getElementById('ad-authors').value,
+                img: document.getElementById('ad-img').value,
+                desc: document.getElementById('ad-desc').value,
+                timestamp: id ? undefined : Date.now(),
+                episodes: id ? allRel.find(x=>x.id===id).episodes : [],
+                likes: id ? (allRel.find(x=>x.id===id).likes || []) : [], // ДОБАВЛЕНО: Массивы для лайков/дизлайков
+                dislikes: id ? (allRel.find(x=>x.id===id).dislikes || []) : []
+            };
+            if(!id) await addDoc(collection(db, "releases"), data);
+            else { delete data.timestamp; await updateDoc(doc(db, "releases", id), data); }
+            closeModals(); loadHome(); showToast("Успешно сохранено!");
+        };
+
         window.loadHome = async () => {
-            const snap = await getDocs(query(collection(db, "releases"), orderBy("year", "desc")));
+            const snap = await getDocs(query(collection(db, "releases"), orderBy("timestamp", "desc")));
             allRel = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            const list = document.getElementById('rel-list');
-            list.innerHTML = allRel.map(r => `
-                <div class="rel-card" onclick="viewRel('${r.id}')">
-                    <img src="${r.img}" class="rel-img">
-                    <div class="rel-info">
-                        <div class="rel-title">${esc(r.title)}</div>
-                        <div style="font-size:12px; color:var(--text-dim);">${r.year} • ${esc(r.genre)}</div>
+            filterData();
+        };
+
+        window.filterData = () => {
+            let res = allRel;
+            const q = document.getElementById('main-search').value.toLowerCase();
+            const g = document.getElementById('filter-genre').value;
+            const s = document.getElementById('filter-sort').value;
+
+            if(q) res = res.filter(r => r.title.toLowerCase().includes(q));
+            if(g !== 'all') res = res.filter(r => r.genre === g);
+
+            if(s === 'pop') res.sort((a,b) => (b.views||0) - (a.views||0));
+            else if(s === 'random') res = res.sort(() => 0.5 - Math.random());
+            else res.sort((a,b) => b.timestamp - a.timestamp);
+
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = res.map(r => `
+                <div class="card" onclick="openView('${r.id}')">
+                    ${isAdmin ? `
+                        <div class="adm-tools">
+                            <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openRelModal('${r.id}')">Ред</button>
+                            <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); deleteRel('${r.id}')">Удал</button>
+                        </div>
+                    ` : ''}
+                    <img src="${r.img}" loading="lazy">
+                    <div class="card-info">
+                        <div>
+                            <span class="tag">${r.genre}</span>
+                            <span class="year-tag">${r.year}</span>
+                        </div>
+                        <div class="card-title">${r.title}</div>
+                        <div style="font-size:10px; color:var(--text-dim); margin-top:5px;"><i class="fas fa-eye"></i> ${r.views||0}</div>
                     </div>
                 </div>
             `).join('');
         };
 
-        // ЗАГРУЗКА КОМАНДЫ
-        window.loadTeam = async () => {
-            const snap = await getDocs(query(collection(db, "team"), orderBy("order")));
-            allTeam = snap.docs.map(d => ({id: d.id, ...d.data()})); // Сохраняем в глобальную переменную
-            
-            const cats = { admin: "Администрация", voice: "Голоса", tech: "Тех. часть" };
-            const list = document.getElementById('team-list');
-            list.innerHTML = '';
-
-            for (let [key, title] of Object.entries(cats)) {
-                const members = allTeam.filter(m => m.cat === key);
-                if(members.length) {
-                    list.innerHTML += `
-                        <div class="team-section">
-                            <h3 style="margin-bottom:20px; color:var(--accent);">${title}</h3>
-                            <div class="team-grid">
-                                ${members.map(m => `
-                                    <div class="team-card" onclick="openTeamPage('${m.id}')">
-                                        <img src="${m.img}" class="team-ava">
-                                        <div style="font-weight:700;">${esc(m.name)}</div>
-                                        <div style="font-size:12px; color:var(--text-dim);">${esc(m.role)}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        };
-
-        // ПРОСМОТР СТРАНИЦЫ УЧАСТНИКА (С исправленной системой ID)
-        window.openTeamPage = async (id) => {
-            curTM = allTeam.find(x => x.id === id);
-            if(!curTM) return;
-            
-            navigate('team-page');
-            const box = document.getElementById('team-page-view');
-            
-            // ЛОГИКА УПОМИНАНИЙ (ID)
-            let bio = esc(curTM.bio || "Биография еще не заполнена.");
-            const emails = bio.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
-            
-            // Обрабатываем найденные почты
-            for(let email of emails) {
-                const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
-                if(!uSnap.empty) {
-                    const uData = uSnap.docs[0].data();
-                    const uId = uSnap.docs[0].id;
-                    const link = `<span class="mention-link" onclick="event.stopPropagation(); openUserProfile('${uId}')">@${esc(uData.nickname)}</span>`;
-                    bio = bio.split(email).join(link);
-                }
-            }
-
-            box.innerHTML = `
-                <div style="display:flex; gap:30px; align-items:center; flex-wrap:wrap; margin-bottom:30px;">
-                    <img src="${curTM.img}" style="width:150px; height:150px; border-radius:50%; object-fit:cover; border:3px solid var(--accent);">
-                    <div>
-                        <h1 style="font-size:2.5rem; margin-bottom:5px;">${esc(curTM.name)}</h1>
-                        <div style="color:var(--accent); font-weight:bold; letter-spacing:1px;">${esc(curTM.role)}</div>
-                    </div>
-                </div>
-                <div style="background:var(--card-bg); padding:25px; border-radius:15px; border:1px solid var(--border); margin-bottom:20px;">
-                    <div style="line-height:1.8; font-size:16px; white-space:pre-wrap;">${bio}</div>
-                </div>
-                ${curTM.social ? `<a href="${curTM.social}" target="_blank" class="btn btn-outline"><i class="fas fa-link"></i> Соцсети / Портфолио</a>` : ''}
-            `;
-            
-            if(isAdmin) document.getElementById('adm-tp-controls').style.display = 'flex';
-            else document.getElementById('adm-tp-controls').style.display = 'none';
-        };
-
-        // ОТКРЫТИЕ ЧУЖОГО ПРОФИЛЯ (Статистика + Подписки)
-        window.openUserProfile = async (uid) => {
-            const snap = await getDoc(doc(db, "users", uid));
-            if(!snap.exists()) return;
-            const u = snap.data();
-            
-            document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-            document.getElementById('mu-nick').innerText = u.nickname;
-            document.getElementById('mu-role').innerText = u.role === 'admin' ? 'АДМИН' : 'ПОЛЬЗОВАТЕЛЬ';
-            
-            const statsHtml = `
-                <div style="display:flex; justify-content:center; gap:20px; margin: 15px 0; font-size:14px; color:var(--text-dim);">
-                    <span>Просмотров: <b style="color:white;">${u.views || 0}</b></span>
-                    <span>Подписчиков: <b style="color:white;">${u.subscribers || 0}</b></span>
-                </div>
-            `;
-            
-            const grid = document.getElementById('mu-ach-list');
-            grid.innerHTML = statsHtml + '<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;" id="mu-grid-inner"></div>';
-            
-            (u.achievements || []).forEach(a => {
-                if(!a.hidden) {
-                    const ach = document.createElement('div');
-                    ach.style = "font-size:30px; background:var(--input-bg); padding:5px; border-radius:8px;";
-                    ach.innerText = a.img;
-                    ach.title = a.name;
-                    document.getElementById('mu-grid-inner').appendChild(ach);
-                }
-            });
-
-            const subBtn = document.getElementById('mu-sub-btn');
-            if(auth.currentUser && auth.currentUser.uid !== uid) {
-                subBtn.style.display = 'block';
-                const isSubbed = u.subscribersList && u.subscribersList.includes(auth.currentUser.uid);
-                subBtn.innerText = isSubbed ? "Отписаться" : "Подписаться";
-                subBtn.className = isSubbed ? "btn btn-outline" : "btn";
-                subBtn.onclick = () => toggleSub(uid, isSubbed);
-            } else {
-                subBtn.style.display = 'none';
-            }
-            
-            openModal('m-user-profile');
-        };
-        // ПРОСМОТР РЕЛИЗА
-        window.viewRel = async (id) => {
-            const rel = allRel.find(x => x.id === id);
-            if(!rel) return;
-            curProj = rel;
+        // --- ЛОГИКА ПРОСМОТРА РЕЛИЗА И СЕРИЙ ---
+        window.openView = async (id) => {
+            curProj = allRel.find(x => x.id === id);
             navigate('view');
             
-            const box = document.getElementById('rel-view');
-            box.innerHTML = `
-                <div style="display:flex; gap:30px; flex-wrap:wrap; margin-top:20px;">
-                    <img src="${rel.img}" style="width:300px; border-radius:15px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-                    <div style="flex:1; min-width:300px;">
-                        <h1 style="font-size:32px; margin-bottom:10px;">${esc(rel.title)}</h1>
-                        <div style="margin-bottom:20px; color:var(--text-dim);">${rel.year} • ${esc(rel.genre)}</div>
-                        <p style="line-height:1.8; margin-bottom:30px; background:var(--card-bg); padding:20px; border-radius:15px; border:1px solid var(--border);">${esc(rel.desc)}</p>
-                        ${isAdmin ? `<button class="btn btn-outline" onclick="editRel()"><i class="fas fa-edit"></i> Редактировать</button>` : ''}
-                    </div>
-                </div>
-                <div style="margin-top:40px;">
-                    <div style="padding-top:56.25%; position:relative; background:var(--input-bg); border-radius:15px; overflow:hidden; border:1px solid var(--border);">
-                        <iframe src="https://vk.com/video_ext.php?oid=${rel.video.split('_')[0]}&id=${rel.video.split('_')[1]}&hash=777" 
-                                style="position:absolute; top:0; left:0; width:100%; height:100%;" frameborder="0" allowfullscreen></iframe>
+            // Обновляем просмотры
+            if(userData) {
+                updateDoc(doc(db, "releases", id), { views: increment(1) });
+                updateDoc(doc(db, "users", auth.currentUser.uid), { views: increment(1) });
+            }
+
+            document.getElementById('v-info').innerHTML = `
+                <div class="view-header">
+                    <img src="${curProj.img}" class="v-poster">
+                    <div>
+                        <h1 class="view-title">${curProj.title}</h1>
+                        <p style="color:var(--text-dim); margin-bottom:15px; font-size:14px;">${curProj.year} • ${curProj.genre}</p>
+                        <p style="font-size:13px; line-height:1.6; margin-bottom:15px; color:#ddd;">${curProj.desc}</p>
+                        <div style="font-size:12px; color:var(--text-dim);">
+                            <b>Студия/Авторы:</b> ${curProj.authors} <br>
+                            <b style="color:var(--accent);">Озвучка:</b> ${curProj.voiceover}
+                        </div>
+                        ${isAdmin ? `<button class="btn btn-blue" style="margin-top:15px;" onclick="document.getElementById('m-ep').style.display='flex'">+ Добавить медиа</button>` : ''}
                     </div>
                 </div>
             `;
-            loadComments(id);
-            // Увеличиваем просмотры релизов (опционально для статистики админа)
-            if(auth.currentUser) updateDoc(doc(db, "releases", id), { views: increment(1) });
+            
+            updateLikesUI(); // ДОБАВЛЕНО: Обновление интерфейса лайков (Запрос 3)
+            renderEps();
+            loadComments();
         };
 
-        // КОММЕНТАРИИ (С системой ID)
-        window.loadComments = async (rid) => {
-            const snap = await getDocs(query(collection(db, "releases", rid, "comments"), orderBy("date", "desc")));
-            const list = document.getElementById('comm-list');
-            list.innerHTML = '';
+        // ДОБАВЛЕНО: Функция для лайков и дизлайков (Запрос 3)
+        window.rateProj = async (type) => {
+            if(!userData) return showToast("Авторизуйтесь для оценки", "error");
             
-            for(let d of snap.docs) {
-                const c = d.data();
-                let txt = esc(c.text);
-                
-                // Обработка упоминаний @email
-                const mentions = txt.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
-                for(let m of mentions) {
-                    const email = m.replace('@', '');
-                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
-                    if(!uSnap.empty) {
-                        const uData = uSnap.docs[0].data();
-                        const uId = uSnap.docs[0].id;
-                        txt = txt.split(m).join(`<span class="mention-link" onclick="openUserProfile('${uId}')">@${esc(uData.nickname)}</span>`);
-                    }
-                }
+            const uid = auth.currentUser.uid;
+            let likes = curProj.likes || [];
+            let dislikes = curProj.dislikes || [];
+            
+            // Логика переключения
+            if(type === 'like') {
+                if(likes.includes(uid)) likes = likes.filter(id => id !== uid); // Убрать лайк
+                else { likes.push(uid); dislikes = dislikes.filter(id => id !== uid); } // Поставить лайк, убрать диз
+            } else {
+                if(dislikes.includes(uid)) dislikes = dislikes.filter(id => id !== uid); // Убрать дизлайк
+                else { dislikes.push(uid); likes = likes.filter(id => id !== uid); } // Поставить дизлайк, убрать лайк
+            }
 
-                list.innerHTML += `
-                    <div style="background:var(--card-bg); padding:15px; border-radius:12px; border:1px solid var(--border);">
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                            <img src="${c.userAva}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
-                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.userId}')">${esc(c.userNick)}</b>
-                            <span style="font-size:10px; color:var(--text-dim);">${new Date(c.date).toLocaleString()}</span>
-                        </div>
-                        <div style="font-size:14px; line-height:1.5;">${txt}</div>
-                    </div>
-                `;
+            curProj.likes = likes; curProj.dislikes = dislikes;
+            await updateDoc(doc(db, "releases", curProj.id), { likes, dislikes });
+            updateLikesUI();
+        };
+
+        function updateLikesUI() {
+            const uid = userData ? auth.currentUser.uid : null;
+            const likes = curProj.likes || [];
+            const dislikes = curProj.dislikes || [];
+            
+            document.getElementById('v-like-cnt').innerText = likes.length;
+            document.getElementById('v-dislike-cnt').innerText = dislikes.length;
+            
+            document.getElementById('btn-like').classList.toggle('active', uid && likes.includes(uid));
+            document.getElementById('btn-dislike').classList.toggle('active', uid && dislikes.includes(uid));
+        }
+
+        window.renderEps = () => {
+            const list = document.getElementById('v-ep-list');
+            const eps = curProj.episodes || [];
+            document.getElementById('v-current-ep-title').style.display = 'none';
+
+            if(eps.length === 0) {
+                list.innerHTML = '';
+                document.getElementById('v-iframe').style.display = 'none';
+                document.getElementById('v-tape').style.display = 'flex';
+                return;
+            }
+            
+            document.getElementById('v-iframe').style.display = 'block';
+            document.getElementById('v-tape').style.display = 'none';
+
+            list.innerHTML = eps.map((ep, i) => `
+                <div style="display:flex; flex-direction:column; align-items:center; gap:5px; position:relative;">
+                    ${isAdmin ? `<button class="btn-sm" style="background:red; position:absolute; top:-10px; right:-10px; z-index:10;" onclick="delEp(${i})">X</button>` : ''}
+                    <button class="btn btn-outline ep-btn" onclick="playEp('${ep.url}', this, '${esc(ep.title || '')}')">${ep.name}</button>
+                </div>
+            `).join('');
+            
+            // Автозапуск первой серии
+            const firstBtn = list.querySelector('.ep-btn');
+            if(firstBtn && eps.length > 0) playEp(eps[0].url, firstBtn, eps[0].title || '');
+        };
+
+        window.saveEp = async () => {
+            const ep = {
+                type: document.getElementById('ad-ep-type').value,
+                name: document.getElementById('ad-ep-name').value,
+                title: document.getElementById('ad-ep-title').value, // ДОБАВЛЕНО: Название серии (Запрос 4)
+                url: document.getElementById('ad-ep-url').value
+            };
+            const eps = curProj.episodes || [];
+            eps.push(ep);
+            await updateDoc(doc(db, "releases", curProj.id), { episodes: eps });
+            curProj.episodes = eps;
+            closeModals(); renderEps(); showToast("Медиа добавлено!");
+            document.getElementById('ad-ep-name').value = '';
+            document.getElementById('ad-ep-title').value = '';
+            document.getElementById('ad-ep-url').value = '';
+        };
+
+        window.delEp = async (idx) => {
+            if(!confirm("Удалить медиа?")) return;
+            curProj.episodes.splice(idx, 1);
+            await updateDoc(doc(db, "releases", curProj.id), { episodes: curProj.episodes });
+            renderEps(); showToast("Удалено");
+        };
+
+        // ДОБАВЛЕНО: Функция воспроизведения с подсветкой и выводом названия (Запрос 4)
+        window.playEp = (url, btnElement, epTitle) => {
+            let src = url;
+            if(url.includes("drive.google.com")) src = url.replace(/\/view.*$/, "/preview");
+            else if(url.includes("youtube.com/watch")) src = url.replace("watch?v=", "embed/");
+            else if(url.includes("youtu.be/")) src = url.replace("youtu.be/", "youtube.com/embed/");
+            
+            document.getElementById('v-iframe').src = src;
+
+            // Убираем активный класс у всех кнопок и добавляем текущей
+            document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active-ep'));
+            if(btnElement) btnElement.classList.add('active-ep');
+
+            // Показываем название серии над плеером, если оно есть
+            const titleEl = document.getElementById('v-current-ep-title');
+            if(epTitle && epTitle.trim() !== '') {
+                titleEl.innerText = epTitle;
+                titleEl.style.display = 'block';
+            } else {
+                titleEl.style.display = 'none';
             }
         };
 
-        window.sendComm = async () => {
+        // --- КОММЕНТАРИИ ---
+        window.loadComments = async () => {
+            const snap = await getDocs(query(collection(db, `releases/${curProj.id}/comments`), orderBy("time", "desc")));
+            document.getElementById('comm-count').innerText = snap.size;
+            document.getElementById('comm-list').innerHTML = snap.docs.map(d => {
+                const c = d.data();
+                const text = c.text.replace(/@([\wа-яА-ЯёЁ]+)/g, '<a href="#" class="mention-link" onclick="openUserProfileByName(\'$1\'); return false;">@$1</a>');
+                
+                return `
+                <div class="comm-item">
+                    <img src="${c.ava || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
+                    <div style="flex:1;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${c.nick}</b>
+                            <span style="font-size:10px; color:var(--text-dim);">${new Date(c.time).toLocaleString()}</span>
+                        </div>
+                        <p style="font-size:13px; margin-top:5px; word-break:break-word;">${text}</p>
+                        ${(isAdmin || (userData && c.uid === auth.currentUser.uid)) ? `<button class="btn-sm" style="background:transparent; color:red; margin-top:5px; padding:0;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
+                    </div>
+                </div>
+            `}).join('');
+        };
+
+        window.sendComment = async () => {
             const txt = document.getElementById('comm-text').value.trim();
-            if(!txt || !curProj) return;
-            await addDoc(collection(db, "releases", curProj.id, "comments"), {
-                userId: auth.currentUser.uid,
-                userNick: userData.nickname,
-                userAva: userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg',
+            if(!txt) return;
+            await addDoc(collection(db, `releases/${curProj.id}/comments`), {
+                uid: auth.currentUser.uid,
+                nick: userData.nickname,
+                ava: userData.avatar || '',
                 text: txt,
-                date: Date.now()
+                time: Date.now()
             });
             document.getElementById('comm-text').value = '';
-            loadComments(curProj.id);
+            loadComments(); showToast("Комментарий отправлен");
         };
 
-        // СИСТЕМА ПОДПИСОК
-        window.toggleSub = async (targetUid, isSubbed) => {
-            if(!auth.currentUser) return showToast("Войдите в аккаунт", "error");
-            const targetRef = doc(db, "users", targetUid);
-            const myId = auth.currentUser.uid;
-
-            try {
-                if(isSubbed) {
-                    await updateDoc(targetRef, {
-                        subscribers: increment(-1),
-                        subscribersList: arrayRemove(myId)
-                    });
-                    showToast("Вы отписались");
-                } else {
-                    await updateDoc(targetRef, {
-                        subscribers: increment(1),
-                        subscribersList: arrayUnion(myId)
-                    });
-                    showToast("Подписка оформлена!");
-                }
-                openUserProfile(targetUid); // Обновляем модалку
-            } catch(e) {
-                showToast("Ошибка при подписке", "error");
-            }
+        window.delComm = async (id) => {
+            if(!confirm("Удалить комментарий?")) return;
+            await deleteDoc(doc(db, `releases/${curProj.id}/comments`, id));
+            loadComments(); showToast("Удалено");
         };
 
-        // СОХРАНЕНИЕ ПРОФИЛЯ (С исправленным Google Drive)
-        window.saveProfile = async () => {
-            const nick = document.getElementById('ed-nick').value.trim();
-            const ava = fixDriveUrl(document.getElementById('ed-ava').value.trim()); // Использование функции
-            
-            if(!nick) return showToast("Ник не может быть пустым", "error");
-
-            const q = query(collection(db, "users"), where("nickname", "==", nick));
-            const snap = await getDocs(q);
-            if(!snap.empty && nick !== userData.nickname) return showToast("Никнейм занят", "error");
-
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: nick, avatar: ava });
-            userData.nickname = nick; userData.avatar = ava;
-            
-            document.getElementById('u-nick').innerText = nick;
-            document.getElementById('u-ava').src = ava || 'https://api.dicebear.com/7.x/identicon/svg';
-            
-            showToast("Профиль сохранен!");
-            closeModals();
-        };
-        // АДМИН: УПРАВЛЕНИЕ РЕЛИЗАМИ (С функцией Google Диска)
-        window.saveRel = async () => {
-            const id = document.getElementById('ed-rel-id').value;
-            const title = document.getElementById('ad-title').value.trim();
-            const genre = document.getElementById('ad-genre').value.trim();
-            const year = document.getElementById('ad-year').value.trim();
-            const desc = document.getElementById('ad-desc').value.trim();
-            const video = document.getElementById('ad-video').value.trim();
-            
-            // Автоматически чиним ссылку с Google Диска
-            const img = fixDriveUrl(document.getElementById('ad-img').value.trim());
-
-            if(!title || !img) return showToast("Название и постер обязательны", "error");
-
-            const data = { title, genre, year, desc, video, img };
-
-            try {
-                if(id) {
-                    await updateDoc(doc(db, "releases", id), data);
-                    showToast("Релиз обновлен!");
-                } else {
-                    data.timestamp = Date.now();
-                    data.views = 0;
-                    await addDoc(collection(db, "releases"), data);
-                    showToast("Релиз добавлен!");
-                }
-                closeModals();
-                loadHome();
-            } catch(e) {
-                showToast("Ошибка сохранения", "error");
-            }
-        };
-
-        window.deleteRel = async () => {
-            const id = document.getElementById('ed-rel-id').value;
-            if(!id) return;
-            if(confirm("Удалить этот релиз навсегда?")) {
-                await deleteDoc(doc(db, "releases", id));
-                closeModals();
-                loadHome();
-                showToast("Релиз удален");
-            }
-        };
-
-        // АДМИН: УПРАВЛЕНИЕ КОМАНДОЙ (С функцией Google Диска)
-        window.saveTeam = async () => {
-            const id = document.getElementById('ed-team-id').value;
-            const name = document.getElementById('ad-m-name').value.trim();
-            const role = document.getElementById('ad-m-role').value.trim();
-            const cat = document.getElementById('ad-m-cat').value;
-            
-            // Автоматически чиним ссылку с Google Диска
-            const img = fixDriveUrl(document.getElementById('ad-m-img').value.trim());
-
-            if(!name || !img) return showToast("Имя и фото обязательны", "error");
-
-            const data = { name, role, cat, img };
-
-            try {
-                if(id) {
-                    await updateDoc(doc(db, "team", id), data);
-                    showToast("Участник обновлен!");
-                } else {
-                    data.order = 999; // В конец списка по умолчанию
-                    data.bio = "";
-                    data.social = "";
-                    await addDoc(collection(db, "team"), data);
-                    showToast("Участник добавлен!");
-                }
-                closeModals();
-                loadTeam();
-            } catch(e) {
-                showToast("Ошибка сохранения", "error");
-            }
-        };
-
-        window.deleteTeam = async () => {
-            const id = document.getElementById('ed-team-id').value;
-            if(!id) return;
-            if(confirm("Удалить участника из состава?")) {
-                await deleteDoc(doc(db, "team", id));
-                closeModals();
-                loadTeam();
-                showToast("Участник удален");
-            }
-        };
-
-        window.editTeamPage = () => {
-            if(!curTM) return;
-            const bio = prompt("Биография (можно использовать @email):", curTM.bio || "");
-            if(bio !== null) {
-                const social = prompt("Ссылки на соцсети:", curTM.social || "");
-                updateDoc(doc(db, "team", curTM.id), { bio: bio, social: social || "" }).then(() => {
-                    curTM.bio = bio;
-                    curTM.social = social;
-                    openTeamPage(curTM.id); // Перерисовываем страницу
-                    showToast("Страница обновлена");
-                });
-            }
-        };
-
-        // АДМИН: ВЫДАЧА АЧИВОК
-        window.giveAch = async () => {
-            const email = document.getElementById('ach-target').value.trim();
-            const img = document.getElementById('ach-img').value.trim();
-            const name = document.getElementById('ach-name').value.trim();
-            const desc = document.getElementById('ach-desc').value.trim();
-
-            if(!email || !img || !name) return showToast("Заполните email, эмодзи и название", "error");
-
-            const q = query(collection(db, "users"), where("email", "==", email));
-            const snap = await getDocs(q);
-
-            if(snap.empty) return showToast("Пользователь с таким email не найден", "error");
-
-            const targetUid = snap.docs[0].id;
-            const achData = {
-                name, desc, img, 
-                date: Date.now(), 
-                giver: userData.nickname || "Администрация",
-                hidden: false
-            };
-
-            await updateDoc(doc(db, "users", targetUid), {
-                achievements: arrayUnion(achData)
-            });
-
-            document.getElementById('ach-target').value = '';
-            document.getElementById('ach-img').value = '';
-            document.getElementById('ach-name').value = '';
-            document.getElementById('ach-desc').value = '';
-            showToast("Достижение успешно выдано!");
-        };
-
-        // АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
+        // --- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ И АВТОРИЗАЦИЯ ---
         document.getElementById('btn-reg').onclick = async () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-            if(p.length < 6) return showToast("Пароль от 6 символов", "error");
-            
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
             try {
                 const cred = await createUserWithEmailAndPassword(auth, e, p);
-                const defaultNick = "User" + Math.floor(Math.random() * 10000);
                 await setDoc(doc(db, "users", cred.user.uid), {
-                    email: e, 
-                    nickname: defaultNick, 
-                    role: "user", 
-                    views: 0, 
-                    subscribers: 0, 
-                    subscribersList: [],
-                    achievements: [{
-                        name: "Новичок", desc: "Присоединился к проекту", img: "👋", date: Date.now(), giver: "Система", hidden: false
-                    }]
+                    nickname: "User_" + Math.floor(Math.random()*10000),
+                    email: e, role: "user", views: 0, subscribers: 0,
+                    achievements: [{ name: "Новичок", desc: "Зарегистрировался на сайте", img: "👋", date: Date.now() }]
                 });
                 showToast("Регистрация успешна!");
-                closeModals();
-            } catch(err) {
-                showToast("Ошибка: " + err.message, "error");
-            }
+            } catch(err) { showToast(err.message, 'error'); }
         };
 
         document.getElementById('btn-login').onclick = async () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
+            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
             try {
                 await signInWithEmailAndPassword(auth, e, p);
                 showToast("Вход выполнен!");
-                closeModals();
-            } catch(err) {
-                showToast("Неверный email или пароль", "error");
+                loginAttempts = 0;
+            } catch(err) { 
+                loginAttempts++;
+                if(loginAttempts >= 3) document.getElementById('reset-pass-block').style.display = 'block';
+                showToast("Ошибка входа!", 'error'); 
             }
         };
 
-        document.getElementById('btn-logout').onclick = () => {
-            signOut(auth);
-            closeModals();
-            showToast("Вы вышли из аккаунта");
+        document.getElementById('btn-logout').onclick = () => signOut(auth);
+
+        window.saveProfile = async () => {
+            const nick = document.getElementById('ed-nick').value;
+            const ava = document.getElementById('ed-ava').value;
+            
+            const q = query(collection(db, "users"), where("nickname", "==", nick));
+            const snap = await getDocs(q);
+            if(!snap.empty && nick !== userData.nickname) return showToast("Этот никнейм уже занят!", "error");
+
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: nick, avatar: ava });
+            showToast("Профиль обновлен!"); closeModals();
+            userData.nickname = nick; userData.avatar = ava;
+            document.getElementById('u-nick').innerText = nick;
+            document.getElementById('u-ava').src = ava || 'https://api.dicebear.com/7.x/identicon/svg';
         };
 
-        // НАБЛЮДАТЕЛЬ ЗА СОСТОЯНИЕМ АВТОРИЗАЦИИ
-        onAuthStateChanged(auth, async (user) => {
-            const authUi = document.getElementById('auth-ui');
-            const userUi = document.getElementById('user-ui');
-            const commAuth = document.getElementById('comm-auth-msg');
-            const commForm = document.getElementById('comm-form');
+        // ДОБАВЛЕНО: Исправлено модальное окно чужого профиля (Запрос 2)
+        window.openUserProfile = async (uid) => {
+            if(userData && uid === auth.currentUser.uid) { navigate('profile'); return; }
+            const snap = await getDoc(doc(db, "users", uid));
+            if(snap.exists()) {
+                const u = snap.data();
+                document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+                document.getElementById('mu-nick').innerText = u.nickname;
+                
+                // Отображение счетчиков (Запрос 2)
+                document.getElementById('mu-views-count').innerText = u.views || 0;
+                document.getElementById('mu-subs-count').innerText = u.subscribers || 0;
 
+                // Кнопка подписки (Запрос 2)
+                const subBtn = document.getElementById('btn-mu-sub');
+                if(userData) {
+                    const amISubbed = (u.subscribersList || []).includes(auth.currentUser.uid);
+                    subBtn.innerText = amISubbed ? "Отписаться" : "Подписаться";
+                    subBtn.className = amISubbed ? "btn btn-outline" : "btn";
+                    subBtn.onclick = () => subscribeToUser(uid, amISubbed);
+                    subBtn.style.display = 'block';
+                } else {
+                    subBtn.style.display = 'none';
+                }
+
+                // Кликабельные ачивки (Запрос 2)
+                const achs = u.achievements || [];
+                document.getElementById('mu-ach-list').innerHTML = achs.filter(a => !a.hidden).map(a => `
+                    <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:24px; cursor:pointer; border:1px solid var(--border);" title="${a.name}" onclick='viewAchExt(${JSON.stringify(a)})'>
+                        ${a.img}
+                    </div>
+                `).join('');
+                
+                document.getElementById('m-user-profile').style.display = 'flex';
+            }
+        };
+
+        window.openUserProfileByName = async (nick) => {
+            const snap = await getDocs(query(collection(db, "users"), where("nickname", "==", nick)));
+            if(!snap.empty) openUserProfile(snap.docs[0].id);
+        };
+
+        // ДОБАВЛЕНО: Функция подписки (Запрос 2)
+        window.subscribeToUser = async (targetUid, isSubbed) => {
+            if(!userData) return;
+            try {
+                const targetRef = doc(db, "users", targetUid);
+                if(isSubbed) {
+                    await updateDoc(targetRef, { 
+                        subscribers: increment(-1), 
+                        subscribersList: arrayRemove(auth.currentUser.uid) 
+                    });
+                } else {
+                    await updateDoc(targetRef, { 
+                        subscribers: increment(1), 
+                        subscribersList: arrayUnion(auth.currentUser.uid) 
+                    });
+                }
+                showToast(isSubbed ? "Вы отписались" : "Вы подписались!");
+                openUserProfile(targetUid); // Обновляем окно
+            } catch(e) { showToast("Ошибка: " + e.message, "error"); }
+        };
+
+        // ДОБАВЛЕНО: Просмотр ачивки из чужого профиля (Запрос 2)
+        window.viewAchExt = (ach) => {
+            document.getElementById('ach-v-img').innerText = ach.img;
+            document.getElementById('ach-v-name').innerText = ach.name;
+            document.getElementById('ach-v-desc').innerText = ach.desc;
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(ach.date).toLocaleDateString()}<br><b>Способ получения:</b> ${ach.giver || 'Система/Студия'}`;
+            document.getElementById('btn-ach-del').style.display = 'none';
+            document.getElementById('m-user-profile').style.display = 'none'; // Скрываем профиль
+            document.getElementById('m-ach-view').style.display = 'flex';
+        };
+
+        // --- АЧИВКИ ---
+        window.giveAch = async () => {
+            const email = document.getElementById('ga-uid').value;
+            const q = query(collection(db, "users"), where("email", "==", email));
+            const snap = await getDocs(q);
+            if(snap.empty) return showToast("Пользователь не найден!", "error");
+            
+            const uRef = doc(db, "users", snap.docs[0].id);
+            const uData = snap.docs[0].data();
+            const achs = uData.achievements || [];
+            achs.push({
+                name: document.getElementById('ga-name').value,
+                desc: document.getElementById('ga-desc').value,
+                img: document.getElementById('ga-img').value,
+                date: Date.now(),
+                hidden: false,
+                giver: userData.nickname
+            });
+            await updateDoc(uRef, { achievements: achs });
+            showToast("Достижение выдано!"); closeModals();
+        };
+
+        window.renderAchProfile = () => {
+            if(!userData) return;
+            const achs = userData.achievements || [];
+            document.getElementById('u-ach').innerHTML = achs.filter(a => !a.hidden).map((a, i) => `
+                <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:24px; cursor:pointer; border:1px solid var(--border);" title="${a.name}" onclick="viewAch(${i}, true)">
+                    ${a.img}
+                </div>
+            `).join('') || '<p style="font-size:12px; color:var(--text-dim);">Пока нет достижений.</p>';
+        };
+
+        window.openAchInventory = () => {
+            const achs = userData.achievements || [];
+            document.getElementById('ach-inv-list').innerHTML = achs.map((a, i) => `
+                <div style="background:var(--input-bg); padding:15px; border-radius:10px; text-align:center; cursor:pointer; border:1px solid ${a.hidden ? 'red' : 'var(--accent)'}; opacity: ${a.hidden ? '0.5' : '1'}; transition: 0.2s;" onclick="toggleAchVisibility(${i})">
+                    <div style="font-size:30px;">${a.img}</div>
+                    <div style="font-size:10px; margin-top:5px; font-weight:bold;">${a.name}</div>
+                    <div style="font-size:9px; color:var(--text-dim); margin-top:5px; text-decoration:underline;" onclick="event.stopPropagation(); viewAch(${i}, false)">Подробнее</div>
+                </div>
+            `).join('');
+            document.getElementById('m-ach-inv').style.display = 'flex';
+        };
+
+        window.toggleAchVisibility = async (idx) => {
+            userData.achievements[idx].hidden = !userData.achievements[idx].hidden;
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
+            openAchInventory(); renderAchProfile();
+        };
+
+        window.viewAch = (idx, fromProfile) => {
+            viewAchIdx = idx;
+            const a = userData.achievements[idx];
+            document.getElementById('ach-v-img').innerText = a.img;
+            document.getElementById('ach-v-name').innerText = a.name;
+            document.getElementById('ach-v-desc').innerText = a.desc;
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(a.date).toLocaleDateString()}<br><b>Способ получения:</b> ${a.giver || 'Система/Студия'}`;
+            
+            document.getElementById('btn-ach-del').style.display = 'block';
+            document.getElementById('m-ach-inv').style.display = 'none';
+            document.getElementById('m-ach-view').style.display = 'flex';
+        };
+
+        window.deleteAchievement = async () => {
+            if(!confirm("Удалить достижение НАВСЕГДА? Это действие нельзя отменить.")) return;
+            userData.achievements.splice(viewAchIdx, 1);
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
+            showToast("Достижение удалено.");
+            closeModals(); renderAchProfile();
+        };
+
+        // --- СОСТАВ КОМАНДЫ ---
+        window.loadTeam = async () => {
+            const snap = await getDocs(query(collection(db, "team"), orderBy("order")));
+            const t = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            const cats = {};
+            t.forEach(m => {
+                const c = m.cat || 'Без категории';
+                if(!cats[c]) cats[c] = [];
+                cats[c].push(m);
+            });
+
+            const w = document.getElementById('team-wrapper');
+            w.innerHTML = '';
+
+            Object.keys(cats).forEach(cat => {
+                const cDiv = document.createElement('div');
+                cDiv.className = 'team-container';
+                cDiv.innerHTML = `<div class="team-container-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'grid' : 'none'">${cat} <i class="fas fa-chevron-down" style="font-size:12px;"></i></div>
+                                  <div class="grid" id="cat-${cat.replace(/\s/g,'')}"></div>`;
+                w.appendChild(cDiv);
+                
+                const grid = cDiv.querySelector('.grid');
+                grid.innerHTML = cats[cat].map(m => `
+                    <div class="card" data-id="${m.id}" onclick="openTeamPage('${m.id}')">
+                        <div class="drag-handle"><i class="fas fa-grip-lines"></i> Перетащить</div>
+                        ${isAdmin ? `<div class="adm-tools">
+                            <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openTeamModal('${m.id}')">Ред</button>
+                            <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); delTeam('${m.id}')">Удал</button>
+                        </div>` : ''}
+                        <img src="${m.img}" loading="lazy">
+                        <div class="card-info" style="text-align:center;">
+                            <div class="card-title" style="font-size:16px;">${m.name}</div>
+                            <div style="color:var(--accent); font-size:12px; margin-top:5px; font-weight:bold;">${m.role}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                if(isAdmin) {
+                    new Sortable(grid, {
+                        handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost',
+                        onEnd: async () => {
+                            const items = Array.from(grid.children);
+                            for(let i=0; i<items.length; i++) {
+                                await updateDoc(doc(db, "team", items[i].dataset.id), { order: i });
+                            }
+                            showToast("Порядок сохранен");
+                        }
+                    });
+                }
+            });
+
+            if(isAdmin) document.body.classList.add('admin-mode');
+            else document.body.classList.remove('admin-mode');
+        };
+
+        window.openTeamModal = async (id = '') => {
+            document.getElementById('ed-team-id').value = id;
+            if(id) {
+                const snap = await getDoc(doc(db, "team", id));
+                const d = snap.data();
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = d[f] || '');
+            } else {
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = '');
+            }
+            document.getElementById('m-team').style.display = 'flex';
+        };
+
+        window.saveTeam = async () => {
+            const id = document.getElementById('ed-team-id').value;
+            const data = {
+                name: document.getElementById('ad-m-name').value,
+                role: document.getElementById('ad-m-role').value,
+                img: document.getElementById('ad-m-img').value,
+                cat: document.getElementById('ad-m-cat').value || 'Без категории'
+            };
+            if(!id) {
+                data.order = 999;
+                await addDoc(collection(db, "team"), data);
+            } else {
+                await updateDoc(doc(db, "team", id), data);
+            }
+            closeModals(); loadTeam(); showToast("Участник сохранен!");
+        };
+
+        window.delTeam = async (id) => {
+            if(!confirm("Удалить участника?")) return;
+            await deleteDoc(doc(db, "team", id));
+            loadTeam(); showToast("Удален");
+        };
+
+        // --- ЛИЧНЫЕ СТРАНИЦЫ УЧАСТНИКОВ ---
+        window.openTeamPage = async (id) => {
+            curTM = {id, ...(await getDoc(doc(db, "team", id))).data()};
+            navigate('team-page');
+            document.getElementById('adm-tp-controls').style.display = isAdmin ? 'flex' : 'none';
+            
+            document.getElementById('team-page-view').innerHTML = `
+                <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
+                    <img src="${curTM.img}" style="width:250px; height:350px; border-radius:15px; object-fit:cover; border:2px solid var(--accent);">
+                    <div style="flex:1; min-width:300px;">
+                        <h1 style="font-size:2.5rem; margin-bottom:10px;">${curTM.name}</h1>
+                        <h3 style="color:var(--accent); margin-bottom:20px;">${curTM.role}</h3>
+                        <div style="background:var(--input-bg); padding:20px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px;">
+                            <h4 style="margin-bottom:10px; color:var(--text-dim);">О себе:</h4>
+                            <p style="line-height:1.6; font-size:14px; white-space:pre-wrap;">${curTM.bio || 'Информация пока не добавлена.'}</p>
+                        </div>
+                        ${curTM.social ? `<a href="${curTM.social}" target="_blank" class="btn btn-outline" style="text-decoration:none;"><i class="fas fa-link"></i> Ссылки / Соцсети</a>` : ''}
+                    </div>
+                </div>
+            `;
+        };
+
+        window.openTPModal = () => {
+            document.getElementById('tp-bio').value = curTM.bio || '';
+            document.getElementById('tp-social').value = curTM.social || '';
+            document.getElementById('m-tp-edit').style.display = 'flex';
+        };
+
+        window.saveTP = async () => {
+            const bio = document.getElementById('tp-bio').value;
+            const soc = document.getElementById('tp-social').value;
+            await updateDoc(doc(db, "team", curTM.id), { bio: bio, social: soc });
+            closeModals(); openTeamPage(curTM.id); showToast("Страница обновлена");
+        };
+
+        // --- ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ---
+        window.openPrivacy = async () => {
+            document.getElementById('m-privacy').style.display = 'flex';
+            const d = await getDoc(doc(db, "settings", "privacy"));
+            const txt = d.exists() ? d.data().text : "Политика конфиденциальности пока не заполнена.";
+            
+            document.getElementById('priv-text').innerText = txt;
+            document.getElementById('priv-edit').value = txt;
+            
+            // Сбрасываем вид (показываем текст, прячем редактор)
+            document.getElementById('priv-text').style.display = 'block';
+            document.getElementById('priv-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'none';
+            
+            // Если админ, показываем кнопку "Редактировать"
+            if(isAdmin) {
+                document.getElementById('priv-adm-btns').style.display = 'block';
+                document.getElementById('priv-btn-edit').style.display = 'block';
+            }
+        };
+
+        window.editPriv = () => {
+            document.getElementById('priv-text').style.display = 'none';
+            document.getElementById('priv-edit').style.display = 'block';
+            document.getElementById('priv-btn-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'block';
+        };
+
+        window.savePriv = async () => {
+            await setDoc(doc(db, "settings", "privacy"), { text: document.getElementById('priv-edit').value });
+            closeModals();
+            showToast("Политика конфиденциальности сохранена!", "success");
+        };
+
+
+        // --- ПРОСМОТР СПИСКА ПОДПИСЧИКОВ ---
+        window.showSubscribers = async (targetUid) => {
+            // Если ID не передан, показываем подписчиков текущего пользователя
+            const uid = targetUid || auth.currentUser.uid; 
+            const uDoc = await getDoc(doc(db, "users", uid));
+            
+            if(!uDoc.exists()) return;
+            const subs = uDoc.data().subscribersList || [];
+            
+            if(subs.length === 0) return showToast("Пока нет подписчиков");
+            
+            const list = document.getElementById('subs-list'); 
+            list.innerHTML = ''; // Очищаем старый список
+            
+            for(let subId of subs) {
+                const subDoc = await getDoc(doc(db, "users", subId));
+                if(subDoc.exists()) {
+                    list.innerHTML += `
+                    <div style="padding:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+                        <img src="${subDoc.data().avatar || 'https://api.dicebear.com/7.x/identicon/svg'}" style="width:30px;height:30px;border-radius:50%; object-fit:cover;">
+                        <b style="cursor:pointer; color:var(--accent);" onclick="closeModals(); openUserProfile('${subId}')">${esc(subDoc.data().nickname)}</b>
+                    </div>`;
+                }
+            }
+            // Закрываем окно профиля и открываем окно подписчиков
+            document.getElementById('m-user-profile').style.display = 'none';
+            document.getElementById('m-subs').style.display = 'flex';
+        };
+
+
+        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ ПРОФИЛЯ (Клик по подписчикам) ---
+        const originalOpenUserProfile = window.openUserProfile;
+        window.openUserProfile = async (uid) => {
+            // Вызываем старую логику
+            await originalOpenUserProfile(uid);
+            
+            // Делаем блок "Подписчики" в чужом профиле кликабельным
+            const subsBlock = document.getElementById('mu-subs-count').parentElement;
+            subsBlock.style.cursor = 'pointer';
+            subsBlock.onclick = () => showSubscribers(uid);
+        };
+        
+        // Для своего профиля тоже обновим вызов
+        window.showMySubscribers = () => {
+            showSubscribers(auth.currentUser.uid);
+        };
+
+
+        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ КОММЕНТАРИЕВ (Упоминания @email -> @nickname) ---
+        window.loadComments = async () => {
+            const snap = await getDocs(query(collection(db, `releases/${curProj.id}/comments`), orderBy("time", "desc")));
+            document.getElementById('comm-count').innerText = snap.size;
+            
+            let html = '';
+            for (let d of snap.docs) {
+                const c = d.data();
+                let text = esc(c.text);
+                
+                // Ищем email-ы с собачкой (например @test@mail.ru)
+                const mentions = text.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+                for(let m of mentions) {
+                    const email = m.replace('@', ''); // Убираем первую собачку для поиска
+                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+                    if(!uSnap.empty) {
+                        const uDoc = uSnap.docs[0];
+                        // Заменяем email на кликабельный никнейм
+                        text = text.replace(m, `<a href="#" class="mention-link" onclick="openUserProfile('${uDoc.id}'); return false;">@${esc(uDoc.data().nickname)}</a>`);
+                    }
+                }
+                
+                html += `
+                <div class="comm-item">
+                    <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
+                    <div style="flex:1;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${esc(c.nick)}</b>
+                            <span style="font-size:10px; color:var(--text-dim);">${new Date(c.time).toLocaleString()}</span>
+                        </div>
+                        <p style="font-size:13px; margin-top:5px; word-break:break-word;">${text}</p>
+                        ${(isAdmin || (userData && c.uid === auth.currentUser.uid)) ? `<button class="btn-sm" style="background:transparent; color:red; margin-top:5px; padding:0;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
+                    </div>
+                </div>`;
+            }
+            document.getElementById('comm-list').innerHTML = html;
+        };
+
+        // --- AUTH & INIT ---
+        onAuthStateChanged(auth, async (user) => {
             if(user) {
                 const snap = await getDoc(doc(db, "users", user.uid));
                 if(snap.exists()) {
                     userData = snap.data();
                     isAdmin = userData.role === "admin";
-
-                    // Обновляем шапку
-                    authUi.style.display = 'none';
-                    userUi.style.display = 'flex';
-                    document.getElementById('u-nick').innerText = userData.nickname;
-                    document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
                     
-                    // Обновляем модалку профиля
-                    document.getElementById('u-nick-title').innerText = userData.nickname;
+                    document.getElementById('auth-ui').style.display = 'none';
+                    document.getElementById('user-ui').style.display = 'block';
+                    document.getElementById('comm-form').style.display = 'block';
+                    document.getElementById('comm-auth-msg').style.display = 'none';
+
+                    document.getElementById('u-nick').innerText = userData.nickname;
+                    document.getElementById('ed-nick').value = userData.nickname; // Заполняем поле редактирования
+                    document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+                    document.getElementById('ed-ava').value = userData.avatar || ''; // Заполняем поле редактирования
                     document.getElementById('u-role').innerText = isAdmin ? "АДМИН" : "ПОЛЬЗОВАТЕЛЬ";
-                    document.getElementById('ed-nick').value = userData.nickname;
-                    document.getElementById('ed-ava').value = userData.avatar || '';
-                    document.getElementById('ed-ava-pre').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
                     document.getElementById('u-views').innerText = userData.views || 0;
                     document.getElementById('u-subs').innerText = userData.subscribers || 0;
-
-                    // Ачивки в профиле
-                    const achBox = document.getElementById('u-ach');
-                    achBox.innerHTML = '';
-                    (userData.achievements || []).forEach(a => {
-                        if(!a.hidden) achBox.innerHTML += `<div style="font-size:24px; background:rgba(255,255,255,0.05); padding:5px; border-radius:8px;" title="${a.name}">${a.img}</div>`;
-                    });
-
-                    // Админ панель
+                    
+                    renderAchProfile();
+                    
                     if(isAdmin) {
                         document.getElementById('adm-btn-rel').style.display = 'block';
                         document.getElementById('adm-btn-team').style.display = 'block';
                         document.getElementById('adm-ach-panel').style.display = 'block';
-                        document.getElementById('btn-rel-del').style.display = 'block';
-                        document.getElementById('btn-team-del').style.display = 'block';
-                        document.body.classList.add('admin-mode');
-                    } else {
-                        document.body.classList.remove('admin-mode');
                     }
-
-                    // Комментарии
-                    commAuth.style.display = 'none';
-                    commForm.style.display = 'block';
                 }
             } else {
-                userData = null;
-                isAdmin = false;
-                authUi.style.display = 'flex';
-                userUi.style.display = 'none';
-                document.body.classList.remove('admin-mode');
+                userData = null; isAdmin = false;
+                document.getElementById('auth-ui').style.display = 'block';
+                document.getElementById('user-ui').style.display = 'none';
+                document.getElementById('comm-form').style.display = 'none';
+                document.getElementById('comm-auth-msg').style.display = 'block';
                 
-                commAuth.style.display = 'block';
-                commForm.style.display = 'none';
+                document.getElementById('adm-btn-rel').style.display = 'none';
+                document.getElementById('adm-btn-team').style.display = 'none';
+                document.getElementById('adm-ach-panel').style.display = 'none';
             }
-
-            // Инициализация первой загрузки страницы по хэшу
-            const hash = window.location.hash.replace('#', '') || 'home';
-            navigate(hash, false);
+            const hashPage = window.location.hash.replace('#', '') || 'home';
+            navigate(hashPage, false);
         });
-
     </script>
 </body>
 </html>
