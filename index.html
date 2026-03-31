@@ -405,6 +405,18 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        // Универсальный преобразователь ссылок Google Drive
+const fixDriveUrl = (url) => {
+    if (!url || !url.includes('drive.google.com')) return url;
+    let id = '';
+    if (url.includes('/d/')) {
+        id = url.split('/d/')[1].split('/')[0];
+    } else if (url.includes('id=')) {
+        id = url.split('id=')[1].split('&')[0];
+    }
+    // Формируем прямую ссылку для вставки в тег img
+    return id ? `https://drive.google.com/uc?export=view&id=${id}` : url;
+};
         const auth = getAuth(app);
 
         let isAdmin = false, userData = null, allRel = [], curProj = null, curTM = null, viewAchIdx = -1;
@@ -419,6 +431,19 @@
             container.appendChild(t);
             setTimeout(() => { t.style.animation = 'fadeOut 0.3s forwards'; setTimeout(()=>t.remove(),300); }, 4000);
         };
+
+        // Функция для превращения ссылки Google Drive в прямую ссылку на изображение
+const fixDriveUrl = (url) => {
+    if (!url || !url.includes('drive.google.com')) return url;
+    let id = '';
+    if (url.includes('/d/')) {
+        id = url.split('/d/')[1].split('/')[0];
+    } else if (url.includes('id=')) {
+        id = url.split('id=')[1].split('&')[0];
+    }
+    // Используем специальный домен для прямого отображения
+    return id ? `https://lh3.googleusercontent.com/d/${id}` : url;
+};
 
         window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
 
@@ -473,7 +498,7 @@
                 year: document.getElementById('ad-year').value,
                 voiceover: document.getElementById('ad-voiceover').value,
                 authors: document.getElementById('ad-authors').value,
-                img: document.getElementById('ad-img').value,
+                img: fixDriveUrl(document.getElementById('ad-img').value),
                 desc: document.getElementById('ad-desc').value,
                 timestamp: id ? undefined : Date.now(),
                 episodes: id ? allRel.find(x=>x.id===id).episodes : [],
@@ -738,57 +763,77 @@
 
         document.getElementById('btn-logout').onclick = () => signOut(auth);
 
-        window.saveProfile = async () => {
-            const nick = document.getElementById('ed-nick').value;
-            const ava = document.getElementById('ed-ava').value;
-            
-            const q = query(collection(db, "users"), where("nickname", "==", nick));
-            const snap = await getDocs(q);
-            if(!snap.empty && nick !== userData.nickname) return showToast("Этот никнейм уже занят!", "error");
+window.saveProfile = async () => {
+    const nick = document.getElementById('ed-nick').value;
+    // ТУТ ИЗМЕНЕНИЕ: оборачиваем в функцию fixDriveUrl
+    const ava = fixDriveUrl(document.getElementById('ed-ava').value); 
+    
+    const q = query(collection(db, "users"), where("nickname", "==", nick));
+    const snap = await getDocs(q);
+    if(!snap.empty && nick !== userData.nickname) return showToast("Этот никнейм уже занят!", "error");
 
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: nick, avatar: ava });
-            showToast("Профиль обновлен!"); closeModals();
-            userData.nickname = nick; userData.avatar = ava;
-            document.getElementById('u-nick').innerText = nick;
-            document.getElementById('u-ava').src = ava || 'https://api.dicebear.com/7.x/identicon/svg';
-        };
+    await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: nick, avatar: ava });
+    showToast("Профиль обновлен!"); closeModals();
+    userData.nickname = nick; userData.avatar = ava;
+    document.getElementById('u-nick').innerText = nick;
+    document.getElementById('u-ava').src = ava || 'https://api.dicebear.com/7.x/identicon/svg';
+};
 
         // ДОБАВЛЕНО: Исправлено модальное окно чужого профиля (Запрос 2)
-        window.openUserProfile = async (uid) => {
-            if(userData && uid === auth.currentUser.uid) { navigate('profile'); return; }
-            const snap = await getDoc(doc(db, "users", uid));
-            if(snap.exists()) {
-                const u = snap.data();
-                document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-                document.getElementById('mu-nick').innerText = u.nickname;
-                
-                // Отображение счетчиков (Запрос 2)
-                document.getElementById('mu-views-count').innerText = u.views || 0;
-                document.getElementById('mu-subs-count').innerText = u.subscribers || 0;
+window.openUserProfile = async (uid) => {
+    try {
+        const d = await getDoc(doc(db, "users", uid));
+        if(!d.exists()) return;
+        const u = d.data();
+        
+        document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+        document.getElementById('mu-nick').innerText = u.nickname;
+        
+        // Статистика: просмотры и подписчики
+        const statsHtml = `
+            <div style="display:flex; justify-content:center; gap:20px; margin: 15px 0; font-size:12px; color:var(--text-dim);">
+                <span>👁 Просмотров: <b style="color:white">${u.views || 0}</b></span>
+                <span>👥 Подписчиков: <b style="color:white">${u.subscribers || 0}</b></span>
+            </div>
+        `;
 
-                // Кнопка подписки (Запрос 2)
-                const subBtn = document.getElementById('btn-mu-sub');
-                if(userData) {
-                    const amISubbed = (u.subscribersList || []).includes(auth.currentUser.uid);
-                    subBtn.innerText = amISubbed ? "Отписаться" : "Подписаться";
-                    subBtn.className = amISubbed ? "btn btn-outline" : "btn";
-                    subBtn.onclick = () => subscribeToUser(uid, amISubbed);
-                    subBtn.style.display = 'block';
-                } else {
-                    subBtn.style.display = 'none';
-                }
+        const grid = document.getElementById('mu-ach-list');
+        grid.innerHTML = statsHtml + '<div id="mu-grid-inner" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;"></div>';
+        const innerGrid = document.getElementById('mu-grid-inner');
 
-                // Кликабельные ачивки (Запрос 2)
-                const achs = u.achievements || [];
-                document.getElementById('mu-ach-list').innerHTML = achs.filter(a => !a.hidden).map(a => `
-                    <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:24px; cursor:pointer; border:1px solid var(--border);" title="${a.name}" onclick='viewAchExt(${JSON.stringify(a)})'>
-                        ${a.img}
-                    </div>
-                `).join('');
-                
-                document.getElementById('m-user-profile').style.display = 'flex';
+        (u.achievements || []).forEach(a => {
+            if(!a.hidden) {
+                const achEl = document.createElement('div');
+                achEl.style = "font-size:30px; cursor:pointer; background:rgba(255,255,255,0.05); padding:8px; border-radius:10px;";
+                achEl.innerText = a.img;
+                achEl.title = a.name;
+                // Клик по ачивке открывает инфо о том, кто её выдал
+                achEl.onclick = () => {
+                    document.getElementById('ach-v-img').innerText = a.img;
+                    document.getElementById('ach-v-name').innerText = a.name;
+                    document.getElementById('ach-v-desc').innerText = a.desc;
+                    document.getElementById('ach-v-meta').innerHTML = `<b>Выдал:</b> ${a.giver || 'Система'}<br><b>Дата:</b> ${new Date(a.date).toLocaleDateString()}`;
+                    document.getElementById('btn-ach-del').style.display = 'none';
+                    document.getElementById('m-ach-view').style.display = 'flex';
+                };
+                innerGrid.appendChild(achEl);
             }
-        };
+        });
+
+        // Кнопка подписки
+        const btn = document.getElementById('btn-mu-sub');
+        if(auth.currentUser && auth.currentUser.uid !== uid) {
+            btn.style.display = 'block';
+            const isSub = (u.subscribersList || []).includes(auth.currentUser.uid);
+            btn.innerText = isSub ? "Отписаться" : "Подписаться";
+            btn.className = isSub ? "btn btn-outline" : "btn";
+            btn.onclick = () => toggleSub(uid, isSub);
+        } else {
+            btn.style.display = 'none';
+        }
+        document.getElementById('m-user-profile').style.display = 'flex';
+    } catch(e) { console.error(e); }
+};
 
         window.openUserProfileByName = async (nick) => {
             const snap = await getDocs(query(collection(db, "users"), where("nickname", "==", nick)));
@@ -971,7 +1016,7 @@
             const data = {
                 name: document.getElementById('ad-m-name').value,
                 role: document.getElementById('ad-m-role').value,
-                img: document.getElementById('ad-m-img').value,
+                img: fixDriveUrl(document.getElementById('ad-m-img').value),
                 cat: document.getElementById('ad-m-cat').value || 'Без категории'
             };
             if(!id) {
@@ -990,26 +1035,41 @@
         };
 
         // --- ЛИЧНЫЕ СТРАНИЦЫ УЧАСТНИКОВ ---
-        window.openTeamPage = async (id) => {
-            curTM = {id, ...(await getDoc(doc(db, "team", id))).data()};
-            navigate('team-page');
-            document.getElementById('adm-tp-controls').style.display = isAdmin ? 'flex' : 'none';
-            
-            document.getElementById('team-page-view').innerHTML = `
-                <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
-                    <img src="${curTM.img}" style="width:250px; height:350px; border-radius:15px; object-fit:cover; border:2px solid var(--accent);">
-                    <div style="flex:1; min-width:300px;">
-                        <h1 style="font-size:2.5rem; margin-bottom:10px;">${curTM.name}</h1>
-                        <h3 style="color:var(--accent); margin-bottom:20px;">${curTM.role}</h3>
-                        <div style="background:var(--input-bg); padding:20px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px;">
-                            <h4 style="margin-bottom:10px; color:var(--text-dim);">О себе:</h4>
-                            <p style="line-height:1.6; font-size:14px; white-space:pre-wrap;">${curTM.bio || 'Информация пока не добавлена.'}</p>
-                        </div>
-                        ${curTM.social ? `<a href="${curTM.social}" target="_blank" class="btn btn-outline" style="text-decoration:none;"><i class="fas fa-link"></i> Ссылки / Соцсети</a>` : ''}
-                    </div>
-                </div>
-            `;
-        };
+window.openTeamPage = async (id) => {
+    curTM = allTeam.find(x => x.id === id);
+    navigate('team-page');
+    const box = document.getElementById('team-page-view');
+    
+    // ЛОГИКА СИСТЕМЫ ID (УПОМИНАНИЙ)
+    let bio = esc(curTM.bio || "");
+    const mentions = bio.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+    
+    for(let m of mentions) {
+        const email = m.replace('@', '');
+        const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+        if(!uSnap.empty) {
+            const uDoc = uSnap.docs[0];
+            const uData = uDoc.data();
+            const linkHtml = `<span class="mention-link" style="cursor:pointer; text-decoration:underline;" onclick="openUserProfile('${uDoc.id}')">@${esc(uData.nickname)}</span>`;
+            bio = bio.split(m).join(linkHtml);
+        }
+    }
+
+    box.innerHTML = `
+        <div style="display:flex; gap:30px; align-items:center; flex-wrap:wrap; margin-bottom:30px;">
+            <img src="${curTM.img}" style="width:150px; height:150px; border-radius:50%; object-fit:cover; border:3px solid var(--accent);">
+            <div>
+                <h1 style="font-size:2.5rem; margin-bottom:5px;">${curTM.name}</h1>
+                <div style="color:var(--accent); font-weight:bold; letter-spacing:1px;">${curTM.role}</div>
+            </div>
+        </div>
+        <div style="background:var(--input-bg); padding:25px; border-radius:15px; border:1px solid var(--border); margin-bottom:20px;">
+            <h4 style="margin-bottom:15px; color:var(--text-dim); text-transform:uppercase; font-size:12px;">Биография / Описание</h4>
+            <div style="line-height:1.8; font-size:15px; white-space:pre-wrap;">${bio}</div>
+        </div>
+        ${curTM.social ? `<a href="${curTM.social}" target="_blank" class="btn btn-outline" style="text-decoration:none;"><i class="fas fa-link"></i> Ссылки / Соцсети</a>` : ''}
+    `;
+};
 
         window.openTPModal = () => {
             document.getElementById('tp-bio').value = curTM.bio || '';
