@@ -212,14 +212,20 @@
         </section>
         
         <section id="profile" class="section">
-            <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
-                <form onsubmit="return false;">
-                    <input type="text" style="display:none" autocomplete="username">
-                    <input type="email" id="email" placeholder="Email" autocomplete="username">
-                    <input type="password" id="pass" placeholder="Пароль" autocomplete="current-password">
-                    <button class="btn" style="width:100%" id="btn-login" type="button">Войти</button>
-                    <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg" type="button">Регистрация</button>
-                </form>
+    <div id="auth-ui" style="max-width:320px; margin:40px auto; text-align:center;">
+    <form onsubmit="return false;">
+        <input type="text" style="display:none" autocomplete="username">
+        
+        <input type="email" id="email" placeholder="Email" autocomplete="username">
+        <input type="password" id="pass" placeholder="Пароль" autocomplete="current-password">
+        <button class="btn" style="width:100%" id="btn-login" type="button">Войти</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg" type="button">Регистрация</button>
+    </form>
+    <div id="reset-pass-block" style="display:none; margin-top:15px;">
+        <a href="#" style="color:var(--text-dim); font-size:12px;" onclick="resetPassword(); return false;">Забыли пароль?</a>
+    </div>
+</div>
+                <button class="btn btn-outline" style="width:100%; margin-top:10px;" id="btn-reg">Регистрация</button>
                 <div id="reset-pass-block" style="display:none; margin-top:15px;">
                     <a href="#" style="color:var(--text-dim); font-size:12px;" onclick="resetPassword(); return false;">Забыли пароль?</a>
                 </div>
@@ -382,6 +388,7 @@
         <button id="btn-mu-sub" class="btn" style="width:100%; margin-bottom:5px;">Подписаться</button>
         <button class="btn btn-outline" style="width:100%;" onclick="closeModals()">Закрыть</button>
     </div></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -400,23 +407,10 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // 1. ИСПРАВЛЕНИЕ: Добавлена глобальная переменная allTeam = []
-        let isAdmin = false, userData = null, allRel = [], allTeam = [], curProj = null, curTM = null, viewAchIdx = -1;
+        let isAdmin = false, userData = null, allRel = [], curProj = null, curTM = null, viewAchIdx = -1;
         let loginAttempts = 0, viewTimer = null;
 
         const esc = (s) => s ? s.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
-
-        // 2. ИСПРАВЛЕНИЕ: Функция для преобразования ссылок с Google Диска
-        const fixDriveUrl = (url) => {
-            if (!url || !url.includes('drive.google.com')) return url;
-            let id = '';
-            if (url.includes('/d/')) {
-                id = url.split('/d/')[1].split('/')[0];
-            } else if (url.includes('id=')) {
-                id = url.split('id=')[1].split('&')[0];
-            }
-            return id ? `https://drive.google.com/uc?export=view&id=${id}` : url;
-        };
 
         window.showToast = (msg, type = 'success') => {
             const container = document.getElementById('toast-container');
@@ -449,8 +443,7 @@
             if(e.state && e.state.page) navigate(e.state.page, false);
             else navigate('home', false);
         });
-
-        // --- БАЗОВЫЕ ФУНКЦИИ УПРАВЛЕНИЯ РЕЛИЗАМИ ---
+        // --- БАЗОВЫЕ ФУНКЦИИ ---
         window.openRelModal = (id = '') => {
             document.getElementById('ed-rel-id').value = id;
             if(id) {
@@ -462,6 +455,7 @@
             document.getElementById('m-rel').style.display = 'flex';
         };
 
+        // ДОБАВЛЕНО: Функция удаления релиза (Запрос 1)
         window.deleteRel = async (id) => {
             if(!confirm("Вы точно хотите удалить этот релиз навсегда?")) return;
             try {
@@ -473,20 +467,17 @@
 
         window.saveRel = async () => {
             const id = document.getElementById('ed-rel-id').value;
-            // 3. ИСПРАВЛЕНИЕ: Прогоняем ссылку на постер через fixDriveUrl
-            const imgFixed = fixDriveUrl(document.getElementById('ad-img').value);
-            
             const data = {
                 title: document.getElementById('ad-title').value,
                 genre: document.getElementById('ad-genre').value,
                 year: document.getElementById('ad-year').value,
                 voiceover: document.getElementById('ad-voiceover').value,
                 authors: document.getElementById('ad-authors').value,
-                img: imgFixed, 
+                img: document.getElementById('ad-img').value,
                 desc: document.getElementById('ad-desc').value,
                 timestamp: id ? undefined : Date.now(),
                 episodes: id ? allRel.find(x=>x.id===id).episodes : [],
-                likes: id ? (allRel.find(x=>x.id===id).likes || []) : [],
+                likes: id ? (allRel.find(x=>x.id===id).likes || []) : [], // ДОБАВЛЕНО: Массивы для лайков/дизлайков
                 dislikes: id ? (allRel.find(x=>x.id===id).dislikes || []) : []
             };
             if(!id) await addDoc(collection(db, "releases"), data);
@@ -540,6 +531,7 @@
             curProj = allRel.find(x => x.id === id);
             navigate('view');
             
+            // Обновляем просмотры
             if(userData) {
                 updateDoc(doc(db, "releases", id), { views: increment(1) });
                 updateDoc(doc(db, "users", auth.currentUser.uid), { views: increment(1) });
@@ -561,11 +553,12 @@
                 </div>
             `;
             
-            updateLikesUI(); 
+            updateLikesUI(); // ДОБАВЛЕНО: Обновление интерфейса лайков (Запрос 3)
             renderEps();
             loadComments();
         };
 
+        // ДОБАВЛЕНО: Функция для лайков и дизлайков (Запрос 3)
         window.rateProj = async (type) => {
             if(!userData) return showToast("Авторизуйтесь для оценки", "error");
             
@@ -573,12 +566,13 @@
             let likes = curProj.likes || [];
             let dislikes = curProj.dislikes || [];
             
+            // Логика переключения
             if(type === 'like') {
-                if(likes.includes(uid)) likes = likes.filter(id => id !== uid);
-                else { likes.push(uid); dislikes = dislikes.filter(id => id !== uid); }
+                if(likes.includes(uid)) likes = likes.filter(id => id !== uid); // Убрать лайк
+                else { likes.push(uid); dislikes = dislikes.filter(id => id !== uid); } // Поставить лайк, убрать диз
             } else {
-                if(dislikes.includes(uid)) dislikes = dislikes.filter(id => id !== uid);
-                else { dislikes.push(uid); likes = likes.filter(id => id !== uid); }
+                if(dislikes.includes(uid)) dislikes = dislikes.filter(id => id !== uid); // Убрать дизлайк
+                else { dislikes.push(uid); likes = likes.filter(id => id !== uid); } // Поставить дизлайк, убрать лайк
             }
 
             curProj.likes = likes; curProj.dislikes = dislikes;
@@ -620,6 +614,7 @@
                 </div>
             `).join('');
             
+            // Автозапуск первой серии
             const firstBtn = list.querySelector('.ep-btn');
             if(firstBtn && eps.length > 0) playEp(eps[0].url, firstBtn, eps[0].title || '');
         };
@@ -628,7 +623,7 @@
             const ep = {
                 type: document.getElementById('ad-ep-type').value,
                 name: document.getElementById('ad-ep-name').value,
-                title: document.getElementById('ad-ep-title').value,
+                title: document.getElementById('ad-ep-title').value, // ДОБАВЛЕНО: Название серии (Запрос 4)
                 url: document.getElementById('ad-ep-url').value
             };
             const eps = curProj.episodes || [];
@@ -648,6 +643,7 @@
             renderEps(); showToast("Удалено");
         };
 
+        // ДОБАВЛЕНО: Функция воспроизведения с подсветкой и выводом названия (Запрос 4)
         window.playEp = (url, btnElement, epTitle) => {
             let src = url;
             if(url.includes("drive.google.com")) src = url.replace(/\/view.*$/, "/preview");
@@ -656,9 +652,11 @@
             
             document.getElementById('v-iframe').src = src;
 
+            // Убираем активный класс у всех кнопок и добавляем текущей
             document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active-ep'));
             if(btnElement) btnElement.classList.add('active-ep');
 
+            // Показываем название серии над плеером, если оно есть
             const titleEl = document.getElementById('v-current-ep-title');
             if(epTitle && epTitle.trim() !== '') {
                 titleEl.innerText = epTitle;
@@ -668,41 +666,27 @@
             }
         };
 
-        // --- КОММЕНТАРИИ (С парсером ID) ---
+        // --- КОММЕНТАРИИ ---
         window.loadComments = async () => {
             const snap = await getDocs(query(collection(db, `releases/${curProj.id}/comments`), orderBy("time", "desc")));
             document.getElementById('comm-count').innerText = snap.size;
-            
-            let html = '';
-            for (let d of snap.docs) {
+            document.getElementById('comm-list').innerHTML = snap.docs.map(d => {
                 const c = d.data();
-                let text = esc(c.text);
+                const text = c.text.replace(/@([\wа-яА-ЯёЁ]+)/g, '<a href="#" class="mention-link" onclick="openUserProfileByName(\'$1\'); return false;">@$1</a>');
                 
-                // 4. ИСПРАВЛЕНИЕ: Парсинг email для системы упоминаний
-                const mentions = text.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
-                for(let m of mentions) {
-                    const email = m.replace('@', ''); 
-                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
-                    if(!uSnap.empty) {
-                        const uDoc = uSnap.docs[0];
-                        text = text.replace(m, `<a href="#" class="mention-link" onclick="openUserProfile('${uDoc.id}'); return false;">@${esc(uDoc.data().nickname)}</a>`);
-                    }
-                }
-                
-                html += `
+                return `
                 <div class="comm-item">
-                    <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
+                    <img src="${c.ava || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
                     <div style="flex:1;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${esc(c.nick)}</b>
+                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${c.nick}</b>
                             <span style="font-size:10px; color:var(--text-dim);">${new Date(c.time).toLocaleString()}</span>
                         </div>
                         <p style="font-size:13px; margin-top:5px; word-break:break-word;">${text}</p>
                         ${(isAdmin || (userData && c.uid === auth.currentUser.uid)) ? `<button class="btn-sm" style="background:transparent; color:red; margin-top:5px; padding:0;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
                     </div>
-                </div>`;
-            }
-            document.getElementById('comm-list').innerHTML = html;
+                </div>
+            `}).join('');
         };
 
         window.sendComment = async () => {
@@ -725,14 +709,14 @@
             loadComments(); showToast("Удалено");
         };
 
-        // --- БАЗОВАЯ АВТОРИЗАЦИЯ ---
+        // --- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ И АВТОРИЗАЦИЯ ---
         document.getElementById('btn-reg').onclick = async () => {
             const e = document.getElementById('email').value, p = document.getElementById('pass').value;
             try {
                 const cred = await createUserWithEmailAndPassword(auth, e, p);
                 await setDoc(doc(db, "users", cred.user.uid), {
                     nickname: "User_" + Math.floor(Math.random()*10000),
-                    email: e, role: "user", views: 0, subscribers: 0, subscribersList: [],
+                    email: e, role: "user", views: 0, subscribers: 0,
                     achievements: [{ name: "Новичок", desc: "Зарегистрировался на сайте", img: "👋", date: Date.now() }]
                 });
                 showToast("Регистрация успешна!");
@@ -753,164 +737,231 @@
         };
 
         document.getElementById('btn-logout').onclick = () => signOut(auth);
-        // --- ПРОФИЛЬ И НАСТРОЙКИ (с поддержкой Google Drive) ---
-        window.saveProfile = async () => {
-            const newNick = document.getElementById('ed-nick').value.trim();
-            const newAva = fixDriveUrl(document.getElementById('ed-ava').value.trim()); // Исправляем ссылку на аватар
-            const updates = {};
-            if(newNick) updates.nickname = newNick;
-            if(newAva) updates.avatar = newAva;
 
-            if(Object.keys(updates).length > 0) {
-                await updateDoc(doc(db, "users", auth.currentUser.uid), updates);
-                showToast("Профиль обновлен!");
-                closeModals();
+        window.saveProfile = async () => {
+            const nick = document.getElementById('ed-nick').value;
+            const ava = document.getElementById('ed-ava').value;
+            
+            const q = query(collection(db, "users"), where("nickname", "==", nick));
+            const snap = await getDocs(q);
+            if(!snap.empty && nick !== userData.nickname) return showToast("Этот никнейм уже занят!", "error");
+
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { nickname: nick, avatar: ava });
+            showToast("Профиль обновлен!"); closeModals();
+            userData.nickname = nick; userData.avatar = ava;
+            document.getElementById('u-nick').innerText = nick;
+            document.getElementById('u-ava').src = ava || 'https://api.dicebear.com/7.x/identicon/svg';
+        };
+
+        // ДОБАВЛЕНО: Исправлено модальное окно чужого профиля (Запрос 2)
+        window.openUserProfile = async (uid) => {
+            if(userData && uid === auth.currentUser.uid) { navigate('profile'); return; }
+            const snap = await getDoc(doc(db, "users", uid));
+            if(snap.exists()) {
+                const u = snap.data();
+                document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+                document.getElementById('mu-nick').innerText = u.nickname;
+                
+                // Отображение счетчиков (Запрос 2)
+                document.getElementById('mu-views-count').innerText = u.views || 0;
+                document.getElementById('mu-subs-count').innerText = u.subscribers || 0;
+
+                // Кнопка подписки (Запрос 2)
+                const subBtn = document.getElementById('btn-mu-sub');
+                if(userData) {
+                    const amISubbed = (u.subscribersList || []).includes(auth.currentUser.uid);
+                    subBtn.innerText = amISubbed ? "Отписаться" : "Подписаться";
+                    subBtn.className = amISubbed ? "btn btn-outline" : "btn";
+                    subBtn.onclick = () => subscribeToUser(uid, amISubbed);
+                    subBtn.style.display = 'block';
+                } else {
+                    subBtn.style.display = 'none';
+                }
+
+                // Кликабельные ачивки (Запрос 2)
+                const achs = u.achievements || [];
+                document.getElementById('mu-ach-list').innerHTML = achs.filter(a => !a.hidden).map(a => `
+                    <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:24px; cursor:pointer; border:1px solid var(--border);" title="${a.name}" onclick='viewAchExt(${JSON.stringify(a)})'>
+                        ${a.img}
+                    </div>
+                `).join('');
+                
+                document.getElementById('m-user-profile').style.display = 'flex';
             }
         };
 
-        window.changeUserEmail = async () => {
-            const newEmail = document.getElementById('ed-new-email').value.trim();
-            if(!newEmail) return;
+        window.openUserProfileByName = async (nick) => {
+            const snap = await getDocs(query(collection(db, "users"), where("nickname", "==", nick)));
+            if(!snap.empty) openUserProfile(snap.docs[0].id);
+        };
+
+        // ДОБАВЛЕНО: Функция подписки (Запрос 2)
+        window.subscribeToUser = async (targetUid, isSubbed) => {
+            if(!userData) return;
             try {
-                await updateEmail(auth.currentUser, newEmail);
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { email: newEmail });
-                showToast("Email изменен!");
-            } catch(e) { showToast(e.message, 'error'); }
+                const targetRef = doc(db, "users", targetUid);
+                if(isSubbed) {
+                    await updateDoc(targetRef, { 
+                        subscribers: increment(-1), 
+                        subscribersList: arrayRemove(auth.currentUser.uid) 
+                    });
+                } else {
+                    await updateDoc(targetRef, { 
+                        subscribers: increment(1), 
+                        subscribersList: arrayUnion(auth.currentUser.uid) 
+                    });
+                }
+                showToast(isSubbed ? "Вы отписались" : "Вы подписались!");
+                openUserProfile(targetUid); // Обновляем окно
+            } catch(e) { showToast("Ошибка: " + e.message, "error"); }
         };
 
-        window.changeUserPass = async () => {
-            const newPass = document.getElementById('ed-new-pass').value.trim();
-            if(!newPass) return;
-            try {
-                await updatePassword(auth.currentUser, newPass);
-                showToast("Пароль изменен!");
-            } catch(e) { showToast(e.message, 'error'); }
+        // ДОБАВЛЕНО: Просмотр ачивки из чужого профиля (Запрос 2)
+        window.viewAchExt = (ach) => {
+            document.getElementById('ach-v-img').innerText = ach.img;
+            document.getElementById('ach-v-name').innerText = ach.name;
+            document.getElementById('ach-v-desc').innerText = ach.desc;
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(ach.date).toLocaleDateString()}<br><b>Способ получения:</b> ${ach.giver || 'Система/Студия'}`;
+            document.getElementById('btn-ach-del').style.display = 'none';
+            document.getElementById('m-user-profile').style.display = 'none'; // Скрываем профиль
+            document.getElementById('m-ach-view').style.display = 'flex';
         };
 
-        window.resetPassword = async () => {
-            const e = document.getElementById('email').value;
-            if(!e) return showToast("Введите Email", "error");
-            await sendPasswordResetEmail(auth, e);
-            showToast("Инструкции отправлены на почту");
+        // --- АЧИВКИ ---
+        window.giveAch = async () => {
+            const email = document.getElementById('ga-uid').value;
+            const q = query(collection(db, "users"), where("email", "==", email));
+            const snap = await getDocs(q);
+            if(snap.empty) return showToast("Пользователь не найден!", "error");
+            
+            const uRef = doc(db, "users", snap.docs[0].id);
+            const uData = snap.docs[0].data();
+            const achs = uData.achievements || [];
+            achs.push({
+                name: document.getElementById('ga-name').value,
+                desc: document.getElementById('ga-desc').value,
+                img: document.getElementById('ga-img').value,
+                date: Date.now(),
+                hidden: false,
+                giver: userData.nickname
+            });
+            await updateDoc(uRef, { achievements: achs });
+            showToast("Достижение выдано!"); closeModals();
         };
 
-        // --- СИСТЕМА ДОСТИЖЕНИЙ (ИНВЕНТАРЬ) ---
-        window.openAchInventory = () => {
-            const inv = document.getElementById('ach-inv-list');
-            inv.innerHTML = (userData.achievements || []).map((a, i) => `
-                <div onclick="toggleAchVisibility(${i})" style="cursor:pointer; font-size:30px; padding:10px; background:${a.hidden ? 'rgba(255,255,255,0.05)' : 'rgba(255,46,46,0.1)'}; border-radius:8px; text-align:center; position:relative; border: 1px solid ${a.hidden ? 'transparent' : 'var(--accent)'};">
+        window.renderAchProfile = () => {
+            if(!userData) return;
+            const achs = userData.achievements || [];
+            document.getElementById('u-ach').innerHTML = achs.filter(a => !a.hidden).map((a, i) => `
+                <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:24px; cursor:pointer; border:1px solid var(--border);" title="${a.name}" onclick="viewAch(${i}, true)">
                     ${a.img}
-                    <div style="font-size:8px; color:var(--text-dim); margin-top:5px;">${a.hidden ? 'СКРЫТО' : 'ВИДНО'}</div>
+                </div>
+            `).join('') || '<p style="font-size:12px; color:var(--text-dim);">Пока нет достижений.</p>';
+        };
+
+        window.openAchInventory = () => {
+            const achs = userData.achievements || [];
+            document.getElementById('ach-inv-list').innerHTML = achs.map((a, i) => `
+                <div style="background:var(--input-bg); padding:15px; border-radius:10px; text-align:center; cursor:pointer; border:1px solid ${a.hidden ? 'red' : 'var(--accent)'}; opacity: ${a.hidden ? '0.5' : '1'}; transition: 0.2s;" onclick="toggleAchVisibility(${i})">
+                    <div style="font-size:30px;">${a.img}</div>
+                    <div style="font-size:10px; margin-top:5px; font-weight:bold;">${a.name}</div>
+                    <div style="font-size:9px; color:var(--text-dim); margin-top:5px; text-decoration:underline;" onclick="event.stopPropagation(); viewAch(${i}, false)">Подробнее</div>
                 </div>
             `).join('');
             document.getElementById('m-ach-inv').style.display = 'flex';
         };
 
         window.toggleAchVisibility = async (idx) => {
-            const achs = [...(userData.achievements || [])];
-            achs[idx].hidden = !achs[idx].hidden;
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: achs });
-            openAchInventory();
+            userData.achievements[idx].hidden = !userData.achievements[idx].hidden;
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
+            openAchInventory(); renderAchProfile();
         };
 
-        window.viewAch = (idx) => {
+        window.viewAch = (idx, fromProfile) => {
             viewAchIdx = idx;
             const a = userData.achievements[idx];
             document.getElementById('ach-v-img').innerText = a.img;
             document.getElementById('ach-v-name').innerText = a.name;
             document.getElementById('ach-v-desc').innerText = a.desc;
-            document.getElementById('ach-v-meta').innerText = "Получено: " + new Date(a.date).toLocaleDateString();
-            document.getElementById('btn-ach-del').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(a.date).toLocaleDateString()}<br><b>Способ получения:</b> ${a.giver || 'Система/Студия'}`;
+            
+            document.getElementById('btn-ach-del').style.display = 'block';
+            document.getElementById('m-ach-inv').style.display = 'none';
             document.getElementById('m-ach-view').style.display = 'flex';
         };
 
-        window.giveAch = async () => {
-            const email = document.getElementById('ga-uid').value.trim();
-            const name = document.getElementById('ga-name').value.trim();
-            if(!email || !name) return;
-
-            const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
-            if(uSnap.empty) return showToast("Пользователь не найден", "error");
-
-            const uDoc = uSnap.docs[0];
-            const newAch = {
-                name,
-                desc: document.getElementById('ga-desc').value,
-                img: document.getElementById('ga-img').value || "🏆",
-                date: Date.now(),
-                hidden: false
-            };
-
-            await updateDoc(doc(db, "users", uDoc.id), { achievements: arrayUnion(newAch) });
-            showToast("Ачивка выдана!"); closeModals();
+        window.deleteAchievement = async () => {
+            if(!confirm("Удалить достижение НАВСЕГДА? Это действие нельзя отменить.")) return;
+            userData.achievements.splice(viewAchIdx, 1);
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { achievements: userData.achievements });
+            showToast("Достижение удалено.");
+            closeModals(); renderAchProfile();
         };
 
-        // --- СОСТАВ КОМАНДЫ (С Drag-and-Drop) ---
+        // --- СОСТАВ КОМАНДЫ ---
         window.loadTeam = async () => {
             const snap = await getDocs(query(collection(db, "team"), orderBy("order")));
-            // КРИТИЧЕСКАЯ СТРОКА: Сохраняем участников в глобальную переменную
-            allTeam = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            const t = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            const wrapper = document.getElementById('team-wrapper');
-            wrapper.innerHTML = '';
-
-            const categories = {};
-            allTeam.forEach(m => {
-                const cat = m.category || "Другие";
-                if(!categories[cat]) categories[cat] = [];
-                categories[cat].push(m);
+            const cats = {};
+            t.forEach(m => {
+                const c = m.cat || 'Без категории';
+                if(!cats[c]) cats[c] = [];
+                cats[c].push(m);
             });
 
-            for(let cat in categories) {
-                const catId = `cat-${cat.replace(/\s/g, '')}`;
-                wrapper.innerHTML += `
-                    <div class="team-container">
-                        <div class="team-container-header">${cat}</div>
-                        <div class="grid" id="${catId}">
-                            ${categories[cat].map(m => `
-                                <div class="card" data-id="${m.id}" onclick="openTeamPage('${m.id}')">
-                                    <div class="drag-handle"><i class="fas fa-grip-lines"></i></div>
-                                    ${isAdmin ? `
-                                        <div class="adm-tools">
-                                            <button class="btn-sm" style="background:var(--admin);" onclick="event.stopPropagation(); openTeamModal('${m.id}')">Ред</button>
-                                            <button class="btn-sm" style="background:red;" onclick="event.stopPropagation(); deleteTeam('${m.id}')">X</button>
-                                        </div>
-                                    ` : ''}
-                                    <img src="${m.img || 'https://api.dicebear.com/7.x/avataaars/svg'}" loading="lazy">
-                                    <div class="card-info">
-                                        <div class="card-title" style="text-align:center;">${m.name}</div>
-                                        <div style="font-size:11px; color:var(--accent); text-align:center; margin-top:5px;">${m.role}</div>
-                                    </div>
-                                </div>
-                            `).join('')}
+            const w = document.getElementById('team-wrapper');
+            w.innerHTML = '';
+
+            Object.keys(cats).forEach(cat => {
+                const cDiv = document.createElement('div');
+                cDiv.className = 'team-container';
+                cDiv.innerHTML = `<div class="team-container-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'grid' : 'none'">${cat} <i class="fas fa-chevron-down" style="font-size:12px;"></i></div>
+                                  <div class="grid" id="cat-${cat.replace(/\s/g,'')}"></div>`;
+                w.appendChild(cDiv);
+                
+                const grid = cDiv.querySelector('.grid');
+                grid.innerHTML = cats[cat].map(m => `
+                    <div class="card" data-id="${m.id}" onclick="openTeamPage('${m.id}')">
+                        <div class="drag-handle"><i class="fas fa-grip-lines"></i> Перетащить</div>
+                        ${isAdmin ? `<div class="adm-tools">
+                            <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openTeamModal('${m.id}')">Ред</button>
+                            <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); delTeam('${m.id}')">Удал</button>
+                        </div>` : ''}
+                        <img src="${m.img}" loading="lazy">
+                        <div class="card-info" style="text-align:center;">
+                            <div class="card-title" style="font-size:16px;">${m.name}</div>
+                            <div style="color:var(--accent); font-size:12px; margin-top:5px; font-weight:bold;">${m.role}</div>
                         </div>
                     </div>
-                `;
+                `).join('');
 
                 if(isAdmin) {
-                    new Sortable(document.getElementById(catId), {
-                        animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost',
+                    new Sortable(grid, {
+                        handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost',
                         onEnd: async () => {
-                            const items = Array.from(document.getElementById(catId).children);
+                            const items = Array.from(grid.children);
                             for(let i=0; i<items.length; i++) {
                                 await updateDoc(doc(db, "team", items[i].dataset.id), { order: i });
                             }
+                            showToast("Порядок сохранен");
                         }
                     });
                 }
-            }
+            });
+
+            if(isAdmin) document.body.classList.add('admin-mode');
+            else document.body.classList.remove('admin-mode');
         };
 
-        window.openTeamModal = (id = '') => {
+        window.openTeamModal = async (id = '') => {
             document.getElementById('ed-team-id').value = id;
             if(id) {
-                const m = allTeam.find(x => x.id === id);
-                document.getElementById('ad-m-name').value = m.name;
-                document.getElementById('ad-m-role').value = m.role;
-                document.getElementById('ad-m-img').value = m.img;
-                document.getElementById('ad-m-cat').value = m.category || '';
+                const snap = await getDoc(doc(db, "team", id));
+                const d = snap.data();
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = d[f] || '');
             } else {
-                ['ad-m-name','ad-m-role','ad-m-img','ad-m-cat'].forEach(f => document.getElementById(f).value = '');
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = '');
             }
             document.getElementById('m-team').style.display = 'flex';
         };
@@ -920,215 +971,223 @@
             const data = {
                 name: document.getElementById('ad-m-name').value,
                 role: document.getElementById('ad-m-role').value,
-                img: fixDriveUrl(document.getElementById('ad-m-img').value),
-                category: document.getElementById('ad-m-cat').value || "Другие",
-                order: id ? allTeam.find(x=>x.id===id).order : allTeam.length
+                img: document.getElementById('ad-m-img').value,
+                cat: document.getElementById('ad-m-cat').value || 'Без категории'
             };
-            if(!id) await addDoc(collection(db, "team"), data);
-            else await updateDoc(doc(db, "team", id), data);
-            closeModals(); loadTeam();
+            if(!id) {
+                data.order = 999;
+                await addDoc(collection(db, "team"), data);
+            } else {
+                await updateDoc(doc(db, "team", id), data);
+            }
+            closeModals(); loadTeam(); showToast("Участник сохранен!");
         };
 
-        window.deleteTeam = async (id) => {
-            if(confirm("Удалить участника?")) { await deleteDoc(doc(db, "team", id)); loadTeam(); }
+        window.delTeam = async (id) => {
+            if(!confirm("Удалить участника?")) return;
+            await deleteDoc(doc(db, "team", id));
+            loadTeam(); showToast("Удален");
         };
 
         // --- ЛИЧНЫЕ СТРАНИЦЫ УЧАСТНИКОВ ---
         window.openTeamPage = async (id) => {
-            curTM = allTeam.find(x => x.id === id);
+            curTM = {id, ...(await getDoc(doc(db, "team", id))).data()};
             navigate('team-page');
+            document.getElementById('adm-tp-controls').style.display = isAdmin ? 'flex' : 'none';
             
-            const docRef = doc(db, "team_pages", id);
-            const pSnap = await getDoc(docRef);
-            const p = pSnap.exists() ? pSnap.data() : { bio: "Информация скоро появится...", social: "" };
-
             document.getElementById('team-page-view').innerHTML = `
-                <div style="display:flex; gap:30px; flex-wrap:wrap; align-items:flex-start;">
-                    <img src="${curTM.img}" style="width:250px; border-radius:15px; border:1px solid var(--border);">
+                <div style="display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap;">
+                    <img src="${curTM.img}" style="width:250px; height:350px; border-radius:15px; object-fit:cover; border:2px solid var(--accent);">
                     <div style="flex:1; min-width:300px;">
-                        <h1 style="color:var(--accent); font-size:2.5rem; margin-bottom:5px;">${curTM.name}</h1>
-                        <p style="font-weight:bold; color:var(--text-dim); margin-bottom:20px;">${curTM.role}</p>
-                        <div style="line-height:1.8; white-space:pre-wrap; margin-bottom:20px;">${p.bio}</div>
-                        <div style="font-size:14px; color:var(--admin);">${p.social}</div>
+                        <h1 style="font-size:2.5rem; margin-bottom:10px;">${curTM.name}</h1>
+                        <h3 style="color:var(--accent); margin-bottom:20px;">${curTM.role}</h3>
+                        <div style="background:var(--input-bg); padding:20px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px;">
+                            <h4 style="margin-bottom:10px; color:var(--text-dim);">О себе:</h4>
+                            <p style="line-height:1.6; font-size:14px; white-space:pre-wrap;">${curTM.bio || 'Информация пока не добавлена.'}</p>
+                        </div>
+                        ${curTM.social ? `<a href="${curTM.social}" target="_blank" class="btn btn-outline" style="text-decoration:none;"><i class="fas fa-link"></i> Ссылки / Соцсети</a>` : ''}
                     </div>
                 </div>
             `;
-            document.getElementById('adm-tp-controls').style.display = isAdmin ? 'flex' : 'none';
         };
 
-        window.openTPModal = async () => {
-            const pSnap = await getDoc(doc(db, "team_pages", curTM.id));
-            if(pSnap.exists()) {
-                document.getElementById('tp-bio').value = pSnap.data().bio;
-                document.getElementById('tp-social').value = pSnap.data().social;
-            } else {
-                document.getElementById('tp-bio').value = '';
-                document.getElementById('tp-social').value = '';
-            }
+        window.openTPModal = () => {
+            document.getElementById('tp-bio').value = curTM.bio || '';
+            document.getElementById('tp-social').value = curTM.social || '';
             document.getElementById('m-tp-edit').style.display = 'flex';
         };
 
         window.saveTP = async () => {
-            await setDoc(doc(db, "team_pages", curTM.id), {
-                bio: document.getElementById('tp-bio').value,
-                social: document.getElementById('tp-social').value
-            });
+            const bio = document.getElementById('tp-bio').value;
+            const soc = document.getElementById('tp-social').value;
+            await updateDoc(doc(db, "team", curTM.id), { bio: bio, social: soc });
             closeModals(); openTeamPage(curTM.id); showToast("Страница обновлена");
         };
 
-        // --- ПРОФИЛИ ПОЛЬЗОВАТЕЛЕЙ И ПОДПИСКИ ---
-        window.openUserProfile = async (uid) => {
-            if(userData && uid === auth.currentUser.uid) return navigate('profile');
+        // --- ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ---
+        window.openPrivacy = async () => {
+            document.getElementById('m-privacy').style.display = 'flex';
+            const d = await getDoc(doc(db, "settings", "privacy"));
+            const txt = d.exists() ? d.data().text : "Политика конфиденциальности пока не заполнена.";
             
-            const uSnap = await getDoc(doc(db, "users", uid));
-            if(!uSnap.exists()) return;
-            const u = uSnap.data();
-
-            document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-            document.getElementById('mu-nick').innerText = u.nickname;
-            document.getElementById('mu-views-count').innerText = u.views || 0;
-            document.getElementById('mu-subs-count').innerText = u.subscribers || 0;
+            document.getElementById('priv-text').innerText = txt;
+            document.getElementById('priv-edit').value = txt;
             
-            const achBox = document.getElementById('mu-ach-list');
-            achBox.innerHTML = (u.achievements || []).filter(a => !a.hidden).map(a => `<div title="${a.name}" style="font-size:25px;">${a.img}</div>`).join('');
+            // Сбрасываем вид (показываем текст, прячем редактор)
+            document.getElementById('priv-text').style.display = 'block';
+            document.getElementById('priv-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'none';
             
-            const btnSub = document.getElementById('btn-mu-sub');
-            if(!userData) btnSub.style.display = 'none';
-            else {
-                btnSub.style.display = 'block';
-                const isSubbed = u.subscribersList && u.subscribersList.includes(auth.currentUser.uid);
-                btnSub.innerText = isSubbed ? "Отписаться" : "Подписаться";
-                btnSub.className = isSubbed ? "btn btn-outline" : "btn";
-                btnSub.onclick = () => toggleSub(uid, isSubbed);
+            // Если админ, показываем кнопку "Редактировать"
+            if(isAdmin) {
+                document.getElementById('priv-adm-btns').style.display = 'block';
+                document.getElementById('priv-btn-edit').style.display = 'block';
             }
-
-            document.getElementById('m-user-profile').style.display = 'flex';
         };
 
-        window.toggleSub = async (targetUid, isSubbed) => {
-            const myUid = auth.currentUser.uid;
-            const targetRef = doc(db, "users", targetUid);
-            
-            if(isSubbed) {
-                await updateDoc(targetRef, { subscribers: increment(-1), subscribersList: arrayRemove(myUid) });
-            } else {
-                await updateDoc(targetRef, { subscribers: increment(1), subscribersList: arrayUnion(myUid) });
-            }
-            openUserProfile(targetUid);
+        window.editPriv = () => {
+            document.getElementById('priv-text').style.display = 'none';
+            document.getElementById('priv-edit').style.display = 'block';
+            document.getElementById('priv-btn-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'block';
         };
 
-        window.showMySubscribers = async () => {
-            const list = document.getElementById('subs-list');
-            list.innerHTML = 'Загрузка...';
+        window.savePriv = async () => {
+            await setDoc(doc(db, "settings", "privacy"), { text: document.getElementById('priv-edit').value });
+            closeModals();
+            showToast("Политика конфиденциальности сохранена!", "success");
+        };
+
+
+        // --- ПРОСМОТР СПИСКА ПОДПИСЧИКОВ ---
+        window.showSubscribers = async (targetUid) => {
+            // Если ID не передан, показываем подписчиков текущего пользователя
+            const uid = targetUid || auth.currentUser.uid; 
+            const uDoc = await getDoc(doc(db, "users", uid));
+            
+            if(!uDoc.exists()) return;
+            const subs = uDoc.data().subscribersList || [];
+            
+            if(subs.length === 0) return showToast("Пока нет подписчиков");
+            
+            const list = document.getElementById('subs-list'); 
+            list.innerHTML = ''; // Очищаем старый список
+            
+            for(let subId of subs) {
+                const subDoc = await getDoc(doc(db, "users", subId));
+                if(subDoc.exists()) {
+                    list.innerHTML += `
+                    <div style="padding:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+                        <img src="${subDoc.data().avatar || 'https://api.dicebear.com/7.x/identicon/svg'}" style="width:30px;height:30px;border-radius:50%; object-fit:cover;">
+                        <b style="cursor:pointer; color:var(--accent);" onclick="closeModals(); openUserProfile('${subId}')">${esc(subDoc.data().nickname)}</b>
+                    </div>`;
+                }
+            }
+            // Закрываем окно профиля и открываем окно подписчиков
+            document.getElementById('m-user-profile').style.display = 'none';
             document.getElementById('m-subs').style.display = 'flex';
+        };
 
-            const uSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
-            const subIds = uSnap.data().subscribersList || [];
+
+        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ ПРОФИЛЯ (Клик по подписчикам) ---
+        const originalOpenUserProfile = window.openUserProfile;
+        window.openUserProfile = async (uid) => {
+            // Вызываем старую логику
+            await originalOpenUserProfile(uid);
             
-            if(subIds.length === 0) { list.innerHTML = 'У вас пока нет подписчиков.'; return; }
+            // Делаем блок "Подписчики" в чужом профиле кликабельным
+            const subsBlock = document.getElementById('mu-subs-count').parentElement;
+            subsBlock.style.cursor = 'pointer';
+            subsBlock.onclick = () => showSubscribers(uid);
+        };
+        
+        // Для своего профиля тоже обновим вызов
+        window.showMySubscribers = () => {
+            showSubscribers(auth.currentUser.uid);
+        };
 
+
+        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ КОММЕНТАРИЕВ (Упоминания @email -> @nickname) ---
+        window.loadComments = async () => {
+            const snap = await getDocs(query(collection(db, `releases/${curProj.id}/comments`), orderBy("time", "desc")));
+            document.getElementById('comm-count').innerText = snap.size;
+            
             let html = '';
-            for(let sid of subIds) {
-                const sDoc = await getDoc(doc(db, "users", sid));
-                if(sDoc.exists()) {
-                    const s = sDoc.data();
-                    html += `
-                        <div style="display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid var(--border); cursor:pointer;" onclick="openUserProfile('${sid}')">
-                            <img src="${s.avatar || 'https://api.dicebear.com/7.x/identicon/svg'}" style="width:30px; height:30px; border-radius:50%;">
-                            <span>${esc(s.nickname)}</span>
+            for (let d of snap.docs) {
+                const c = d.data();
+                let text = esc(c.text);
+                
+                // Ищем email-ы с собачкой (например @test@mail.ru)
+                const mentions = text.match(/@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [];
+                for(let m of mentions) {
+                    const email = m.replace('@', ''); // Убираем первую собачку для поиска
+                    const uSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+                    if(!uSnap.empty) {
+                        const uDoc = uSnap.docs[0];
+                        // Заменяем email на кликабельный никнейм
+                        text = text.replace(m, `<a href="#" class="mention-link" onclick="openUserProfile('${uDoc.id}'); return false;">@${esc(uDoc.data().nickname)}</a>`);
+                    }
+                }
+                
+                html += `
+                <div class="comm-item">
+                    <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
+                    <div style="flex:1;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${esc(c.nick)}</b>
+                            <span style="font-size:10px; color:var(--text-dim);">${new Date(c.time).toLocaleString()}</span>
                         </div>
-                    `;
-                }
+                        <p style="font-size:13px; margin-top:5px; word-break:break-word;">${text}</p>
+                        ${(isAdmin || (userData && c.uid === auth.currentUser.uid)) ? `<button class="btn-sm" style="background:transparent; color:red; margin-top:5px; padding:0;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
+                    </div>
+                </div>`;
             }
-            list.innerHTML = html;
-        };
-        // --- ДОПОЛНИТЕЛЬНЫЕ СИСТЕМНЫЕ ФУНКЦИИ ---
-        window.renderAchProfile = () => {
-            const achBox = document.getElementById('u-ach');
-            if(!achBox || !userData) return;
-            
-            achBox.innerHTML = '';
-            (userData.achievements || []).forEach((a, i) => {
-                // Показываем только те, что не скрыты пользователем в инвентаре
-                if(!a.hidden) {
-                    achBox.innerHTML += `
-                        <div title="${esc(a.name)}" 
-                             style="font-size:30px; cursor:pointer; filter: drop-shadow(0 0 5px rgba(255,46,46,0.3));" 
-                             onclick="viewAch(${i})">
-                             ${a.img}
-                        </div>`;
-                }
-            });
+            document.getElementById('comm-list').innerHTML = html;
         };
 
-        window.togglePolicy = (show) => {
-            document.getElementById('m-policy').style.display = show ? 'flex' : 'none';
-        };
-
-        // --- ГЛАВНЫЙ СЛУШАТЕЛЬ СОСТОЯНИЯ (AUTH) ---
+        // --- AUTH & INIT ---
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Пользователь авторизован
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    userData = userDoc.data();
-                    isAdmin = userData.role === 'admin';
-
-                    // Обновляем UI профиля
+            if(user) {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if(snap.exists()) {
+                    userData = snap.data();
+                    isAdmin = userData.role === "admin";
+                    
                     document.getElementById('auth-ui').style.display = 'none';
                     document.getElementById('user-ui').style.display = 'block';
-                    document.getElementById('comm-form').style.display = 'flex';
+                    document.getElementById('comm-form').style.display = 'block';
                     document.getElementById('comm-auth-msg').style.display = 'none';
 
                     document.getElementById('u-nick').innerText = userData.nickname;
+                    document.getElementById('ed-nick').value = userData.nickname; // Заполняем поле редактирования
                     document.getElementById('u-ava').src = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
-                    document.getElementById('u-role').innerText = isAdmin ? "АДМИНИСТРАТОР" : "ПОЛЬЗОВАТЕЛЬ";
+                    document.getElementById('ed-ava').value = userData.avatar || ''; // Заполняем поле редактирования
+                    document.getElementById('u-role').innerText = isAdmin ? "АДМИН" : "ПОЛЬЗОВАТЕЛЬ";
                     document.getElementById('u-views').innerText = userData.views || 0;
                     document.getElementById('u-subs').innerText = userData.subscribers || 0;
                     
-                    // Заполняем поля в модалке настроек
-                    document.getElementById('ed-nick').value = userData.nickname;
-                    document.getElementById('ed-ava').value = userData.avatar || '';
-
-                    // Показываем админ-панели
-                    const admElements = ['adm-btn-rel', 'adm-btn-team', 'adm-ach-panel'];
-                    admElements.forEach(id => {
-                        const el = document.getElementById(id);
-                        if(el) el.style.display = isAdmin ? 'block' : 'none';
-                    });
-
                     renderAchProfile();
+                    
+                    if(isAdmin) {
+                        document.getElementById('adm-btn-rel').style.display = 'block';
+                        document.getElementById('adm-btn-team').style.display = 'block';
+                        document.getElementById('adm-ach-panel').style.display = 'block';
+                    }
                 }
             } else {
-                // Пользователь не авторизован
-                userData = null;
-                isAdmin = false;
-                
+                userData = null; isAdmin = false;
                 document.getElementById('auth-ui').style.display = 'block';
                 document.getElementById('user-ui').style.display = 'none';
                 document.getElementById('comm-form').style.display = 'none';
                 document.getElementById('comm-auth-msg').style.display = 'block';
                 
-                // Скрываем админ-кнопки
-                ['adm-btn-rel', 'adm-btn-team', 'adm-ach-panel'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if(el) el.style.display = 'none';
-                });
+                document.getElementById('adm-btn-rel').style.display = 'none';
+                document.getElementById('adm-btn-team').style.display = 'none';
+                document.getElementById('adm-ach-panel').style.display = 'none';
             }
-
-            // Роутинг: проверяем хэш в URL или открываем главную
             const hashPage = window.location.hash.replace('#', '') || 'home';
             navigate(hashPage, false);
-            
-            // Загружаем контент
-            loadHome();
         });
-
-        // Закрытие модалок при клике на оверлей
-        window.onclick = (e) => {
-            if (e.target.classList.contains('modal')) closeModals();
-        };
     </script>
 </body>
 </html>
-    
