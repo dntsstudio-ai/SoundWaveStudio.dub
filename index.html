@@ -227,10 +227,13 @@
     </div>
 </div>
         <section id="dubin" class="section">
-    <div style="background:var(--card-bg); padding:40px; border-radius:20px; border:1px solid var(--border); text-align:center;">
-        <h2 style="color:var(--accent); margin-bottom:15px;">DUB-In — Панель даберов</h2>
-        <p style="color:var(--text-dim);">Контент на данной странице заполним позже.</p>
-    </div>
+            <div class="section-header">
+                <h2 class="section-title">Панель материалов (DUB-In)</h2>
+                <p style="color:var(--text-dim); font-size:0.9rem;">Здесь доступны исходники и сценарии для текущих релизов</p>
+            </div>
+
+            <div id="dub-materials-list" class="releases-grid">
+                </div>
         </section>
             
                 <div id="reset-pass-block" style="display:none; margin-top:15px;">
@@ -291,6 +294,7 @@
         <input type="text" id="ad-voiceover" placeholder="Озвучка (Например: Sound Wave Studio)">
         <input type="text" id="ad-authors" placeholder="Студия / Авторы">
         <input type="text" id="ad-img" placeholder="URL постера">
+        <input type="text" id="rel-drive-link" placeholder="Ссылка на Google Диск (для даберов)">
         <textarea id="ad-desc" placeholder="Описание сюжета..." rows="4"></textarea>
         <button class="btn btn-blue" style="width:100%" onclick="saveRel()">Сохранить</button>
         <button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="closeModals()">Отмена</button>
@@ -410,6 +414,48 @@
             appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
         };
 
+async function renderDubMaterials() {
+    const container = document.getElementById('dub-materials-list');
+    container.innerHTML = '<p style="color:var(--text-dim);">Загрузка материалов...</p>';
+
+    try {
+        // Запрашиваем проекты (используй 'releases', если это твоя основная коллекция)
+        const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        
+        container.innerHTML = '';
+        let found = false;
+
+        snap.forEach(doc => {
+            const rel = doc.data();
+            // Показываем релиз, только если в нем заполнена ссылка 'driveLink'
+            if (rel.driveLink) {
+                found = true;
+                const card = document.createElement('div');
+                card.className = 'release-card';
+                card.innerHTML = `
+                    <div class="rel-poster" style="background-image: url('${rel.poster || ''}'); height: 180px;"></div>
+                    <div class="rel-info" style="padding: 15px;">
+                        <h4 style="margin-bottom: 10px; font-size: 1rem;">${rel.title}</h4>
+                        <a href="${rel.driveLink}" target="_blank" class="btn" 
+                           style="display: block; text-align: center; background: var(--accent); color: white; text-decoration: none; padding: 8px; border-radius: 8px;">
+                           <i class="fab fa-google-drive"></i> Скачать исходники
+                        </a>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        });
+
+        if (!found) {
+            container.innerHTML = '<p style="color:var(--text-dim);">Пока нет доступных материалов для скачивания.</p>';
+        }
+    } catch (e) {
+        console.error("Ошибка загрузки DUB-In:", e);
+        container.innerHTML = '<p style="color:var(--accent);">Ошибка доступа к базе данных.</p>';
+    }
+}
+        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -482,10 +528,12 @@
                 authors: document.getElementById('ad-authors').value,
                 img: document.getElementById('ad-img').value,
                 desc: document.getElementById('ad-desc').value,
+                driveLink: document.getElementById('rel-drive-link').value;
                 timestamp: id ? undefined : Date.now(),
                 episodes: id ? allRel.find(x=>x.id===id).episodes : [],
                 likes: id ? (allRel.find(x=>x.id===id).likes || []) : [], // ДОБАВЛЕНО: Массивы для лайков/дизлайков
                 dislikes: id ? (allRel.find(x=>x.id===id).dislikes || []) : []
+                
             };
             if(!id) await addDoc(collection(db, "releases"), data);
             else { delete data.timestamp; await updateDoc(doc(db, "releases", id), data); }
