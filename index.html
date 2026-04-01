@@ -3,53 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sound Wave Studio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
+    <title>Sound Wave Studio — My Dubside Engine</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        :root {
-            --bg: #050507; --card-bg: #0c0c0e; --input-bg: #050506;
-            --accent: #ff2e2e; --text: #ffffff; --text-dim: #9ca3af;
-            --border: #1a1a1e; --ts: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        body {
-            background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif;
-            overflow-x: hidden; min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(255, 46, 46, 0.05) 0%, transparent 50%),
-                url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' fill='%23ff2e2e' opacity='0.03' font-size='20'%3EX%3C/text%3E%3Ctext x='150' y='80' fill='%23ffffff' opacity='0.02' font-size='15'%3EO%3C/text%3E%3Ctext x='300' y='40' fill='%23ff2e2e' opacity='0.03' font-size='25'%3EØ%3C/text%3E%3Ctext x='50' y='250' fill='%23ffffff' opacity='0.02' font-size='12'%3ESWS%3C/text%3E%3C/svg%3E");
-        }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
-        header { padding: 25px 0; position: sticky; top: 0; z-index: 1000; background: rgba(5, 5, 7, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); }
-        .nav-flex { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: var(--text); }
-        .logo span { color: var(--accent); }
-        .nav-menu { display: flex; gap: 35px; align-items: center; }
-        .nav-item { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); transition: var(--ts); cursor: pointer; }
-        .nav-item:hover, .nav-item.active { color: var(--accent); }
-        .auth-btn { background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 8px; font-weight: 900; font-size: 11px; text-transform: uppercase; border: none; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 46, 46, 0.2); }
-        .releases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 40px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: var(--ts); cursor: pointer; position: relative; }
-        .card:hover { transform: scale(1.02); border-color: var(--accent); }
-        .card-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; filter: grayscale(0.3); transition: 0.5s; }
-        .card:hover .card-img { filter: grayscale(0); }
-        .card-body { padding: 25px; }
-        .card-tag { color: var(--accent); font-size: 9px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .card-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--card-bg); border: 1px solid var(--border); padding: 40px; border-radius: 30px; width: 100%; max-width: 500px; position: relative; }
-        input, textarea, select { width: 100%; padding: 18px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; color: #fff; margin-bottom: 15px; font-family: inherit; }
-        .btn-primary { width: 100%; padding: 18px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: var(--ts); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 46, 46, 0.3); }
-        .hidden { display: none !important; }
-        .page { animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* Плеер */
-        #player-box { background: #000; border-radius: 25px; border: 1px solid var(--border); overflow: hidden; aspect-ratio: 16/9; margin: 30px 0; display: flex; align-items: center; justify-content: center; }
-        .ep-item { min-width: 150px; background: var(--card-bg); padding: 15px; border-radius: 12px; cursor: pointer; border: 1px solid var(--border); text-align: center; transition: var(--ts); }
-        .ep-item:hover, .ep-item.active { border-color: var(--accent); background: #1a1a1e; }
+        :root{--bg:#0b0b0d;--card-bg:#141417;--input-bg:#050506;--accent:#ff2e2e;--text:#fff;--text-dim:#9ca3af;--border:#252529;--admin:#3897f0;--ts:all 0.2s ease}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Manrope',sans-serif}
+        body{background:var(--bg);color:var(--text);overflow-x:hidden}
+        .container{max-width:1200px;margin:0 auto;padding:0 20px}
+        header{padding:20px 0;background:rgba(11,11,13,0.8);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border)}
+        .nav-flex{display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:22px;font-weight:900;text-transform:uppercase;cursor:pointer}
+        .logo span{color:var(--accent)}
+        .nav-menu{display:flex;gap:30px;align-items:center}
+        .nav-link{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);transition:var(--ts);cursor:pointer}
+        .nav-link:hover,.nav-link.active{color:var(--accent)}
+        .btn-auth{background:var(--accent);color:#fff;padding:10px 20px;border-radius:8px;font-weight:900;font-size:11px;text-transform:uppercase;border:none;cursor:pointer}
+        .search-box{width:100%;max-width:500px;position:relative}
+        .search-box input{width:100%;padding:12px 20px;background:var(--input-bg);border:1px solid var(--border);border-radius:12px;color:#fff;font-size:13px}
+        .releases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:25px;margin-top:30px}
+        .card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:var(--ts);cursor:pointer;position:relative}
+        .card:hover{transform:translateY(-5px);border-color:var(--accent)}
+        .card-img{width:100%;aspect-ratio:16/10;object-fit:cover}
+        .card-body{padding:20px}
+        .card-tag{font-size:9px;font-weight:900;color:var(--accent);text-transform:uppercase;margin-bottom:8px;display:block}
+        .card-title{font-size:16px;font-weight:800;line-height:1.4}
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:1000;align-items:center;justify-content:center;padding:20px}
+        .modal-content{background:var(--card-bg);padding:40px;border-radius:24px;width:100%;max-width:450px;border:1px solid var(--border)}
+        .hidden{display:none!important}
+        #player-area{background:#000;border-radius:20px;aspect-ratio:16/9;margin:30px 0;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);overflow:hidden}
+        .ep-btn{padding:12px 20px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:#fff;cursor:pointer;font-weight:800;font-size:12px;transition:var(--ts)}
+        .ep-btn.active{border-color:var(--accent);color:var(--accent)}
+        .mention-link{color:var(--accent);text-decoration:none;font-weight:bold}
     </style>
 </head>
 <body>
@@ -57,16 +42,14 @@
         <div class="container nav-flex">
             <div class="logo" onclick="navigate('home')">SOUND WAVE <span>STUDIO</span></div>
             <nav class="nav-menu">
-                <div class="nav-item active" data-page="home" onclick="navigate('home')">Релизы</div>
-                <div class="nav-item" data-page="team" onclick="navigate('team')">Команда</div>
-                <div class="nav-item" data-page="dubin" onclick="navigate('dubin')">DUB-IN</div>
-                <div id="adm-nav" class="nav-item hidden" data-page="admin" onclick="navigate('admin')">ADMIN</div>
-                <div id="auth-ui">
-                    <button class="auth-btn" onclick="openModal('m-auth')">Вход</button>
-                </div>
-                <div id="user-ui" class="hidden" style="display:flex; align-items:center; gap:15px; cursor:pointer;" onclick="navigate('profile')">
-                    <div style="text-align:right;"><div id="u-nick" style="font-size:12px; font-weight:800;">User</div><div id="u-role-tag" style="font-size:9px; color:var(--accent); font-weight:900;">UNIT</div></div>
-                    <img id="u-ava" src="" style="width:38px; height:38px; border-radius:10px; border:1px solid var(--accent);">
+                <div class="nav-link active" data-page="home" onclick="navigate('home')">Релизы</div>
+                <div class="nav-link" data-page="team" onclick="navigate('team')">Команда</div>
+                <div class="nav-link" data-page="dubin" onclick="navigate('dubin')">DUB-IN</div>
+                <div id="adm-nav" class="nav-link hidden" onclick="navigate('admin')">ADMIN</div>
+                <div id="auth-ui"><button class="btn-auth" onclick="openModal('m-auth')">Вход</button></div>
+                <div id="user-ui" class="hidden" onclick="navigate('profile')" style="cursor:pointer;display:flex;align-items:center;gap:12px">
+                    <div style="text-align:right"><div id="u-nick" style="font-size:12px;font-weight:900">User</div><div id="u-role" style="font-size:9px;color:var(--accent);font-weight:900">UNIT</div></div>
+                    <img id="u-ava" src="" style="width:35px;height:35px;border-radius:8px;border:1px solid var(--accent)">
                 </div>
             </nav>
         </div>
@@ -74,335 +57,199 @@
 
     <main id="app">
         <section id="s-home" class="page container">
-            <div style="padding: 80px 0; text-align:center;">
-                <h1 style="font-size: 45px; font-weight: 800; text-transform: uppercase;">Sound Wave <span style="color:var(--accent)">Studio</span></h1>
-                <p style="color: var(--text-dim); margin-top: 10px; letter-spacing: 2px; font-size: 12px; font-weight: 800;">PROFESSIONAL DUBBING ENGINE</p>
-                <input type="text" id="main-search" placeholder="Поиск релизов..." style="max-width: 600px; margin-top: 40px; text-align: center;">
+            <div style="padding:60px 0;text-align:center">
+                <h1 style="font-size:35px;font-weight:900">MY <span style="color:var(--accent)">DUBSIDE</span></h1>
+                <div class="search-box" style="margin:30px auto">
+                    <input type="text" id="main-search" placeholder="Поиск релизов...">
+                </div>
+                <div id="filter-bar" style="display:flex;justify-content:center;gap:10px;margin-bottom:20px">
+                    <button class="ep-btn active" onclick="filterReleases('All')">Все</button>
+                    <button class="ep-btn" onclick="filterReleases('Аниме')">Аниме</button>
+                    <button class="ep-btn" onclick="filterReleases('Фильм')">Фильмы</button>
+                    <button class="ep-btn" onclick="filterReleases('Тизер')">Тизеры</button>
+                    <button class="ep-btn" onclick="filterReleases('Трейлер')">Трейлеры</button>
+                </div>
             </div>
             <div id="releases-grid" class="releases-grid"></div>
         </section>
 
         <section id="s-view" class="page container hidden">
-            <div id="view-content" style="padding: 60px 0;"></div>
-        </section>
-
-        <section id="s-team" class="page container hidden">
-            <div style="padding: 80px 0; text-align: center;">
-                <h1 style="font-size: 35px; font-weight: 800;">КОМАНДА <span style="color:var(--accent)">SWS</span></h1>
-            </div>
-            <div id="team-list" class="releases-grid"></div>
-        </section>
-
-        <section id="s-dubin" class="page container hidden">
-            <div style="max-width: 700px; margin: 100px auto; background: var(--card-bg); padding: 50px; border-radius: 30px; border:1px solid var(--border);">
-                <h2 style="margin-bottom: 20px;">DUB-IN <span style="color:var(--accent)">ЗАЯВКА</span></h2>
-                <input type="text" id="dub-title" placeholder="Название тайтла">
-                <textarea id="dub-text" placeholder="Почему мы должны это озвучить?" style="height: 150px;"></textarea>
-                <button class="btn-primary" onclick="sendDubRequest()">ОТПРАВИТЬ В ОБРАБОТКУ</button>
-            </div>
-        </section>
-
-        <section id="s-profile" class="page container hidden">
-            <div id="profile-content" style="padding: 80px 0;"></div>
+            <div id="view-content" style="padding:40px 0"></div>
         </section>
 
         <section id="s-admin" class="page container hidden">
-            <div style="padding: 60px 0; display:flex; justify-content:space-between; align-items:center;">
-                <h2>ADMIN <span style="color:var(--accent)">PANEL</span></h2>
-                <div style="display:flex; gap:10px;">
-                    <button class="auth-btn" onclick="openModal('m-add-rel')">Добавить Релиз</button>
-                    <button class="auth-btn" style="background:#222;" onclick="openModal('m-add-team')">Добавить Юнит</button>
-                </div>
+            <div style="padding:40px 0;display:flex;justify-content:space-between;align-items:center">
+                <h2>Управление контентом</h2>
+                <button class="btn-auth" onclick="openModal('m-add-rel')">Добавить релиз</button>
             </div>
-            <div id="admin-releases" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <div id="admin-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </section>
+
+        <section id="s-profile" class="page container hidden">
+            <div id="profile-area" style="padding:60px 0"></div>
         </section>
     </main>
 
     <div id="m-auth" class="modal" onclick="if(event.target==this)closeModal('m-auth')">
         <div class="modal-content">
-            <h2 id="auth-title" style="text-align:center; margin-bottom:30px;">ВХОД SWS ID</h2>
-            <input type="email" id="auth-email" placeholder="EMAIL">
-            <input type="password" id="auth-pass" placeholder="PASSWORD">
-            <button class="btn-primary" id="auth-btn-main" onclick="handleAuth()">ПОДТВЕРДИТЬ</button>
-            <p onclick="toggleAuthMode()" id="auth-toggle" style="text-align:center; margin-top:20px; font-size:12px; color:var(--text-dim); cursor:pointer;">НЕТ АККАУНТА? РЕГИСТРАЦИЯ</p>
+            <h2 id="atitle" style="text-align:center;margin-bottom:25px">АВТОРИЗАЦИЯ</h2>
+            <input type="email" id="aemail" placeholder="EMAIL">
+            <input type="password" id="apass" placeholder="PASSWORD">
+            <button class="btn-auth" style="width:100%;padding:15px" onclick="handleAuth()">Продолжить</button>
+            <p id="aswitch" onclick="toggleAuth()" style="text-align:center;margin-top:20px;font-size:11px;color:var(--text-dim);cursor:pointer">НЕТ АККАУНТА? РЕГИСТРАЦИЯ</p>
         </div>
     </div>
 
     <div id="m-add-rel" class="modal" onclick="if(event.target==this)closeModal('m-add-rel')">
-        <div class="modal-content" style="max-width:700px;">
-            <h2 style="margin-bottom:20px;">НОВЫЙ РЕЛИЗ</h2>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                <input type="text" id="rel-title" placeholder="Название">
-                <input type="text" id="rel-genre" placeholder="Жанр">
-                <input type="text" id="rel-year" placeholder="Год">
-                <input type="text" id="rel-img" placeholder="URL Обложки">
-            </div>
-            <textarea id="rel-desc" placeholder="Описание" style="height:100px;"></textarea>
-            <textarea id="rel-eps" placeholder="Название|Ссылка, Название|Ссылка" style="height:100px;"></textarea>
-            <button class="btn-primary" onclick="saveRelease()">ОПУБЛИКОВАТЬ</button>
-        </div>
-    </div>
-
-    <div id="m-add-team" class="modal" onclick="if(event.target==this)closeModal('m-add-team')">
-        <div class="modal-content">
-            <h2 style="margin-bottom:20px;">НОВЫЙ УЧАСТНИК</h2>
-            <input type="text" id="tm-name" placeholder="Никнейм">
-            <input type="text" id="tm-role" placeholder="Роль">
-            <input type="text" id="tm-ava" placeholder="URL Аватара">
-            <button class="btn-primary" onclick="saveTeam()">ДОБАВИТЬ</button>
+        <div class="modal-content" style="max-width:600px">
+            <h2>Новый проект</h2>
+            <input type="text" id="rtitle" placeholder="Название">
+            <select id="rgenre"><option value="Аниме">Аниме</option><option value="Фильм">Фильм</option><option value="Тизер">Тизер</option><option value="Трейлер">Трейлер</option></select>
+            <input type="text" id="ryear" placeholder="Год">
+            <input type="text" id="rimg" placeholder="URL обложки">
+            <textarea id="rdesc" placeholder="Описание" style="width:100%;height:100px;padding:12px;background:var(--input-bg);border:1px solid var(--border);color:#fff;border-radius:12px;margin-bottom:15px"></textarea>
+            <textarea id="reps" placeholder="Название серии|ссылка (через запятую)" style="width:100%;height:80px;padding:12px;background:var(--input-bg);border:1px solid var(--border);color:#fff;border-radius:12px;margin-bottom:15px"></textarea>
+            <button class="btn-auth" style="width:100%" onclick="saveRelease()">Опубликовать</button>
         </div>
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDoc, getDocs, doc, deleteDoc, query, where, orderBy, onSnapshot, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDoc, getDocs, doc, deleteDoc, query, where, orderBy, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // КОНФИГ — ВСТАВЬ СВОИ ДАННЫЕ СЮДА
-        const firebaseConfig = {
-            apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
-            authDomain: "my-dub-site.firebaseapp.com",
-            projectId: "my-dub-site",
-            storageBucket: "my-dub-site.firebasestorage.app",
-            messagingSenderId: "302896869866",
-            appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
-        };
-
+        const firebaseConfig = { apiKey: "ВАШ_API_KEY", authDomain: "ВАШ_DOMAIN", projectId: "ВАШ_PROJECT_ID", storageBucket: "ВАШ_BUCKET", messagingSenderId: "ВАШ_SENDER", appId: "ВАШ_APP_ID" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let userData = null;
-        let authMode = 'login';
+        let state = { user: null, profile: null, mode: 'login', currentFilter: 'All' };
 
         // Навигация
-        window.navigate = (page, updateHash = true) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            const target = document.getElementById('s-' + page);
-            if(target) target.classList.remove('hidden');
-            const nav = document.querySelector(`[data-page="${page}"]`);
-            if(nav) nav.classList.add('active');
-            if(updateHash) window.location.hash = page;
-            if(page === 'profile') renderProfile();
-            window.scrollTo(0,0);
+        window.navigate = (p) => {
+            document.querySelectorAll('.page').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('s-' + p).classList.remove('hidden');
+            const link = document.querySelector(`[data-page="${p}"]`);
+            if(link) link.classList.add('active');
+            if(p === 'profile') renderProfile();
         };
 
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
 
-        window.toggleAuthMode = () => {
-            authMode = authMode === 'login' ? 'register' : 'login';
-            document.getElementById('auth-title').innerText = authMode === 'login' ? 'ВХОД SWS ID' : 'РЕГИСТРАЦИЯ';
-            document.getElementById('auth-btn-main').innerText = authMode === 'login' ? 'ПОДТВЕРДИТЬ' : 'СОЗДАТЬ АККАУНТ';
-            document.getElementById('auth-toggle').innerText = authMode === 'login' ? 'НЕТ АККАУНТА? РЕГИСТРАЦИЯ' : 'УЖЕ ЕСТЬ АККАУНТ? ВХОД';
+        window.toggleAuth = () => {
+            state.mode = state.mode === 'login' ? 'reg' : 'login';
+            document.getElementById('atitle').innerText = state.mode === 'login' ? 'АВТОРИЗАЦИЯ' : 'РЕГИСТРАЦИЯ';
+            document.getElementById('aswitch').innerText = state.mode === 'login' ? 'НЕТ АККАУНТА? РЕГИСТРАЦИЯ' : 'ЕСТЬ АККАУНТ? ВХОД';
         };
 
-        // Auth Logic
         window.handleAuth = async () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
+            const e = document.getElementById('aemail').value, p = document.getElementById('apass').value;
             try {
-                if(authMode === 'login') {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                } else {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), {
-                        uid: res.user.uid, nick: email.split('@')[0], role: 'User', 
-                        ava: `https://api.dicebear.com/7.x/bottts/svg?seed=${res.user.uid}`,
-                        views: 0, subs: 0
-                    });
+                if(state.mode === 'login') await signInWithEmailAndPassword(auth, e, p);
+                else {
+                    const res = await createUserWithEmailAndPassword(auth, e, p);
+                    await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, nick: e.split('@')[0], role: 'User', ava: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + res.user.uid, views: 0, subs: 0 });
                 }
                 closeModal('m-auth');
-            } catch(e) { alert(e.message); }
+            } catch (err) { alert(err.message); }
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            if(user) {
-                const snap = await getDoc(doc(db, "users", user.uid));
-                userData = snap.data();
+        onAuthStateChanged(auth, async (u) => {
+            if(u) {
+                state.user = u;
+                const snap = await getDoc(doc(db, "users", u.uid));
+                state.profile = snap.data();
                 document.getElementById('auth-ui').classList.add('hidden');
                 document.getElementById('user-ui').classList.remove('hidden');
-                document.getElementById('u-nick').innerText = userData.nick;
-                document.getElementById('u-ava').src = userData.ava;
-                document.getElementById('u-role-tag').innerText = userData.role.toUpperCase();
-                if(userData.role === 'Admin') document.getElementById('adm-nav').classList.remove('hidden');
+                document.getElementById('u-nick').innerText = state.profile.nick;
+                document.getElementById('u-ava').src = state.profile.ava;
+                document.getElementById('u-role').innerText = state.profile.role.toUpperCase();
+                if(state.profile.role === 'Admin') document.getElementById('adm-nav').classList.remove('hidden');
             } else {
-                userData = null;
+                state.user = null;
                 document.getElementById('auth-ui').classList.remove('hidden');
                 document.getElementById('user-ui').classList.add('hidden');
                 document.getElementById('adm-nav').classList.add('hidden');
             }
-            navigate(window.location.hash.replace('#','') || 'home', false);
         });
 
-        // Релизы
-        onSnapshot(query(collection(db, "releases"), orderBy("title")), (snap) => {
-            const grid = document.getElementById('releases-grid');
-            const admList = document.getElementById('admin-releases');
-            grid.innerHTML = ""; admList.innerHTML = "";
-            snap.forEach(d => {
-                const r = d.data();
-                grid.innerHTML += `
-                    <div class="card" onclick="openView('${d.id}')">
-                        <img src="${r.img}" class="card-img">
-                        <div class="card-body">
-                            <span class="card-tag">${r.genre}</span>
-                            <h3 class="card-title">${r.title}</h3>
-                            <div style="font-size:11px; color:var(--text-dim); font-weight:800;">${r.year} • SWS DUB</div>
-                        </div>
-                    </div>
-                `;
-                admList.innerHTML += `
-                    <div style="background:var(--card-bg); padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border);">
-                        <span>${r.title}</span>
-                        <i class="fas fa-trash" onclick="deleteRel('${d.id}')" style="color:var(--accent); cursor:pointer;"></i>
-                    </div>
-                `;
-            });
-        });
-
-        // Команда
-        onSnapshot(collection(db, "team"), (snap) => {
-            const list = document.getElementById('team-list');
-            list.innerHTML = "";
-            snap.forEach(d => {
-                const t = d.data();
-                list.innerHTML += `
-                    <div class="card" style="padding:30px; text-align:center;">
-                        <img src="${t.ava}" style="width:120px; height:120px; border-radius:50%; border:2px solid var(--accent); padding:5px; margin-bottom:15px; object-fit:cover;">
-                        <h3 style="font-weight:800;">${t.name}</h3>
-                        <p style="color:var(--accent); font-size:10px; font-weight:900; margin-top:5px; text-transform:uppercase;">${t.role}</p>
-                    </div>
-                `;
-            });
-        });
-
-        window.openView = async (id) => {
-            const snap = await getDoc(doc(db, "releases", id));
-            const r = snap.data();
-            navigate('view');
-            const cont = document.getElementById('view-content');
-            cont.innerHTML = `
-                <div style="display:grid; grid-template-columns: 350px 1fr; gap:50px;">
-                    <img src="${r.img}" style="width:100%; border-radius:25px; border:1px solid var(--border);">
-                    <div>
-                        <span style="color:var(--accent); font-weight:900; font-size:12px;">${r.genre} / ${r.year}</span>
-                        <h1 style="font-size:45px; font-weight:800; margin:10px 0;">${r.title}</h1>
-                        <p style="color:var(--text-dim); line-height:1.7; font-size:15px;">${r.desc}</p>
-                        <div id="player-box"><p style="color:#222; font-weight:900;">ВЫБЕРИТЕ СЕРИЮ</p></div>
-                        <div id="ep-list" style="display:flex; gap:12px; overflow-x:auto; padding-bottom:10px;"></div>
-                        <div id="comments-section" style="margin-top:50px; border-top:1px solid var(--border); padding-top:40px;"></div>
-                    </div>
-                </div>
-            `;
-
-            const epList = document.getElementById('ep-list');
-            r.episodes.split(',').forEach(item => {
-                const [name, url] = item.split('|');
-                const div = document.createElement('div');
-                div.className = 'ep-item';
-                div.innerHTML = `<div style="font-size:10px; color:var(--accent); font-weight:900;">СЕРИЯ</div><div style="font-size:13px; font-weight:800;">${name}</div>`;
-                div.onclick = () => {
-                    document.querySelectorAll('.ep-item').forEach(i => i.classList.remove('active'));
-                    div.classList.add('active');
-                    document.getElementById('player-box').innerHTML = `<iframe src="${url.trim()}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
-                };
-                epList.appendChild(div);
-            });
-            initComments(id);
+        // Загрузка релизов с фильтром
+        window.filterReleases = (f) => {
+            state.currentFilter = f;
+            document.querySelectorAll('#filter-bar .ep-btn').forEach(b => b.classList.toggle('active', b.innerText === f || (f === 'All' && b.innerText === 'Все')));
+            loadReleases();
         };
 
-        // Комментарии
-        window.initComments = (relId) => {
-            const cont = document.getElementById('comments-section');
-            const formHTML = userData ? `
-                <div style="margin-bottom:30px;"><textarea id="comm-text" placeholder="Ваш комментарий..." style="height:80px;"></textarea>
-                <button class="auth-btn" onclick="postComment('${relId}')">Отправить</button></div>
-            ` : `<p style="color:#333; text-align:center; font-weight:800; margin-bottom:30px;">ВОЙДИТЕ, ЧТОБЫ КОММЕНТИРОВАТЬ</p>`;
-            cont.innerHTML = `<h3 style="margin-bottom:20px;">ОБСУЖДЕНИЕ</h3>${formHTML}<div id="comm-list" style="display:flex; flex-direction:column; gap:20px;"></div>`;
-            
-            const q = query(collection(db, "comments"), where("relId", "==", relId), orderBy("date", "desc"));
-            onSnapshot(q, (s) => {
-                const list = document.getElementById('comm-list');
-                list.innerHTML = "";
-                s.forEach(d => {
-                    const c = d.data();
-                    list.innerHTML += `
-                        <div style="display:flex; gap:15px; background:rgba(255,255,255,0.02); padding:20px; border-radius:15px;">
-                            <img src="${c.userAva}" style="width:40px; height:40px; border-radius:8px;">
-                            <div>
-                                <div style="font-size:13px; font-weight:800; margin-bottom:5px;">${c.userNick} <span style="color:var(--accent); font-size:10px;">${c.userRole}</span></div>
-                                <p style="color:var(--text-dim); font-size:14px;">${c.text}</p>
-                            </div>
-                        </div>
-                    `;
+        function loadReleases() {
+            const qRel = state.currentFilter === 'All' ? query(collection(db, "releases"), orderBy("title")) : query(collection(db, "releases"), where("genre", "==", state.currentFilter));
+            onSnapshot(qRel, (snap) => {
+                const grid = document.getElementById('releases-grid'), adm = document.getElementById('admin-list');
+                grid.innerHTML = ""; adm.innerHTML = "";
+                snap.forEach(d => {
+                    const r = d.data();
+                    grid.innerHTML += `<div class="card" onclick="openView('${d.id}')"><img src="${r.img}" class="card-img"><div class="card-body"><span class="card-tag">${r.genre}</span><h3 class="card-title">${r.title}</h3><p style="font-size:11px;color:var(--text-dim);margin-top:5px">${r.year} • SWS DUB</p></div></div>`;
+                    adm.innerHTML += `<div style="background:var(--card-bg);padding:15px;border-radius:12px;display:flex;justify-content:space-between;border:1px solid var(--border)"><span>${r.title}</span><i class="fas fa-trash" style="color:var(--accent);cursor:pointer" onclick="deleteRel('${d.id}')"></i></div>`;
                 });
             });
+        }
+        loadReleases();
+
+        // Просмотр релиза + Комментарии с упоминаниями
+        window.openView = async (id) => {
+            const snap = await getDoc(doc(db, "releases", id)), r = snap.data();
+            navigate('view');
+            const view = document.getElementById('view-content');
+            view.innerHTML = `<div style="display:grid;grid-template-columns:300px 1fr;gap:40px"><img src="${r.img}" style="width:100%;border-radius:20px;border:1px solid var(--border)"><div><span class="card-tag">${r.genre}</span><h1 style="font-size:40px;margin:10px 0">${r.title}</h1><p style="color:var(--text-dim);line-height:1.6">${r.desc}</p><div id="player-area">ВЫБЕРИТЕ СЕРИЮ</div><div id="ep-list" style="display:flex;gap:10px;flex-wrap:wrap"></div><div id="comm-area" style="margin-top:50px"></div></div></div>`;
+            
+            const epList = document.getElementById('ep-list');
+            r.episodes.split(',').forEach(e => {
+                const [n, u] = e.split('|');
+                const b = document.createElement('button'); b.className = 'ep-btn'; b.innerText = n;
+                b.onclick = () => {
+                    document.querySelectorAll('.ep-btn').forEach(x => x.classList.remove('active')); b.classList.add('active');
+                    document.getElementById('player-area').innerHTML = `<iframe src="${u.trim()}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+                };
+                epList.appendChild(b);
+            });
+            renderComments(id);
         };
+
+        function renderComments(relId) {
+            const area = document.getElementById('comm-area');
+            area.innerHTML = `<h3>Комментарии</h3><div id="clist" style="margin:20px 0;display:flex;flex-direction:column;gap:15px"></div>` + (state.user ? `<textarea id="ctext" placeholder="Напишите @email чтобы упомянуть..." style="width:100%;height:80px;background:var(--input-bg);border:1px solid var(--border);border-radius:12px;color:#fff;padding:15px"></textarea><button class="btn-auth" style="margin-top:10px" onclick="postComment('${relId}')">Отправить</button>` : '');
+            
+            onSnapshot(query(collection(db, "comments"), where("relId", "==", relId), orderBy("date", "desc")), (snap) => {
+                const list = document.getElementById('clist'); list.innerHTML = "";
+                snap.forEach(d => {
+                    const c = d.data();
+                    const formattedText = c.text.replace(/@(\S+@\S+\.\S+)/g, '<a href="#" class="mention-link">@$1</a>');
+                    list.innerHTML += `<div style="display:flex;gap:15px;background:rgba(255,255,255,0.02);padding:15px;border-radius:15px"><img src="${c.ava}" style="width:40px;height:40px;border-radius:8px"><div><div style="font-size:12px;font-weight:900">${c.nick} <span style="color:var(--accent);font-size:9px">${c.role}</span></div><p style="font-size:14px;color:var(--text-dim);margin-top:5px">${formattedText}</p></div></div>`;
+                });
+            });
+        }
 
         window.postComment = async (relId) => {
-            const text = document.getElementById('comm-text').value;
-            if(!text.trim()) return;
-            await addDoc(collection(db, "comments"), {
-                relId, text, date: new Date().toISOString(),
-                userNick: userData.nick, userAva: userData.ava, userRole: userData.role
-            });
-            document.getElementById('comm-text').value = "";
+            const t = document.getElementById('ctext').value; if(!t.trim()) return;
+            await addDoc(collection(db, "comments"), { relId, text: t, nick: state.profile.nick, ava: state.profile.ava, role: state.profile.role, date: new Date().toISOString() });
+            document.getElementById('ctext').value = "";
         };
 
-        // Admin Actions
         window.saveRelease = async () => {
-            await addDoc(collection(db, "releases"), {
-                title: document.getElementById('rel-title').value, genre: document.getElementById('rel-genre').value,
-                year: document.getElementById('rel-year').value, img: document.getElementById('rel-img').value,
-                desc: document.getElementById('rel-desc').value, episodes: document.getElementById('rel-eps').value
-            });
+            await addDoc(collection(db, "releases"), { title: document.getElementById('rtitle').value, genre: document.getElementById('rgenre').value, year: document.getElementById('ryear').value, img: document.getElementById('rimg').value, desc: document.getElementById('rdesc').value, episodes: document.getElementById('reps').value });
             closeModal('m-add-rel');
         };
 
-        window.saveTeam = async () => {
-            await addDoc(collection(db, "team"), {
-                name: document.getElementById('tm-name').value, role: document.getElementById('tm-role').value,
-                ava: document.getElementById('tm-ava').value
-            });
-            closeModal('m-add-team');
-        };
-
-        window.deleteRel = async (id) => { if(confirm('Удалить релиз?')) await deleteDoc(doc(db, "releases", id)); };
+        window.deleteRel = async (id) => { if(confirm('Удалить?')) await deleteDoc(doc(db, "releases", id)); };
 
         window.renderProfile = () => {
-            const cont = document.getElementById('profile-content');
-            cont.innerHTML = `
-                <div style="max-width:800px; margin:0 auto; background:var(--card-bg); padding:50px; border-radius:30px; border:1px solid var(--border); text-align:center;">
-                    <img src="${userData.ava}" style="width:150px; height:150px; border-radius:30px; border:3px solid var(--accent); margin-bottom:20px;">
-                    <h2>${userData.nick}</h2>
-                    <p style="color:var(--accent); font-weight:800; margin-top:5px;">${userData.role.toUpperCase()}</p>
-                    <div style="display:flex; gap:20px; justify-content:center; margin-top:30px;">
-                        <div style="background:var(--bg); padding:20px; border-radius:15px; flex:1;"><div style="font-size:20px; font-weight:800;">${userData.views || 0}</div><div style="font-size:10px; color:var(--text-dim);">ПРОСМОТРОВ</div></div>
-                        <div style="background:var(--bg); padding:20px; border-radius:15px; flex:1;"><div style="font-size:20px; font-weight:800;">${userData.subs || 0}</div><div style="font-size:10px; color:var(--text-dim);">ПОДПИСЧИКОВ</div></div>
-                    </div>
-                    <button class="btn-primary" onclick="auth.signOut()" style="margin-top:40px; background:#222;">ВЫЙТИ ИЗ АККАУНТА</button>
-                </div>
-            `;
+            document.getElementById('profile-area').innerHTML = `<div style="max-width:600px;margin:0 auto;background:var(--card-bg);padding:40px;border-radius:24px;text-align:center;border:1px solid var(--border)"><img src="${state.profile.ava}" style="width:120px;border-radius:20px;border:2px solid var(--accent);margin-bottom:20px"><h2>${state.profile.nick}</h2><p style="color:var(--accent);font-weight:900">${state.profile.role.toUpperCase()}</p><div style="display:flex;gap:10px;margin-top:30px"><div style="flex:1;background:var(--bg);padding:15px;border-radius:12px"><b>${state.profile.views}</b><br><small>Просмотры</small></div><div style="flex:1;background:var(--bg);padding:15px;border-radius:12px"><b>${state.profile.subs}</b><br><small>Подписки</small></div></div><button class="btn-auth" style="margin-top:30px;background:#222" onclick="auth.signOut().then(()=>location.reload())">ВЫЙТИ</button></div>`;
         };
 
-        window.sendDubRequest = async () => {
-            if(!userData) return openModal('m-auth');
-            await addDoc(collection(db, "dub_requests"), {
-                title: document.getElementById('dub-title').value,
-                text: document.getElementById('dub-text').value,
-                user: userData.nick, date: new Date().toISOString()
-            });
-            alert('Заявка отправлена!');
-        };
-        
-        // Поиск
-        document.getElementById('main-search').addEventListener('input', (e) => {
+        document.getElementById('main-search').oninput = (e) => {
             const v = e.target.value.toLowerCase();
-            document.querySelectorAll('#releases-grid .card').forEach(c => {
-                c.style.display = c.innerText.toLowerCase().includes(v) ? 'block' : 'none';
-            });
-        });
+            document.querySelectorAll('#releases-grid .card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(v) ? 'block' : 'none');
+        };
     </script>
 </body>
 </html>
