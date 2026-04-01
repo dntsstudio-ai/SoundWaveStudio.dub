@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Wave Studio — Профессиональная озвучка и дубляж</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="Студия фандаба Sound Wave Studio: качественный дубляж, озвучка сериалов, фильмов, мультфильмов и аниме.">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #0b0b0d; --card-bg: #141417; --input-bg: #050506;
+            --accent: #ff2e2e; --text: #ffffff; --text-dim: #9ca3af;
+            --border: #252529; --admin: #3897f0; --ts: all 0.2s ease;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        body {
+            background-color: var(--bg);
+            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='50' fill='rgba(255,46,46,0.07)' font-weight='bold' font-size='30' font-family='sans-serif' transform='rotate(-15 10 50)'%3EX%3C/text%3E%3Ctext x='110' y='100' fill='rgba(255,46,46,0.07)' font-weight='bold' font-size='30' font-family='sans-serif' transform='rotate(10 110 100)'%3EO%3C/text%3E%3Ctext x='30' y='160' fill='rgba(255,255,255,0.04)' font-weight='bold' font-size='18' font-family='sans-serif' transform='rotate(-5 30 160)'%3ECBS%3C/text%3E%3Ctext x='140' y='40' fill='rgba(255,46,46,0.05)' font-weight='bold' font-size='22' font-family='sans-serif' transform='rotate(15 140 40)'%3EX%3C/text%3E%3Ctext x='60' y='130' fill='rgba(255,255,255,0.03)' font-weight='bold' font-size='20' font-family='sans-serif'%3ESWS%3C/text%3E%3C/svg%3E");
+            color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 20px; flex: 1; position: relative; z-index: 2; }
+
+        /* HEADER */
+        header {
+            background: rgba(11,11,13,0.95); backdrop-filter: blur(15px);
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 1px; }
+        .logo span { color: var(--accent); }
+        nav { display: flex; gap: 5px; }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 13px; padding: 10px 14px; cursor: pointer; transition: var(--ts); border-radius: 8px; }
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-link.active { color: var(--accent); background: rgba(255,46,46,0.1); }
+
+        /* SECTIONS */
+        .section { display: none; padding: 25px 0; animation: fadeIn 0.35s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* SEARCH */
+        .search-bar { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; margin-top: 10px; }
+        .search-input { flex: 1; min-width: 200px; }
+        .filter-select { width: auto; min-width: 160px; }
+
+        /* INPUTS */
+        input, select, textarea {
+            width: 100%; padding: 13px 16px; background: var(--input-bg); border: 1px solid var(--border);
+            color: white; border-radius: 10px; margin-bottom: 12px; outline: none; font-size: 14px; transition: border 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255,46,46,0.15); }
+
+        /* BUTTONS */
+        .btn { padding: 12px 22px; border: none; border-radius: 10px; background: var(--accent); color: white; font-weight: 700; cursor: pointer; font-size: 13px; transition: var(--ts); display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+        .btn:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: var(--shadow); }
+        .btn-blue { background: var(--admin); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: white; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+        .btn-sm { padding: 5px 10px; font-size: 10px; border-radius: 6px; border: none; cursor: pointer; color: white; font-weight: bold; }
+
+        /* GRID & CARDS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); position: relative; transition: var(--ts); cursor: pointer; display: flex; flex-direction: column; height: fit-content; }
+        .card:hover { transform: translateY(-4px); border-color: #555; box-shadow: var(--shadow); }
+        .card img { width: 100%; height: 270px; object-fit: cover; transition: 0.4s; }
+        .card:hover img { filter: brightness(0.85); }
+        .card-info { padding: 14px; font-size: 13px; flex: 1; display: flex; flex-direction: column; }
+        .card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; font-weight: bold; margin-top: 6px; line-height: 1.3; }
+        .tag { font-size: 9px; background: var(--accent); padding: 2px 7px; border-radius: 5px; display: inline-block; margin-bottom: 5px; margin-right: 5px; color: white; font-weight: 900; }
+        .year-tag { font-size: 9px; background: #2a2a2e; padding: 2px 7px; border-radius: 5px; display: inline-block; color: white; }
+        .adm-tools { position: absolute; top: 5px; right: 5px; display: flex; gap: 4px; z-index: 10; }
+
+        /* VIEW / PLAYER */
+        .view-header { display: flex; gap: 28px; background: var(--card-bg); padding: 28px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 25px; flex-wrap: wrap; }
+        .v-poster { width: 230px; height: 335px; border-radius: 12px; flex-shrink: 0; object-fit: cover; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .view-title { margin-bottom: 10px; color: var(--accent); font-size: 2rem; word-break: break-word; }
+        @media (max-width: 700px) {
+            .view-header { flex-direction: column; align-items: center; text-align: center; }
+            .v-poster { width: 180px; height: 260px; }
+        }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 16px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); position: relative; box-shadow: var(--shadow); }
+        .video-box iframe, .video-box video { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+        .no-episodes { position: absolute; inset: 0; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; z-index: 10; flex-direction: column; }
+
+        /* EPISODE BUTTONS */
+        .ep-btn { padding: 10px 18px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; color: white; cursor: pointer; font-size: 13px; font-weight: bold; transition: var(--ts); white-space: nowrap; }
+        .ep-btn:hover { border-color: var(--accent); background: rgba(255,46,46,0.08); }
+        .ep-btn.active-ep { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* TOASTS */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--card-bg); border-left: 4px solid var(--accent); color: white; padding: 15px 20px; border-radius: 10px; box-shadow: var(--shadow); font-size: 13px; font-weight: 600; animation: slideIn 0.3s ease forwards; max-width: 320px; }
+        .toast.success { border-left-color: #22c55e; }
+        .toast.error { border-left-color: #ef4444; }
+        .toast.info { border-left-color: var(--admin); }
+        @keyframes slideIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(8px); } }
+
+        /* MODALS */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 520px; padding: 28px; border-radius: 18px; border: 1px solid var(--border); overflow-y: auto; max-height: 90vh; position: relative; }
+
+        /* COMMENTS */
+        .mention-link { color: var(--admin); text-decoration: none; font-weight: bold; padding: 1px 5px; background: rgba(56,151,240,0.1); border-radius: 4px; }
+        .comm-item { display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .comm-ava { width: 46px; height: 46px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); }
+        .react-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 12px; cursor: pointer; color: var(--text-dim); transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+        .react-btn:hover, .react-btn.active { background: rgba(255,46,46,0.1); color: white; border-color: var(--accent); }
+        .unauth-msg { text-align: center; padding: 20px; background: rgba(255,46,46,0.04); border-radius: 12px; border: 1px dashed rgba(255,46,46,0.2); }
+
+        /* TEAM */
+        .team-container { background: var(--card-bg); padding: 18px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .team-container-header { display: flex; justify-content: space-between; cursor: pointer; font-weight: bold; margin-bottom: 14px; color: var(--accent); font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .drag-handle { cursor: grab; background: rgba(255,255,255,0.07); padding: 5px; text-align: center; font-size: 10px; border-radius: 4px; margin-bottom: 5px; display: none; }
+        .admin-mode .drag-handle { display: block; }
+        .sortable-ghost { opacity: 0.3; border: 2px dashed var(--accent); }
+
+        /* PROFILE */
+        #user-ui { display: none; }
+        .profile-header { display: flex; align-items: center; gap: 25px; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 25px; flex-wrap: wrap; background: var(--card-bg); padding: 30px; border-radius: 18px; border: 1px solid var(--border); }
+        .profile-header img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
+
+        /* FOOTER */
+        footer { margin-top: 60px; padding: 40px 0 25px; border-top: 1px solid var(--border); text-align: center; }
+        footer a { color: var(--text-dim); font-size: 22px; margin: 0 12px; transition: var(--ts); }
+        footer a:hover { color: white; }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <header>
+        <div class="logo" onclick="navigate('home')">SOUND<span> WAVE</span> STUDIO</div>
+        <nav>
+            <a id="n-home" class="nav-link active" onclick="navigate('home')">Релизы</a>
+            <a id="n-team" class="nav-link" onclick="navigate('team')">Состав</a>
+            <a id="n-profile" class="nav-link" onclick="navigate('profile')">Профиль</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <!-- HOME -->
+        <section id="home" class="section active">
+            <div class="search-bar">
+                <input type="search" id="main-search" class="search-input" oninput="filterData()" placeholder="Поиск по релизам..." autocomplete="off" data-lpignore="true">
+                <select id="filter-genre" class="filter-select" onchange="filterData()">
+                    <option value="all">Все жанры</option>
+                    <option value="Аниме">Аниме</option>
+                    <option value="Сериал">Сериалы</option>
+                    <option value="Фильм">Фильмы</option>
+                    <option value="Мультфильм">Мультфильмы</option>
+                    <option value="Трейлер">Трейлеры</option>
+                    <option value="Тизер">Тизеры</option>
+                </select>
+                <select id="filter-sort" class="filter-select" onchange="filterData()">
+                    <option value="new">Новинки</option>
+                    <option value="pop">Популярные</option>
+                    <option value="random">Случайный</option>
+                </select>
+                <button id="adm-btn-rel" class="btn btn-blue" style="display:none;" onclick="openRelModal()"><i class="fas fa-plus"></i> Добавить релиз</button>
+            </div>
+            <div class="grid" id="main-grid"></div>
+        </section>
+
+        <!-- TEAM -->
+        <section id="team" class="section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+                <h1 style="font-size:1.8rem; font-weight:900;">Команда студии</h1>
+                <button id="adm-btn-team" class="btn btn-blue" style="display:none;" onclick="openTeamModal()"><i class="fas fa-user-plus"></i> Участник</button>
+            </div>
+            <div id="team-wrapper"></div>
+        </section>
+
+        <!-- TEAM PAGE -->
+        <section id="team-page" class="section">
+            <button class="btn btn-outline" onclick="navigate('team')" style="margin-bottom:20px;">← Назад</button>
+            <div id="team-page-view" style="background:var(--card-bg); padding:30px; border-radius:18px; border:1px solid var(--border);"></div>
+            <div id="adm-tp-controls" style="display:none; margin-top:16px; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-blue" onclick="openTPModal()">Редактировать страницу</button>
+                <button class="btn btn-outline" style="color:red; border-color:red;" onclick="deleteTP()">Удалить страницу</button>
+            </div>
+        </section>
+
+        <!-- VIEW / PLAYER -->
+        <section id="view" class="section">
+            <button class="btn btn-outline" onclick="navigate('home')" style="margin-bottom:20px;">← К релизам</button>
+            <div id="v-info"></div>
+
+            <div style="display:flex; gap:10px; margin-bottom:15px; overflow-x:auto; padding-bottom:5px;" id="v-ep-list"></div>
+
+            <h3 id="v-current-ep-title" style="margin-bottom:12px; color:var(--accent); display:none; font-size:1.1rem;"></h3>
+
+            <div class="video-box" id="v-player-container">
+                <div id="v-tape" class="no-episodes" style="display:none;">
+                    <i class="fas fa-hourglass-start" style="font-size:3rem; color:var(--accent); opacity:0.4; margin-bottom:15px;"></i>
+                    <h3 style="color:white; margin-bottom:5px;">Серий пока нет</h3>
+                    <p style="color:var(--text-dim); font-size:14px;">Скоро они появятся!</p>
+                </div>
+                <iframe id="v-iframe" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
+
+            <div id="v-likes-bar" style="display:flex; gap:12px; margin-bottom:20px; background:var(--card-bg); padding:10px 18px; border-radius:12px; border:1px solid var(--border); width:fit-content;">
+                <button id="btn-like" class="react-btn" onclick="rateProj('like')"><i class="fas fa-thumbs-up"></i> <span id="v-like-cnt">0</span></button>
+                <button id="btn-dislike" class="react-btn" onclick="rateProj('dislike')"><i class="fas fa-thumbs-down"></i> <span id="v-dislike-cnt">0</span></button>
+            </div>
+
+            <div style="background:var(--card-bg); padding:22px; border-radius:16px; border:1px solid var(--border);">
+                <h4 style="margin-bottom:15px; font-size:1.1rem;">Комментарии (<span id="comm-count">0</span>)</h4>
+                <div id="comm-auth-msg" class="unauth-msg">
+                    <p style="margin-bottom:12px; font-weight:bold;">Чтобы оставить комментарий, необходимо авторизоваться.</p>
+                    <button class="btn btn-blue" onclick="navigate('profile')">Войти / Регистрация</button>
+                </div>
+                <div id="comm-form" style="display:none; margin-top:15px;">
+                    <textarea id="comm-text" placeholder="Ваш комментарий..." rows="3"></textarea>
+                    <button class="btn" onclick="sendComment()">Отправить</button>
+                </div>
+                <div id="comm-list" style="margin-top:18px;"></div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="profile" class="section">
+            <!-- AUTH UI -->
+            <div id="auth-ui" style="max-width:360px; margin:40px auto;">
+                <div style="background:var(--card-bg); padding:36px; border-radius:20px; border:1px solid var(--border); box-shadow:var(--shadow);">
+                    <div style="text-align:center; margin-bottom:28px;">
+                        <div style="width:70px; height:70px; background:rgba(255,46,46,0.1); border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-size:2rem; color:var(--accent);"><i class="fas fa-wave-square"></i></div>
+                        <h2 style="font-size:1.4rem; font-weight:900;">Sound Wave Studio</h2>
+                        <p style="color:var(--text-dim); font-size:13px; margin-top:5px;">Войдите или зарегистрируйтесь</p>
+                    </div>
+                    <form onsubmit="return false;" autocomplete="off">
+                        <input type="text" style="display:none" autocomplete="username">
+                        <label style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; display:block;">Email</label>
+                        <input type="email" id="email" placeholder="mail@example.com" autocomplete="username" style="margin-bottom:14px;">
+                        <label style="font-size:11px; color:var(--text-dim); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; display:block;">Пароль</label>
+                        <input type="password" id="pass" placeholder="Минимум 6 символов" autocomplete="current-password" style="margin-bottom:16px;">
+                        <button class="btn" style="width:100%; margin-bottom:10px;" id="btn-login" type="button"><i class="fas fa-sign-in-alt"></i> Войти</button>
+                        <button class="btn btn-outline" style="width:100%; margin-bottom:10px;" id="btn-reg" type="button"><i class="fas fa-user-plus"></i> Регистрация</button>
+                    </form>
+                    <div id="reset-pass-block" style="display:none; text-align:center; margin-top:5px;">
+                        <a href="#" style="color:var(--text-dim); font-size:12px;" onclick="resetPassword(); return false;">Забыли пароль?</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USER UI -->
+            <div id="user-ui">
+                <div class="profile-header">
+                    <div style="position:relative;">
+                        <img id="u-ava" src="https://api.dicebear.com/7.x/identicon/svg" style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid var(--accent);">
+                    </div>
+                    <div style="flex:1;">
+                        <h2 id="u-nick" style="margin-bottom:6px; font-size:1.8rem; font-weight:900;"></h2>
+                        <div id="u-role" style="color:var(--accent); font-size:12px; font-weight:bold; margin-bottom:12px; letter-spacing:1px; text-transform:uppercase;"></div>
+                        <div style="display:flex; gap:25px; font-size:13px; flex-wrap:wrap;">
+                            <div><b id="u-views" style="font-size:1.4rem;">0</b><br><span style="color:var(--text-dim); font-size:11px;">Просмотрено</span></div>
+                            <div style="cursor:pointer;" onclick="showMySubscribers()"><b id="u-subs" style="font-size:1.4rem;">0</b><br><span style="color:var(--text-dim); font-size:11px;">Подписчики</span></div>
+                        </div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; min-width:180px;">
+                        <button class="btn btn-outline" onclick="document.getElementById('m-prof').style.display='flex'"><i class="fas fa-cog"></i> Настройки</button>
+                        <button class="btn btn-outline" onclick="openAchInventory()"><i class="fas fa-medal"></i> Достижения</button>
+                        <button class="btn btn-outline" style="color:var(--accent); border-color:rgba(255,46,46,0.4);" id="btn-logout"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                    </div>
+                </div>
+
+                <div style="background:var(--card-bg); padding:22px; border-radius:16px; border:1px solid var(--border); margin-bottom:20px;">
+                    <h4 style="font-size:15px; margin-bottom:14px;">Мои достижения</h4>
+                    <div id="u-ach" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+                </div>
+
+                <div id="adm-ach-panel" style="display:none; background:rgba(56,151,240,0.06); padding:22px; border-radius:16px; border:1px dashed rgba(56,151,240,0.3); margin-bottom:20px;">
+                    <p style="font-size:11px; color:var(--admin); margin-bottom:12px; font-weight:900; text-transform:uppercase; letter-spacing:1px;">Панель администратора — Выдача достижений</p>
+                    <button class="btn btn-blue" onclick="document.getElementById('m-give-ach').style.display='flex'"><i class="fas fa-award"></i> Выдать ачивку</button>
+                </div>
+
+                <div style="text-align:center; padding:30px 0; border-top:1px solid var(--border); margin-top:20px;">
+                    <a href="javascript:void(0)" onclick="openPrivacy()" style="color:var(--text-dim); font-size:11px; text-decoration:none; letter-spacing:2px; text-transform:uppercase; font-weight:700;">Политика конфиденциальности</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div style="margin-bottom:12px;">
+            <a href="https://vk.ru/soundwavestudiosws" target="_blank"><i class="fab fa-vk"></i></a>
+            <a href="https://t.me/soundwavestudiosws" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+            <a href="https://www.youtube.com/@SoundWaveDUB" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p style="font-size:12px; color:var(--text-dim); cursor:pointer;" onclick="openPrivacy()">© 2024–2026 Sound Wave Studio. Все права защищены.</p>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="m-rel" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:18px; font-size:1.2rem; color:var(--accent);">Управление релизом</h3>
+        <input type="hidden" id="ed-rel-id">
+        <input type="text" id="ad-title" placeholder="Название">
+        <select id="ad-genre">
+            <option value="Аниме">Аниме</option>
+            <option value="Сериал">Сериал</option>
+            <option value="Фильм">Фильм</option>
+            <option value="Мультфильм">Мультфильм</option>
+            <option value="Трейлер">Трейлер</option>
+            <option value="Тизер">Тизер</option>
+        </select>
+        <input type="text" id="ad-year" placeholder="Год выпуска">
+        <input type="text" id="ad-voiceover" placeholder="Озвучка (Например: Sound Wave Studio)">
+        <input type="text" id="ad-authors" placeholder="Студия / Авторы">
+        <input type="text" id="ad-img" placeholder="URL постера">
+        <textarea id="ad-desc" placeholder="Описание сюжета..." rows="4"></textarea>
+        <button class="btn btn-blue" style="width:100%; margin-top:5px;" onclick="saveRel()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-ep" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:18px; font-size:1.2rem; color:var(--accent);">Добавить медиа</h3>
+        <select id="ad-ep-type">
+            <option value="series">Серия</option>
+            <option value="trailer">Трейлер / Тизер</option>
+        </select>
+        <input type="text" id="ad-ep-name" placeholder="Номер/Тип (Серия 1 / Трейлер)">
+        <input type="text" id="ad-ep-title" placeholder="Название серии (необязательно)">
+        <input type="text" id="ad-ep-url" placeholder="URL (Google Drive или YouTube)">
+        <button class="btn btn-blue" style="width:100%; margin-top:5px;" onclick="saveEp()">Добавить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-team" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:18px; font-size:1.2rem; color:var(--accent);">Участник команды</h3>
+        <input type="hidden" id="ed-team-id">
+        <input type="text" id="ad-m-name" placeholder="Никнейм">
+        <input type="text" id="ad-m-role" placeholder="Роль (Дабер, Редактор...)">
+        <input type="text" id="ad-m-img" placeholder="URL фото">
+        <input type="text" id="ad-m-cat" placeholder="Категория (оставьте пустым для 'Без категории')">
+        <button class="btn btn-blue" style="width:100%; margin-top:5px;" onclick="saveTeam()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-prof" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:18px; font-size:1.2rem; color:var(--accent);">Настройки аккаунта</h3>
+        <input type="text" id="ed-nick" placeholder="Новый никнейм">
+        <input type="text" id="ed-ava" placeholder="URL нового аватара">
+        <button class="btn" style="width:100%; margin-bottom:14px;" onclick="saveProfile()">Сохранить профиль</button>
+        <hr style="border-color:var(--border); margin-bottom:14px;">
+        <input type="email" id="ed-new-email" placeholder="Новый Email">
+        <button class="btn btn-outline" style="width:100%; margin-bottom:10px;" onclick="changeUserEmail()">Сменить почту</button>
+        <input type="password" id="ed-new-pass" placeholder="Новый пароль">
+        <button class="btn btn-outline" style="width:100%; margin-bottom:10px;" onclick="changeUserPass()">Сменить пароль</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:5px; border-color:red; color:red;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-subs" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:15px;">Ваши подписчики</h3>
+        <div id="subs-list" style="max-height:300px; overflow-y:auto;"></div>
+        <button class="btn btn-outline" style="width:100%; margin-top:15px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-tp-edit" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:15px;">Редактировать страницу участника</h3>
+        <textarea id="tp-bio" rows="8" placeholder="Информация об участнике..."></textarea>
+        <input type="text" id="tp-social" placeholder="Ссылка на соцсети">
+        <button class="btn btn-blue" style="width:100%;" onclick="saveTP()">Сохранить</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModals()">Отмена</button>
+    </div></div>
+
+    <div id="m-give-ach" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:15px;">Выдать достижение</h3>
+        <input type="text" id="ga-uid" placeholder="Email пользователя">
+        <input type="text" id="ga-name" placeholder="Название достижения">
+        <input type="text" id="ga-desc" placeholder="Описание">
+        <input type="text" id="ga-img" placeholder="Эмодзи (например: 🏆)">
+        <button class="btn btn-blue" style="width:100%;" onclick="giveAch()">Выдать</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-ach-inv" class="modal"><div class="modal-content">
+        <h3 style="margin-bottom:5px;">Инвентарь достижений</h3>
+        <p style="font-size:11px; color:var(--text-dim); margin-bottom:15px;">Нажмите на ачивку, чтобы скрыть/показать её в профиле.</p>
+        <div id="ach-inv-list" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;"></div>
+        <button class="btn btn-outline" style="width:100%; margin-top:15px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-ach-view" class="modal"><div class="modal-content" style="text-align:center;">
+        <div id="ach-v-img" style="font-size:50px; margin-bottom:10px;"></div>
+        <h2 id="ach-v-name" style="margin-bottom:10px;"></h2>
+        <p id="ach-v-desc" style="font-size:14px; margin-bottom:15px; line-height:1.5; color:var(--text-dim);"></p>
+        <div id="ach-v-meta" style="font-size:12px; color:var(--text-dim); background:var(--input-bg); padding:10px; border-radius:8px; margin-bottom:14px; border:1px solid var(--border);"></div>
+        <button id="btn-ach-del" class="btn" style="background:red; width:100%; display:none; margin-bottom:8px;" onclick="deleteAchievement()">Удалить навсегда</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-privacy" class="modal"><div class="modal-content" style="max-width:700px;">
+        <h3 style="margin-bottom:15px;">Политика конфиденциальности</h3>
+        <div id="priv-text" style="font-size:13px; line-height:1.6; margin:15px 0; max-height:400px; overflow-y:auto; white-space:pre-wrap; color:var(--text-dim);"></div>
+        <textarea id="priv-edit" style="display:none; height:280px; width:100%;"></textarea>
+        <div id="priv-adm-btns" style="display:none; margin-top:10px;">
+            <button id="priv-btn-edit" class="btn btn-blue" style="width:100%;" onclick="editPriv()">Редактировать</button>
+            <button id="priv-btn-save" class="btn btn-blue" style="display:none; width:100%; background:green;" onclick="savePriv()">Сохранить</button>
+        </div>
+        <button class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <div id="m-user-profile" class="modal"><div class="modal-content" style="text-align:center;">
+        <img id="mu-ava" style="width:85px; height:85px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); margin-bottom:10px;">
+        <h2 id="mu-nick" style="margin-bottom:12px;"></h2>
+        <div style="display:flex; justify-content:center; gap:30px; font-size:13px; margin:12px 0;">
+            <div><b id="mu-views-count" style="font-size:1.2rem;">0</b><br><span style="color:var(--text-dim); font-size:11px;">Просмотрено</span></div>
+            <div><b id="mu-subs-count" style="font-size:1.2rem;">0</b><br><span style="color:var(--text-dim); font-size:11px;">Подписчики</span></div>
+        </div>
+        <div id="mu-ach-list" style="display:flex; justify-content:center; gap:6px; margin:12px 0; flex-wrap:wrap;"></div>
+        <button id="btn-mu-sub" class="btn" style="width:100%; margin-bottom:8px;">Подписаться</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="closeModals()">Закрыть</button>
+    </div></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import {
+            getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc,
+            updateDoc, deleteDoc, query, orderBy, where, increment, arrayUnion, arrayRemove
+        } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import {
+            getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+            createUserWithEmailAndPassword, signOut, sendPasswordResetEmail,
+            updatePassword, updateEmail
+        } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        // ======================= FIREBASE CONFIG =======================
+        const firebaseConfig = {
+            apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
+            authDomain: "my-dub-site.firebaseapp.com",
+            projectId: "my-dub-site",
+            storageBucket: "my-dub-site.firebasestorage.app",
+            messagingSenderId: "302896869866",
+            appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db  = getFirestore(app);
+        const auth = getAuth(app);
+
+        let isAdmin = false, userData = null, allRel = [], curProj = null, curTM = null, viewAchIdx = -1;
+        let loginAttempts = 0, viewTimer = null;
+
+        const esc = (s) => s ? s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+
+        // ======================= TOAST =======================
+        window.showToast = (msg, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = msg;
+            container.appendChild(t);
+            setTimeout(() => { t.style.animation = 'fadeOut 0.3s forwards'; setTimeout(() => t.remove(), 300); }, 4000);
+        };
+
+        // ======================= MODALS =======================
+        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+
+        // ======================= NAVIGATION =======================
+        window.navigate = (id, pushHistory = true) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const section = document.getElementById(id);
+            if (section) section.classList.add('active');
+            const link = document.getElementById('n-' + id);
+            if (link) link.classList.add('active');
+
+            if (pushHistory) history.pushState({ page: id }, '', '#' + id);
+
+            if (id !== 'view') {
+                const iframe = document.getElementById('v-iframe');
+                if (iframe) iframe.src = '';
+                clearTimeout(viewTimer);
+            }
+            if (id === 'home') loadHome();
+            if (id === 'team') loadTeam();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.page) navigate(e.state.page, false);
+            else navigate('home', false);
+        });
+
+        // ======================= RELEASES =======================
+        window.openRelModal = (id = '') => {
+            document.getElementById('ed-rel-id').value = id;
+            if (id) {
+                const r = allRel.find(x => x.id === id);
+                if (r) ['title','genre','year','voiceover','authors','img','desc'].forEach(f => {
+                    document.getElementById(`ad-${f}`).value = r[f] || '';
+                });
+            } else {
+                ['title','genre','year','voiceover','authors','img','desc'].forEach(f => {
+                    document.getElementById(`ad-${f}`).value = '';
+                });
+            }
+            document.getElementById('m-rel').style.display = 'flex';
+        };
+
+        window.deleteRel = async (id) => {
+            if (!confirm('Удалить этот релиз навсегда?')) return;
+            try {
+                await deleteDoc(doc(db, 'releases', id));
+                showToast('Релиз удален!');
+                loadHome();
+            } catch(e) { showToast('Ошибка: ' + e.message, 'error'); }
+        };
+
+        window.saveRel = async () => {
+            const id = document.getElementById('ed-rel-id').value;
+            const data = {
+                title:     document.getElementById('ad-title').value,
+                genre:     document.getElementById('ad-genre').value,
+                year:      document.getElementById('ad-year').value,
+                voiceover: document.getElementById('ad-voiceover').value,
+                authors:   document.getElementById('ad-authors').value,
+                img:       document.getElementById('ad-img').value,
+                desc:      document.getElementById('ad-desc').value,
+                likes:     id ? (allRel.find(x => x.id === id)?.likes    || []) : [],
+                dislikes:  id ? (allRel.find(x => x.id === id)?.dislikes || []) : [],
+                episodes:  id ? (allRel.find(x => x.id === id)?.episodes || []) : [],
+            };
+            if (!id) {
+                data.timestamp = Date.now();
+                await addDoc(collection(db, 'releases'), data);
+            } else {
+                await updateDoc(doc(db, 'releases', id), data);
+            }
+            closeModals(); loadHome(); showToast('Сохранено!');
+        };
+
+        window.loadHome = async () => {
+            const snap = await getDocs(query(collection(db, 'releases'), orderBy('timestamp', 'desc')));
+            allRel = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            filterData();
+        };
+
+        window.filterData = () => {
+            let res = [...allRel];
+            const q = document.getElementById('main-search').value.toLowerCase();
+            const g = document.getElementById('filter-genre').value;
+            const s = document.getElementById('filter-sort').value;
+
+            if (q) res = res.filter(r => r.title && r.title.toLowerCase().includes(q));
+            if (g !== 'all') res = res.filter(r => r.genre === g);
+            if (s === 'pop') res.sort((a,b) => (b.views||0) - (a.views||0));
+            else if (s === 'random') res.sort(() => 0.5 - Math.random());
+            else res.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+
+            document.getElementById('main-grid').innerHTML = res.map(r => `
+                <div class="card" onclick="openView('${r.id}')">
+                    ${isAdmin ? `<div class="adm-tools">
+                        <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openRelModal('${r.id}')">Ред</button>
+                        <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); deleteRel('${r.id}')">Удал</button>
+                    </div>` : ''}
+                    <img src="${esc(r.img)}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x400/141417/ff2e2e?text=SWS'">
+                    <div class="card-info">
+                        <div><span class="tag">${esc(r.genre)}</span><span class="year-tag">${esc(r.year)}</span></div>
+                        <div class="card-title">${esc(r.title)}</div>
+                        <div style="font-size:10px; color:var(--text-dim); margin-top:5px;"><i class="fas fa-eye"></i> ${r.views||0}</div>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // ======================= VIEW =======================
+        window.openView = async (id) => {
+            // Загружаем свежие данные из Firebase
+            const snap = await getDoc(doc(db, 'releases', id));
+            if (!snap.exists()) return showToast('Релиз не найден', 'error');
+            curProj = { id, ...snap.data() };
+
+            // Обновляем кэш
+            const idx = allRel.findIndex(x => x.id === id);
+            if (idx >= 0) allRel[idx] = curProj;
+
+            navigate('view');
+
+            if (userData) {
+                updateDoc(doc(db, 'releases', id), { views: increment(1) });
+                updateDoc(doc(db, 'users', auth.currentUser.uid), { views: increment(1) });
+            }
+
+            document.getElementById('v-info').innerHTML = `
+                <div class="view-header">
+                    <img src="${esc(curProj.img)}" class="v-poster" onerror="this.src='https://via.placeholder.com/230x335/141417/ff2e2e?text=SWS'">
+                    <div style="flex:1;">
+                        <h1 class="view-title">${esc(curProj.title)}</h1>
+                        <p style="color:var(--text-dim); margin-bottom:12px; font-size:14px;">${esc(curProj.year)} • ${esc(curProj.genre)}</p>
+                        <p style="font-size:13px; line-height:1.6; margin-bottom:14px; color:#ddd;">${esc(curProj.desc)}</p>
+                        <div style="font-size:12px; color:var(--text-dim);">
+                            <b>Авторы:</b> ${esc(curProj.authors)}<br>
+                            <b style="color:var(--accent);">Озвучка:</b> ${esc(curProj.voiceover)}
+                        </div>
+                        ${isAdmin ? `<button class="btn btn-blue" style="margin-top:14px;" onclick="document.getElementById('m-ep').style.display='flex'"><i class="fas fa-plus"></i> Добавить медиа</button>` : ''}
+                    </div>
+                </div>
+            `;
+
+            updateLikesUI();
+            renderEps();
+            loadComments();
+        };
+
+        // ======================= LIKES =======================
+        window.rateProj = async (type) => {
+            if (!userData) return showToast('Авторизуйтесь для оценки', 'error');
+            const uid = auth.currentUser.uid;
+            let likes = [...(curProj.likes || [])];
+            let dislikes = [...(curProj.dislikes || [])];
+
+            if (type === 'like') {
+                if (likes.includes(uid)) likes = likes.filter(x => x !== uid);
+                else { likes.push(uid); dislikes = dislikes.filter(x => x !== uid); }
+            } else {
+                if (dislikes.includes(uid)) dislikes = dislikes.filter(x => x !== uid);
+                else { dislikes.push(uid); likes = likes.filter(x => x !== uid); }
+            }
+
+            curProj.likes = likes; curProj.dislikes = dislikes;
+            await updateDoc(doc(db, 'releases', curProj.id), { likes, dislikes });
+            updateLikesUI();
+        };
+
+        function updateLikesUI() {
+            const uid = userData ? auth.currentUser.uid : null;
+            const likes = curProj.likes || [];
+            const dislikes = curProj.dislikes || [];
+            document.getElementById('v-like-cnt').innerText = likes.length;
+            document.getElementById('v-dislike-cnt').innerText = dislikes.length;
+            document.getElementById('btn-like').classList.toggle('active', !!(uid && likes.includes(uid)));
+            document.getElementById('btn-dislike').classList.toggle('active', !!(uid && dislikes.includes(uid)));
+        }
+
+        // ======================= EPISODES (рабочая логика из v5) =======================
+        window.renderEps = () => {
+            const list = document.getElementById('v-ep-list');
+            const eps = curProj.episodes || [];
+            document.getElementById('v-current-ep-title').style.display = 'none';
+
+            if (eps.length === 0) {
+                list.innerHTML = '';
+                document.getElementById('v-iframe').style.display = 'none';
+                document.getElementById('v-tape').style.display = 'flex';
+                return;
+            }
+
+            document.getElementById('v-iframe').style.display = 'block';
+            document.getElementById('v-tape').style.display = 'none';
+
+            list.innerHTML = eps.map((ep, i) => `
+                <div style="display:flex; flex-direction:column; align-items:center; gap:5px; position:relative;">
+                    ${isAdmin ? `<button class="btn-sm" style="background:red; position:absolute; top:-8px; right:-8px; z-index:10; border-radius:50%; width:18px; height:18px; font-size:9px; display:flex; align-items:center; justify-content:center;" onclick="delEp(${i})">×</button>` : ''}
+                    <button class="ep-btn" onclick="playEp('${esc(ep.url)}', this, '${esc(ep.title || '')}')">${esc(ep.name)}</button>
+                </div>
+            `).join('');
+
+            // Автозапуск первой серии
+            const firstBtn = list.querySelector('.ep-btn');
+            if (firstBtn && eps.length > 0) playEp(eps[0].url, firstBtn, eps[0].title || '');
+        };
+
+        window.saveEp = async () => {
+            const ep = {
+                type:  document.getElementById('ad-ep-type').value,
+                name:  document.getElementById('ad-ep-name').value,
+                title: document.getElementById('ad-ep-title').value,
+                url:   document.getElementById('ad-ep-url').value
+            };
+            if (!ep.name || !ep.url) return showToast('Заполните название и URL!', 'error');
+            const eps = [...(curProj.episodes || [])];
+            eps.push(ep);
+            await updateDoc(doc(db, 'releases', curProj.id), { episodes: eps });
+            curProj.episodes = eps;
+            closeModals(); renderEps(); showToast('Медиа добавлено!');
+            document.getElementById('ad-ep-name').value = '';
+            document.getElementById('ad-ep-title').value = '';
+            document.getElementById('ad-ep-url').value = '';
+        };
+
+        window.delEp = async (idx) => {
+            if (!confirm('Удалить медиа?')) return;
+            curProj.episodes.splice(idx, 1);
+            await updateDoc(doc(db, 'releases', curProj.id), { episodes: curProj.episodes });
+            renderEps(); showToast('Удалено');
+        };
+
+        window.playEp = (url, btnElement, epTitle) => {
+            if (!url) return;
+            let src = url;
+            if (url.includes('drive.google.com')) src = url.replace(/\/view.*$/, '/preview');
+            else if (url.includes('youtube.com/watch')) src = url.replace('watch?v=', 'embed/');
+            else if (url.includes('youtu.be/')) src = url.replace('youtu.be/', 'youtube.com/embed/');
+
+            document.getElementById('v-iframe').src = src;
+            document.querySelectorAll('.ep-btn').forEach(btn => btn.classList.remove('active-ep'));
+            if (btnElement) btnElement.classList.add('active-ep');
+
+            const titleEl = document.getElementById('v-current-ep-title');
+            if (epTitle && epTitle.trim()) {
+                titleEl.innerText = epTitle;
+                titleEl.style.display = 'block';
+            } else {
+                titleEl.style.display = 'none';
+            }
+        };
+
+        // ======================= COMMENTS =======================
+        window.loadComments = async () => {
+            const snap = await getDocs(query(collection(db, `releases/${curProj.id}/comments`), orderBy('time', 'desc')));
+            document.getElementById('comm-count').innerText = snap.size;
+            document.getElementById('comm-list').innerHTML = snap.docs.map(d => {
+                const c = d.data();
+                const text = esc(c.text).replace(/@([\wа-яА-ЯёЁ]+)/g,
+                    '<a href="#" class="mention-link" onclick="openUserProfileByName(\'$1\'); return false;">@$1</a>');
+                return `
+                <div class="comm-item">
+                    <img src="${esc(c.ava) || 'https://api.dicebear.com/7.x/identicon/svg'}" class="comm-ava" style="cursor:pointer;" onclick="openUserProfile('${c.uid}')">
+                    <div style="flex:1;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
+                            <b style="font-size:14px; cursor:pointer;" onclick="openUserProfile('${c.uid}')">${esc(c.nick)}</b>
+                            <span style="font-size:10px; color:var(--text-dim);">${new Date(c.time).toLocaleString()}</span>
+                        </div>
+                        <p style="font-size:13px; margin-top:5px; word-break:break-word; line-height:1.5;">${text}</p>
+                        ${(isAdmin || (userData && c.uid === auth.currentUser.uid)) ? `<button class="btn-sm" style="background:transparent; color:red; margin-top:5px; padding:0;" onclick="delComm('${d.id}')">Удалить</button>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
+        window.sendComment = async () => {
+            const txt = document.getElementById('comm-text').value.trim();
+            if (!txt) return;
+            if (!userData) return showToast('Авторизуйтесь!', 'error');
+            await addDoc(collection(db, `releases/${curProj.id}/comments`), {
+                uid:  auth.currentUser.uid,
+                nick: userData.nickname,
+                ava:  userData.avatar || '',
+                text: txt,
+                time: Date.now()
+            });
+            document.getElementById('comm-text').value = '';
+            loadComments(); showToast('Комментарий отправлен!');
+        };
+
+        window.delComm = async (id) => {
+            if (!confirm('Удалить комментарий?')) return;
+            await deleteDoc(doc(db, `releases/${curProj.id}/comments`, id));
+            loadComments(); showToast('Удалено');
+        };
+
+        // ======================= AUTH =======================
+        document.getElementById('btn-login').onclick = async () => {
+            const e = document.getElementById('email').value.trim();
+            const p = document.getElementById('pass').value;
+            try {
+                await signInWithEmailAndPassword(auth, e, p);
+                showToast('Вход выполнен!');
+                loginAttempts = 0;
+            } catch(err) {
+                loginAttempts++;
+                if (loginAttempts >= 3) document.getElementById('reset-pass-block').style.display = 'block';
+                showToast('Ошибка входа!', 'error');
+            }
+        };
+
+        document.getElementById('btn-reg').onclick = async () => {
+            const e = document.getElementById('email').value.trim();
+            const p = document.getElementById('pass').value;
+            if (!e || p.length < 6) return showToast('Заполните email и пароль (мин. 6 символов)!', 'error');
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, 'users', cred.user.uid), {
+                    nickname: 'User_' + Math.floor(Math.random() * 10000),
+                    email: e,
+                    role: 'user',
+                    views: 0,
+                    subscribers: 0,
+                    achievements: [{ name: 'Новичок', desc: 'Зарегистрировался на сайте', img: '👋', date: Date.now(), hidden: false }]
+                });
+                showToast('Регистрация успешна!');
+            } catch(err) { showToast(err.message, 'error'); }
+        };
+
+        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => { showToast('Вы вышли из аккаунта'); navigate('home'); });
+
+        window.resetPassword = async () => {
+            const e = document.getElementById('email').value.trim();
+            if (!e) return showToast('Введите email!', 'error');
+            try {
+                await sendPasswordResetEmail(auth, e);
+                showToast('Письмо отправлено!');
+            } catch(err) { showToast(err.message, 'error'); }
+        };
+
+        window.changeUserEmail = async () => {
+            const newEmail = document.getElementById('ed-new-email').value.trim();
+            if (!newEmail) return;
+            try {
+                await updateEmail(auth.currentUser, newEmail);
+                showToast('Email изменён!'); closeModals();
+            } catch(err) { showToast(err.message, 'error'); }
+        };
+
+        window.changeUserPass = async () => {
+            const newPass = document.getElementById('ed-new-pass').value;
+            if (!newPass || newPass.length < 6) return showToast('Минимум 6 символов!', 'error');
+            try {
+                await updatePassword(auth.currentUser, newPass);
+                showToast('Пароль изменён!'); closeModals();
+            } catch(err) { showToast(err.message, 'error'); }
+        };
+
+        window.saveProfile = async () => {
+            const nick = document.getElementById('ed-nick').value.trim();
+            const ava  = document.getElementById('ed-ava').value.trim();
+            if (!nick) return showToast('Введите никнейм!', 'error');
+
+            const q = query(collection(db, 'users'), where('nickname', '==', nick));
+            const snap = await getDocs(q);
+            if (!snap.empty && nick !== userData.nickname) return showToast('Этот никнейм занят!', 'error');
+
+            await updateDoc(doc(db, 'users', auth.currentUser.uid), { nickname: nick, avatar: ava });
+            userData.nickname = nick; userData.avatar = ava;
+            document.getElementById('u-nick').innerText = nick;
+            document.getElementById('u-ava').src = ava || 'https://api.dicebear.com/7.x/identicon/svg';
+            showToast('Профиль обновлён!'); closeModals();
+        };
+
+        // ======================= USER PROFILES =======================
+        window.openUserProfile = async (uid) => {
+            if (userData && uid === auth.currentUser.uid) { navigate('profile'); return; }
+            const snap = await getDoc(doc(db, 'users', uid));
+            if (!snap.exists()) return showToast('Пользователь не найден', 'error');
+            const u = snap.data();
+            document.getElementById('mu-ava').src = u.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+            document.getElementById('mu-nick').innerText = u.nickname;
+            document.getElementById('mu-views-count').innerText = u.views || 0;
+            document.getElementById('mu-subs-count').innerText = u.subscribers || 0;
+            const subBtn = document.getElementById('btn-mu-sub');
+            if (userData) {
+                const amISubbed = (u.subscribersList || []).includes(auth.currentUser.uid);
+                subBtn.innerText = amISubbed ? 'Отписаться' : 'Подписаться';
+                subBtn.className = amISubbed ? 'btn btn-outline' : 'btn';
+                subBtn.onclick = () => subscribeToUser(uid, amISubbed);
+                subBtn.style.display = 'block';
+            } else {
+                subBtn.style.display = 'none';
+            }
+            const achs = u.achievements || [];
+            document.getElementById('mu-ach-list').innerHTML = achs.filter(a => !a.hidden).map(a => `
+                <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:22px; cursor:pointer; border:1px solid var(--border);" title="${esc(a.name)}" onclick='viewAchExt(${JSON.stringify(a)})'>${a.img}</div>
+            `).join('');
+            document.getElementById('m-user-profile').style.display = 'flex';
+        };
+
+        window.openUserProfileByName = async (nick) => {
+            const snap = await getDocs(query(collection(db, 'users'), where('nickname', '==', nick)));
+            if (!snap.empty) openUserProfile(snap.docs[0].id);
+        };
+
+        window.subscribeToUser = async (targetUid, isSubbed) => {
+            if (!userData) return;
+            const targetRef = doc(db, 'users', targetUid);
+            try {
+                if (isSubbed) {
+                    await updateDoc(targetRef, { subscribers: increment(-1), subscribersList: arrayRemove(auth.currentUser.uid) });
+                } else {
+                    await updateDoc(targetRef, { subscribers: increment(1), subscribersList: arrayUnion(auth.currentUser.uid) });
+                }
+                showToast(isSubbed ? 'Вы отписались' : 'Вы подписались!');
+                openUserProfile(targetUid);
+            } catch(e) { showToast('Ошибка: ' + e.message, 'error'); }
+        };
+
+        window.showMySubscribers = async () => {
+            if (!userData) return;
+            const uid = auth.currentUser.uid;
+            const uDoc = await getDoc(doc(db, 'users', uid));
+            if (!uDoc.exists()) return;
+            const subs = uDoc.data().subscribersList || [];
+            if (subs.length === 0) return showToast('Пока нет подписчиков');
+            const list = document.getElementById('subs-list');
+            list.innerHTML = '';
+            for (let subId of subs) {
+                const subDoc = await getDoc(doc(db, 'users', subId));
+                if (subDoc.exists()) {
+                    list.innerHTML += `<div style="padding:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+                        <img src="${subDoc.data().avatar || 'https://api.dicebear.com/7.x/identicon/svg'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
+                        <b style="cursor:pointer; color:var(--accent);" onclick="closeModals(); openUserProfile('${subId}')">${esc(subDoc.data().nickname)}</b>
+                    </div>`;
+                }
+            }
+            document.getElementById('m-subs').style.display = 'flex';
+        };
+
+        // ======================= ACHIEVEMENTS =======================
+        window.giveAch = async () => {
+            const email = document.getElementById('ga-uid').value.trim();
+            const snap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
+            if (snap.empty) return showToast('Пользователь не найден!', 'error');
+            const uRef = doc(db, 'users', snap.docs[0].id);
+            const uData = snap.docs[0].data();
+            const achs = [...(uData.achievements || [])];
+            achs.push({
+                name:   document.getElementById('ga-name').value,
+                desc:   document.getElementById('ga-desc').value,
+                img:    document.getElementById('ga-img').value,
+                date:   Date.now(),
+                hidden: false,
+                giver:  userData.nickname
+            });
+            await updateDoc(uRef, { achievements: achs });
+            showToast('Достижение выдано!'); closeModals();
+        };
+
+        window.renderAchProfile = () => {
+            if (!userData) return;
+            const achs = userData.achievements || [];
+            document.getElementById('u-ach').innerHTML = achs.filter(a => !a.hidden).map((a, i) => `
+                <div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:22px; cursor:pointer; border:1px solid var(--border);" title="${esc(a.name)}" onclick="viewAch(${i}, true)">${a.img}</div>
+            `).join('') || '<p style="font-size:12px; color:var(--text-dim);">Пока нет достижений.</p>';
+        };
+
+        window.openAchInventory = () => {
+            const achs = userData.achievements || [];
+            document.getElementById('ach-inv-list').innerHTML = achs.map((a, i) => `
+                <div style="background:var(--input-bg); padding:12px; border-radius:10px; text-align:center; cursor:pointer; border:1px solid ${a.hidden ? 'red' : 'var(--accent)'}; opacity:${a.hidden ? '0.5' : '1'}; transition:0.2s;" onclick="toggleAchVisibility(${i})">
+                    <div style="font-size:26px; margin-bottom:5px;">${a.img}</div>
+                    <div style="font-size:10px; font-weight:bold;">${esc(a.name)}</div>
+                    <div style="font-size:9px; color:var(--text-dim); margin-top:4px; text-decoration:underline;" onclick="event.stopPropagation(); viewAch(${i}, false)">Подробнее</div>
+                </div>
+            `).join('');
+            document.getElementById('m-ach-inv').style.display = 'flex';
+        };
+
+        window.toggleAchVisibility = async (idx) => {
+            userData.achievements[idx].hidden = !userData.achievements[idx].hidden;
+            await updateDoc(doc(db, 'users', auth.currentUser.uid), { achievements: userData.achievements });
+            openAchInventory(); renderAchProfile();
+        };
+
+        window.viewAch = (idx, fromProfile) => {
+            viewAchIdx = idx;
+            const a = userData.achievements[idx];
+            document.getElementById('ach-v-img').innerText = a.img;
+            document.getElementById('ach-v-name').innerText = a.name;
+            document.getElementById('ach-v-desc').innerText = a.desc;
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(a.date).toLocaleDateString()}<br><b>От:</b> ${a.giver || 'Система/Студия'}`;
+            document.getElementById('btn-ach-del').style.display = 'block';
+            document.getElementById('m-ach-inv').style.display = 'none';
+            document.getElementById('m-ach-view').style.display = 'flex';
+        };
+
+        window.viewAchExt = (ach) => {
+            document.getElementById('ach-v-img').innerText = ach.img;
+            document.getElementById('ach-v-name').innerText = ach.name;
+            document.getElementById('ach-v-desc').innerText = ach.desc;
+            document.getElementById('ach-v-meta').innerHTML = `<b>Получено:</b> ${new Date(ach.date).toLocaleDateString()}<br><b>От:</b> ${ach.giver || 'Система/Студия'}`;
+            document.getElementById('btn-ach-del').style.display = 'none';
+            document.getElementById('m-user-profile').style.display = 'none';
+            document.getElementById('m-ach-view').style.display = 'flex';
+        };
+
+        window.deleteAchievement = async () => {
+            if (!confirm('Удалить достижение НАВСЕГДА?')) return;
+            userData.achievements.splice(viewAchIdx, 1);
+            await updateDoc(doc(db, 'users', auth.currentUser.uid), { achievements: userData.achievements });
+            showToast('Достижение удалено!');
+            closeModals(); renderAchProfile();
+        };
+
+        // ======================= TEAM =======================
+        window.loadTeam = async () => {
+            const snap = await getDocs(query(collection(db, 'team'), orderBy('order')));
+            const t = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            const cats = {};
+            t.forEach(m => {
+                const c = m.cat || 'Без категории';
+                if (!cats[c]) cats[c] = [];
+                cats[c].push(m);
+            });
+
+            const w = document.getElementById('team-wrapper');
+            w.innerHTML = '';
+
+            Object.keys(cats).forEach(cat => {
+                const cDiv = document.createElement('div');
+                cDiv.className = 'team-container';
+                cDiv.innerHTML = `
+                    <div class="team-container-header" onclick="const g = this.nextElementSibling; g.style.display = g.style.display === 'none' ? 'grid' : 'none'">
+                        ${esc(cat)} <i class="fas fa-chevron-down" style="font-size:11px;"></i>
+                    </div>
+                    <div class="grid" id="cat-${cat.replace(/\s/g,'')}"></div>`;
+                w.appendChild(cDiv);
+
+                const grid = cDiv.querySelector('.grid');
+                grid.innerHTML = cats[cat].map(m => `
+                    <div class="card" data-id="${m.id}" onclick="openTeamPage('${m.id}')">
+                        <div class="drag-handle"><i class="fas fa-grip-lines"></i> Перетащить</div>
+                        ${isAdmin ? `<div class="adm-tools">
+                            <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openTeamModal('${m.id}')">Ред</button>
+                            <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); delTeam('${m.id}')">Удал</button>
+                        </div>` : ''}
+                        <img src="${esc(m.img)}" loading="lazy" style="width:100%; height:230px; object-fit:cover;" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg'">
+                        <div class="card-info" style="text-align:center;">
+                            <div class="card-title" style="font-size:14px;">${esc(m.name)}</div>
+                            <div style="color:var(--accent); font-size:11px; margin-top:5px; font-weight:bold;">${esc(m.role)}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                if (isAdmin) {
+                    new Sortable(grid, {
+                        handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost',
+                        onEnd: async () => {
+                            const items = Array.from(grid.children);
+                            for (let i = 0; i < items.length; i++) {
+                                await updateDoc(doc(db, 'team', items[i].dataset.id), { order: i });
+                            }
+                            showToast('Порядок сохранён');
+                        }
+                    });
+                }
+            });
+
+            if (isAdmin) document.body.classList.add('admin-mode');
+            else document.body.classList.remove('admin-mode');
+        };
+
+        window.openTeamModal = async (id = '') => {
+            document.getElementById('ed-team-id').value = id;
+            if (id) {
+                const snap = await getDoc(doc(db, 'team', id));
+                const d = snap.data();
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = d[f] || '');
+            } else {
+                ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = '');
+            }
+            document.getElementById('m-team').style.display = 'flex';
+        };
+
+        window.saveTeam = async () => {
+            const id = document.getElementById('ed-team-id').value;
+            const data = {
+                name: document.getElementById('ad-m-name').value,
+                role: document.getElementById('ad-m-role').value,
+                img:  document.getElementById('ad-m-img').value,
+                cat:  document.getElementById('ad-m-cat').value || 'Без категории'
+            };
+            if (!id) { data.order = 999; await addDoc(collection(db, 'team'), data); }
+            else await updateDoc(doc(db, 'team', id), data);
+            closeModals(); loadTeam(); showToast('Участник сохранён!');
+        };
+
+        window.delTeam = async (id) => {
+            if (!confirm('Удалить участника?')) return;
+            await deleteDoc(doc(db, 'team', id));
+            loadTeam(); showToast('Удалён');
+        };
+
+        window.openTeamPage = async (id) => {
+            curTM = { id, ...(await getDoc(doc(db, 'team', id))).data() };
+            navigate('team-page');
+            document.getElementById('adm-tp-controls').style.display = isAdmin ? 'flex' : 'none';
+            document.getElementById('team-page-view').innerHTML = `
+                <div style="display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap;">
+                    <img src="${esc(curTM.img)}" style="width:230px; height:320px; border-radius:14px; object-fit:cover; border:2px solid var(--accent); box-shadow:var(--shadow);" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg'">
+                    <div style="flex:1; min-width:280px;">
+                        <h1 style="font-size:2.2rem; margin-bottom:8px;">${esc(curTM.name)}</h1>
+                        <h3 style="color:var(--accent); margin-bottom:18px;">${esc(curTM.role)}</h3>
+                        <div style="background:var(--input-bg); padding:18px; border-radius:10px; border:1px solid var(--border); margin-bottom:18px;">
+                            <h4 style="margin-bottom:8px; color:var(--text-dim);">О себе:</h4>
+                            <p style="line-height:1.6; font-size:14px; white-space:pre-wrap;">${esc(curTM.bio || 'Информация пока не добавлена.')}</p>
+                        </div>
+                        ${curTM.social ? `<a href="${esc(curTM.social)}" target="_blank" class="btn btn-outline" style="text-decoration:none;"><i class="fas fa-link"></i> Соцсети</a>` : ''}
+                    </div>
+                </div>
+            `;
+        };
+
+        window.openTPModal = () => {
+            document.getElementById('tp-bio').value = curTM.bio || '';
+            document.getElementById('tp-social').value = curTM.social || '';
+            document.getElementById('m-tp-edit').style.display = 'flex';
+        };
+
+        window.saveTP = async () => {
+            const bio = document.getElementById('tp-bio').value;
+            const soc = document.getElementById('tp-social').value;
+            await updateDoc(doc(db, 'team', curTM.id), { bio, social: soc });
+            closeModals(); openTeamPage(curTM.id); showToast('Страница обновлена');
+        };
+
+        window.deleteTP = async () => {
+            if (!confirm('Удалить страницу участника?')) return;
+            await updateDoc(doc(db, 'team', curTM.id), { bio: '', social: '' });
+            showToast('Страница удалена'); navigate('team');
+        };
+
+        // ======================= PRIVACY =======================
+        window.openPrivacy = async () => {
+            document.getElementById('m-privacy').style.display = 'flex';
+            const d = await getDoc(doc(db, 'settings', 'privacy'));
+            const txt = d.exists() ? d.data().text : 'Политика конфиденциальности пока не заполнена.';
+            document.getElementById('priv-text').innerText = txt;
+            document.getElementById('priv-edit').value = txt;
+            document.getElementById('priv-text').style.display = 'block';
+            document.getElementById('priv-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'none';
+            document.getElementById('priv-adm-btns').style.display = isAdmin ? 'block' : 'none';
+            if (isAdmin) document.getElementById('priv-btn-edit').style.display = 'block';
+        };
+        window.editPriv = () => {
+            document.getElementById('priv-text').style.display = 'none';
+            document.getElementById('priv-edit').style.display = 'block';
+            document.getElementById('priv-btn-edit').style.display = 'none';
+            document.getElementById('priv-btn-save').style.display = 'block';
+        };
+        window.savePriv = async () => {
+            await setDoc(doc(db, 'settings', 'privacy'), { text: document.getElementById('priv-edit').value });
+            closeModals(); showToast('Политика сохранена!');
+        };
+
+        // ======================= AUTH STATE =======================
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                if (snap.exists()) {
+                    userData = snap.data();
+                    isAdmin = userData.role === 'admin';
+
+                    document.getElementById('auth-ui').style.display  = 'none';
+                    document.getElementById('user-ui').style.display   = 'block';
+                    document.getElementById('comm-form').style.display = 'block';
+                    document.getElementById('comm-auth-msg').style.display = 'none';
+
+                    document.getElementById('u-nick').innerText = userData.nickname;
+                    document.getElementById('ed-nick').value    = userData.nickname;
+                    document.getElementById('u-ava').src        = userData.avatar || 'https://api.dicebear.com/7.x/identicon/svg';
+                    document.getElementById('ed-ava').value     = userData.avatar || '';
+                    document.getElementById('u-role').innerText = isAdmin ? 'АДМИН' : 'ПОЛЬЗОВАТЕЛЬ';
+                    document.getElementById('u-views').innerText = userData.views || 0;
+                    document.getElementById('u-subs').innerText  = userData.subscribers || 0;
+
+                    renderAchProfile();
+
+                    document.getElementById('adm-btn-rel').style.display    = isAdmin ? 'inline-flex' : 'none';
+                    document.getElementById('adm-btn-team').style.display   = isAdmin ? 'inline-flex' : 'none';
+                    document.getElementById('adm-ach-panel').style.display  = isAdmin ? 'block' : 'none';
+                }
+            } else {
+                userData = null; isAdmin = false;
+                document.getElementById('auth-ui').style.display   = 'block';
+                document.getElementById('user-ui').style.display   = 'none';
+                document.getElementById('comm-form').style.display = 'none';
+                document.getElementById('comm-auth-msg').style.display = 'block';
+                document.getElementById('adm-btn-rel').style.display  = 'none';
+                document.getElementById('adm-btn-team').style.display = 'none';
+                document.getElementById('adm-ach-panel').style.display = 'none';
+            }
+            const hashPage = window.location.hash.replace('#', '') || 'home';
+            navigate(hashPage, false);
+        });
+    </script>
+</body>
+</html>
