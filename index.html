@@ -3,728 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sound Wave Studio | My Dubside Engine</title>
-    
+    <title>Sound Wave Studio | My Dubside</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050507;
-            --card-bg: #0c0c0e;
-            --accent: #ff2e2e; /* ТОТ САМЫЙ КРАСНЫЙ */
-            --accent-glow: rgba(255, 46, 46, 0.2);
-            --text: #ffffff;
-            --text-dim: #9ca3af;
-            --border: #1a1a1e;
-            --white: #ffffff;
-            --gray: #252529;
+            --bg: #050507; --card-bg: #0c0c0e; --accent: #ff2e2e; 
+            --text: #ffffff; --text-dim: #666; --border: #1a1a1e;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Manrope', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-            /* ФОНОВЫЙ ПАТТЕРН С СИМВОЛАМИ */
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(255, 46, 46, 0.05) 0%, transparent 50%),
-                url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' fill='%23ff2e2e' opacity='0.03' font-family='Arial' font-size='20'%3EX%3C/text%3E%3Ctext x='150' y='80' fill='%23ffffff' opacity='0.02' font-family='Arial' font-size='15'%3EO%3C/text%3E%3Ctext x='300' y='40' fill='%23ff2e2e' opacity='0.03' font-family='Arial' font-size='25'%3EØ%3C/text%3E%3Ctext x='50' y='250' fill='%23ffffff' opacity='0.02' font-family='Arial' font-size='12'%3ESWS%3C/text%3E%3Ctext x='250' y='350' fill='%23ff2e2e' opacity='0.04' font-family='Arial' font-size='18'%3EX%3C/text%3E%3Ctext x='350' y='150' fill='%23ffffff' opacity='0.02' font-family='Arial' font-size='20'%3EO%3C/text%3E%3Ctext x='80' y='380' fill='%23ff2e2e' opacity='0.03' font-family='Arial' font-size='14'%3ESWS%3C/text%3E%3C/svg%3E");
+            background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif;
+            background-image: radial-gradient(circle at 20% 30%, rgba(255, 46, 46, 0.05) 0%, transparent 50%),
+            url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' fill='%23ff2e2e' opacity='0.03' font-size='20'%3EX%3C/text%3E%3Ctext x='150' y='80' fill='%23ffffff' opacity='0.02' font-size='15'%3EO%3C/text%3E%3Ctext x='300' y='40' fill='%23ff2e2e' opacity='0.03' font-size='25'%3EØ%3C/text%3E%3Ctext x='50' y='250' fill='%23ffffff' opacity='0.02' font-size='12'%3ESWS%3C/text%3E%3C/svg%3E");
         }
-
-        /* СКРОЛЛБАР */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
-
-        /* HEADER */
-        header {
-            padding: 25px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(5, 5, 7, 0.9);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
-        }
-
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 20px; }
+        header { padding: 20px 0; position: sticky; top: 0; z-index: 1000; background: rgba(5,5,7,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
         .nav-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 950;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            cursor: pointer;
-            color: var(--white);
-        }
-
+        .logo { font-size: 20px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
         .logo span { color: var(--accent); }
-
-        .nav-menu { display: flex; gap: 35px; align-items: center; }
-
-        .nav-item {
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-dim);
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-item:hover, .nav-item.active { color: var(--accent); }
-
-        .auth-btn {
-            background: var(--accent);
-            color: #fff;
-            padding: 10px 22px;
-            border-radius: 8px;
-            font-weight: 900;
-            font-size: 11px;
-            text-transform: uppercase;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 5px 15px var(--accent-glow);
-            transition: 0.3s;
-        }
-
-        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--accent-glow); }
-
-        /* ГАЛЕРЕЯ */
-        .releases-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-            padding-bottom: 100px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            overflow: hidden;
-            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .card:hover { transform: scale(1.02); border-color: var(--accent); }
-
-        .card-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; filter: grayscale(0.5); transition: 0.5s; }
-        .card:hover .card-img { filter: grayscale(0); }
-
-        .card-body { padding: 25px; }
-
-        .card-tag {
-            color: var(--accent);
-            font-size: 9px;
-            font-weight: 950;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .card-title { font-size: 18px; font-weight: 900; margin-bottom: 12px; color: var(--white); }
-
-        .card-meta { display: flex; gap: 12px; color: var(--text-dim); font-size: 11px; font-weight: 700; }
-
-        /* УТИЛИТЫ */
-        .page { animation: fadeIn 0.6s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-menu { display: flex; gap: 25px; align-items: center; }
+        .nav-item { font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; color: var(--text-dim); transition: 0.3s; }
+        .nav-item.active { color: var(--accent); }
+        .auth-btn { background: var(--accent); color: #fff; padding: 8px 20px; border-radius: 6px; font-weight: 800; font-size: 11px; border: none; cursor: pointer; }
+        .releases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; padding: 40px 0; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .card-img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+        .card-body { padding: 15px; }
+        .card-title { font-size: 16px; font-weight: 800; margin-top: 5px; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 20px; width: 100%; max-width: 500px; }
+        input, textarea, select { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 15px; }
+        .btn-primary { background: var(--accent); color: #fff; padding: 12px; border: none; border-radius: 8px; font-weight: 800; width: 100%; cursor: pointer; }
         .hidden { display: none !important; }
-        
-        .btn { 
-            padding: 14px 28px; border-radius: 10px; border: none; 
-            font-weight: 900; cursor: pointer; transition: 0.3s; 
-            font-size: 12px; text-transform: uppercase; 
-        }
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--white); }
-        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
-        /* ПОИСК */
-        .search-section { padding: 80px 0 20px; text-align: center; }
-        .search-box {
-            max-width: 700px; margin: 0 auto;
-            position: relative;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 5px;
-            display: flex;
-        }
-        .search-box input {
-            background: none; border: none; color: #fff; padding: 15px 25px;
-            width: 100%; font-size: 16px; font-weight: 600;
-        }
+        footer { border-top: 1px solid var(--border); padding: 60px 0; margin-top: 100px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="container nav-flex">
-            <div class="logo" onclick="navigate('home')">SOUND WAVE <span>STUDIO</span></div>
-            <nav class="nav-menu">
-                <div class="nav-item active" data-page="home" onclick="navigate('home')">Релизы</div>
-                <div class="nav-item" data-page="team" onclick="navigate('team')">Команда</div>
-                <div class="nav-item" data-page="dubin" onclick="navigate('dubin')">DUB-IN</div>
-                <div id="admin-nav" class="nav-item hidden" data-page="admin" onclick="navigate('admin')">Admin</div>
-                <div id="auth-section">
-                    <button class="auth-btn" onclick="openModal('m-auth')">Вход</button>
-                </div>
-            </nav>
+<header>
+    <div class="container nav-flex">
+        <div class="logo" onclick="navigate('home')">SOUND WAVE <span>STUDIO</span></div>
+        <nav class="nav-menu">
+            <div class="nav-item active" data-page="home" onclick="navigate('home')">Релизы</div>
+            <div class="nav-item" data-page="team" onclick="navigate('team')">Команда</div>
+            <div class="nav-item" data-page="dubin" onclick="navigate('dubin')">DUB-IN</div>
+            <div id="admin-nav" class="nav-item hidden" onclick="navigate('admin')">ADMIN</div>
+            <div id="auth-section"></div>
+        </nav>
+    </div>
+</header>
+
+<main id="app">
+    <section id="s-home" class="page container">
+        <div style="padding: 60px 0; text-align: center;">
+            <h1 style="font-size: 32px; font-weight: 800;">ГЛАВНЫЕ <span style="color:var(--accent)">РЕЛИЗЫ</span></h1>
+            <input type="text" id="main-search" placeholder="Поиск по названию..." style="max-width: 500px; margin-top: 20px;">
         </div>
-    </header>
+        <div id="releases-grid" class="releases-grid"></div>
+    </section>
 
-    <main id="app">
-        <section id="s-home" class="page">
-            <div class="container">
-                <div class="search-section">
-                    <h2 style="font-size: 42px; font-weight: 950; text-transform: uppercase; margin-bottom: 30px;">Твой <span style="color:var(--accent)">Дубляж</span> Тут</h2>
-                    <div class="search-box">
-                        <input type="text" id="main-search" placeholder="Поиск релизов...">
-                        <button class="btn-primary" style="border-radius: 10px; padding: 0 30px;"><i class="fas fa-search"></i></button>
-                    </div>
-                </div>
-                <div id="releases-grid" class="releases-grid">
-                    </div>
+    <section id="s-view" class="page container hidden">
+        <div id="view-content" style="padding: 40px 0;"></div>
+    </section>
+
+    <section id="s-team" class="page container hidden">
+        <h1 style="text-align: center; padding: 60px 0;">НАША <span style="color:var(--accent)">КОМАНДА</span></h1>
+        <div id="team-list" class="releases-grid"></div>
+    </section>
+
+    <section id="s-dubin" class="page container hidden">
+        <div style="max-width: 600px; margin: 100px auto; background: var(--card-bg); padding: 40px; border-radius: 20px;">
+            <h2 style="margin-bottom: 20px;">ОСТАВИТЬ ЗАЯВКУ</h2>
+            <input type="text" id="dub-title" placeholder="Название тайтла">
+            <textarea id="dub-text" placeholder="Ваши комментарии..." style="height: 100px;"></textarea>
+            <button class="btn-primary" onclick="submitDubRequest()">ОТПРАВИТЬ</button>
+        </div>
+    </section>
+
+    <section id="s-admin" class="page container hidden">
+        <div style="padding: 40px 0; display: flex; justify-content: space-between;">
+            <h2>ADMIN PANEL</h2>
+            <div style="display: flex; gap: 10px;">
+                <button class="auth-btn" onclick="openModal('m-add-release')">Добавить релиз</button>
+                <button class="auth-btn" style="background: #333;" onclick="openModal('m-add-team')">Добавить юнит</button>
             </div>
-        </section>
-        <section id="s-view" class="page hidden">
-            <div class="container" id="view-content">
-                </div>
-        </section>
+        </div>
+        <div id="admin-releases-list"></div>
+    </section>
 
-        <section id="s-team" class="page hidden">
-            <div class="container">
-                <div style="padding: 80px 0; text-align: center;">
-                    <h1 style="font-size: 50px; font-weight: 950; text-transform: uppercase;">Наш <span style="color:var(--accent)">Состав</span></h1>
-                    <p style="color: var(--text-dim); font-weight: 700; letter-spacing: 3px; font-size: 12px;">SOUND WAVE STUDIO TEAM UNIT</p>
-                </div>
-                <div id="team-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 100px;">
-                    </div>
-            </div>
-        </section>
+    <section id="s-profile" class="page container hidden">
+        <div id="profile-area" style="padding: 100px 0;"></div>
+    </section>
+</main>
 
-        <section id="s-dubin" class="page hidden">
-            <div class="container" style="padding: 100px 0;">
-                <div style="max-width: 800px; margin: 0 auto; background: var(--card-bg); padding: 50px; border-radius: 30px; border: 1px solid var(--border); position: relative; overflow: hidden;">
-                    <div style="position: absolute; top: -20px; right: -20px; font-size: 150px; color: var(--accent); opacity: 0.05; font-weight: 900; pointer-events: none;">SWS</div>
-                    <h2 style="font-size: 32px; font-weight: 950; text-transform: uppercase; margin-bottom: 15px;">DUB-IN <span style="color: var(--accent);">SYSTEM</span></h2>
-                    <p style="color: var(--text-dim); margin-bottom: 40px; font-weight: 500; line-height: 1.6;">Оставьте заявку на озвучку. Все запросы уходят напрямую администрации в коллекцию <code style="color:var(--accent)">dub_requests</code>.</p>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        <input type="text" id="dub-title" placeholder="Название тайтла" style="width:100%; padding:18px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#fff;">
-                        <textarea id="dub-text" placeholder="Ваши пожелания или ссылки..." style="width:100%; padding:18px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#fff; height:150px; resize:none;"></textarea>
-                        <button class="btn-primary btn" onclick="window.submitDubRequest()">ОТПРАВИТЬ В ОБРАБОТКУ</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+<footer>
+    <div class="container">
+        <div class="logo" style="margin-bottom: 20px;">SOUND WAVE <span>STUDIO</span></div>
+        <p style="font-size: 10px; color: var(--text-dim);">© 2026 MY DUBSIDE ENGINE. ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDoc, getDocs, doc, deleteDoc, query, where, orderBy, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<div id="m-auth" class="modal" onclick="closeModalOnDim(event, 'm-auth')">
+    <div class="modal-content">
+        <h2 id="auth-title" style="text-align: center; margin-bottom: 20px;">ВХОД</h2>
+        <input type="email" id="auth-email" placeholder="EMAIL">
+        <input type="password" id="auth-pass" placeholder="PASSWORD">
+        <button class="btn-primary" id="auth-main-btn" onclick="handleAuth()">ВОЙТИ</button>
+        <p onclick="toggleAuthMode()" id="auth-switch" style="text-align: center; margin-top: 15px; font-size: 12px; cursor: pointer;">НЕТ АККАУНТА?</p>
+    </div>
+</div>
 
-        // ТВОЙ КОНФИГ (Обязательно проверь данные в консоли Firebase)
-        const firebaseConfig = {
-            apiKey: "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
-            authDomain: "my-dub-site.firebaseapp.com",
-            projectId: "my-dub-site",
-            storageBucket: "my-dub-site.firebasestorage.app",
-            messagingSenderId: "302896869866",
-            appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
-        };
+<div id="m-add-release" class="modal" onclick="closeModalOnDim(event, 'm-add-release')">
+    <div class="modal-content" style="max-width: 600px;">
+        <h2>НОВЫЙ РЕЛИЗ</h2>
+        <input type="text" id="rel-title" placeholder="Название">
+        <input type="text" id="rel-genre" placeholder="Жанр">
+        <input type="text" id="rel-year" placeholder="Год">
+        <input type="text" id="rel-img" placeholder="Ссылка на обложку">
+        <textarea id="rel-desc" placeholder="Описание"></textarea>
+        <textarea id="rel-eps" placeholder="Серия 1|ссылка, Серия 2|ссылка"></textarea>
+        <button class="btn-primary" onclick="saveRelease()">СОХРАНИТЬ</button>
+    </div>
+</div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+<div id="m-add-team" class="modal" onclick="closeModalOnDim(event, 'm-add-team')">
+    <div class="modal-content">
+        <h2>НОВЫЙ ЮНИТ</h2>
+        <input type="text" id="tm-name" placeholder="Никнейм">
+        <input type="text" id="tm-role" placeholder="Роль">
+        <input type="text" id="tm-ava" placeholder="URL аватара">
+        <button class="btn-primary" onclick="saveTeamMember()">ДОБАВИТЬ</button>
+    </div>
+</div>
 
-        window.state = { user: null, profile: null, role: 'User', isAuth: false, allReleases: [] };
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDoc, getDocs, doc, deleteDoc, query, where, orderBy, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- МОДУЛЬ ПЛЕЕРА И ПРОСМОТРА (FIXED) ---
-        window.openView = async function(id) {
-            const container = document.getElementById('view-content');
-            navigate('view');
-            container.innerHTML = `<div style="padding:100px; text-align:center;"><div class="loader-pulse" style="margin:0 auto; border-top-color:var(--accent);"></div></div>`;
+    const firebaseConfig = { apiKey: "ВАШ_API_KEY", authDomain: "ВАШ_ID.firebaseapp.com", projectId: "ВАШ_ID", storageBucket: "ВАШ_ID.appspot.com", messagingSenderId: "...", appId: "..." };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-            try {
-                const snap = await getDoc(doc(db, "releases", id));
-                if (!snap.exists()) return navigate('home');
-                const data = snap.data();
+    window.state = { user: null, profile: null, role: 'User', isAuth: false, authMode: 'login' };
 
-                container.innerHTML = `
-                    <div style="padding: 60px 0;">
-                        <div style="display:grid; grid-template-columns: 300px 1fr; gap:50px; margin-bottom:60px;">
-                            <img src="${data.img}" style="width:100%; border-radius:20px; border:1px solid var(--border); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
-                            <div>
-                                <span style="background:var(--accent); color:#fff; padding:5px 12px; border-radius:5px; font-size:10px; font-weight:900;">${data.genre}</span>
-                                <h1 style="font-size:50px; font-weight:950; margin:15px 0; text-transform:uppercase;">${data.title}</h1>
-                                <p style="color:var(--text-dim); line-height:1.8; font-size:16px; margin-bottom:30px;">${data.desc || 'Нет описания.'}</p>
-                                <div style="display:flex; gap:15px;">
-                                    <button class="btn btn-primary" onclick="document.getElementById('player-box').scrollIntoView({behavior:'smooth'})">СМОТРЕТЬ ОНЛАЙН</button>
-                                </div>
-                            </div>
-                        </div>
+    window.navigate = (pageId) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('s-' + pageId).classList.remove('hidden');
+        const navBtn = document.querySelector(`[data-page="${pageId}"]`);
+        if (navBtn) navBtn.classList.add('active');
+        if (pageId === 'profile') renderProfile();
+    };
 
-                        <div id="player-box" style="background:#000; border-radius:30px; border:1px solid var(--border); overflow:hidden; aspect-ratio:16/9; margin-bottom:30px; display:flex; align-items:center; justify-content:center;">
-                            <div id="iframe-target" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-                                <p style="color:#222; font-weight:900; text-transform:uppercase;">Выберите серию ниже</p>
-                            </div>
-                        </div>
+    window.openModal = (id) => document.getElementById(id).style.display = 'flex';
+    window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+    window.closeModalOnDim = (e, id) => { if(e.target.id === id) closeModal(id); };
 
-                        <div id="episodes-list" style="display:flex; gap:15px; overflow-x:auto; padding-bottom:20px; scrollbar-width:none;">
-                            </div>
-                    </div>
-                `;
+    window.toggleAuthMode = () => {
+        state.authMode = state.authMode === 'login' ? 'register' : 'login';
+        document.getElementById('auth-title').innerText = state.authMode === 'login' ? 'ВХОД' : 'РЕГИСТРАЦИЯ';
+        document.getElementById('auth-main-btn').innerText = state.authMode === 'login' ? 'ВОЙТИ' : 'СОЗДАТЬ';
+    };
 
-                // ЛОГИКА ПАРСИНГА СЕРИЙ (Именно здесь была ошибка)
-                if (data.episodes) {
-                    const epList = document.getElementById('episodes-list');
-                    const items = data.episodes.split(',').filter(x => x.includes('|'));
-                    
-                    if (items.length > 0) {
-                        epList.innerHTML = items.map((item, index) => {
-                            const [name, url] = item.split('|');
-                            return `
-                                <div class="ep-item" onclick="window.loadVideo('${url.trim()}', this)" 
-                                     style="min-width:180px; background:var(--card-bg); padding:20px; border-radius:15px; cursor:pointer; border:1px solid var(--border); text-align:center; transition:0.3s;">
-                                    <div style="font-size:10px; color:var(--accent); font-weight:900; margin-bottom:5px;">СЕРИЯ ${index + 1}</div>
-                                    <div style="font-weight:700; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name.trim()}</div>
-                                </div>
-                            `;
-                        }).join('');
-                    } else {
-                        epList.innerHTML = `<p style="color:#444;">Серии в обработке...</p>`;
-                    }
-                }
-            } catch (e) { console.error(e); }
-        };
-
-        window.loadVideo = (url, el) => {
-            const target = document.getElementById('iframe-target');
-            document.querySelectorAll('.ep-item').forEach(i => i.style.borderColor = 'var(--border)');
-            el.style.borderColor = 'var(--accent)';
-            target.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
-        };
-
-        // --- МОДУЛЬ КОМАНДЫ (FIXED) ---
-        window.renderTeam = async function() {
-            const list = document.getElementById('team-list');
-            if (!list) return;
-            try {
-                const snap = await getDocs(collection(db, "team"));
-                list.innerHTML = "";
-                if (snap.empty) {
-                    list.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#222;">БАЗА ДАННЫХ КОМАНДЫ ПУСТА</p>`;
-                    return;
-                }
-                snap.forEach(d => {
-                    const m = d.data();
-                    list.innerHTML += `
-                        <div class="card" style="padding:40px; text-align:center;">
-                            <img src="${m.ava}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; margin-bottom:20px; border:3px solid var(--bg); outline:1px solid var(--accent);">
-                            <h3 style="text-transform:uppercase; font-weight:900;">${m.name}</h3>
-                            <p style="color:var(--accent); font-size:11px; font-weight:800; margin-top:5px; text-transform:uppercase; letter-spacing:1px;">${m.role}</p>
-                        </div>
-                    `;
-                });
-            } catch (e) { console.error("Team Error:", e); }
-        };
-        // --- МОДУЛЬ: ГЛОБАЛЬНАЯ НАВИГАЦИЯ (SPA ENGINE) ---
-        window.navigate = function(pageId) {
-            console.log("[SWS] Switch to:", pageId);
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
-            const target = document.getElementById('s-' + pageId);
-            if (target) target.classList.remove('hidden');
-            
-            const navBtn = document.querySelector(`[data-page="${pageId}"]`);
-            if (navBtn) navBtn.classList.add('active');
-            
-            // Триггеры загрузки данных
-            if (pageId === 'team') window.renderTeam();
-            if (pageId === 'admin') window.initAdminPanel();
-            if (pageId === 'profile') window.renderProfile();
-            
-            window.scrollTo(0,0);
-        };
-
-        // --- МОДУЛЬ: УПРАВЛЕНИЕ ДОСТУПОМ (AUTH CORE) ---
-        window.toggleAuthMode = () => {
-            const t = document.getElementById('auth-title');
-            const b = document.getElementById('auth-main-btn');
-            const s = document.getElementById('auth-switch');
-            state.authMode = state.authMode === 'login' ? 'register' : 'login';
-            t.innerText = state.authMode === 'login' ? 'ВХОД В SWS ID' : 'РЕГИСТРАЦИЯ';
-            b.innerText = state.authMode === 'login' ? 'ВОЙТИ' : 'СОЗДАТЬ АККАУНТ';
-            s.innerText = state.authMode === 'login' ? 'НЕТ АККАУНТА? РЕГИСТРАЦИЯ' : 'УЖЕ ЕСТЬ АККАУНТ? ВХОД';
-        };
-
-        window.handleAuth = async () => {
-            const email = document.getElementById('auth-email').value.trim();
-            const pass = document.getElementById('auth-pass').value.trim();
-            if (!email || pass.length < 6) return alert("Заполните данные корректно!");
-
-            try {
-                if (state.authMode === 'login') {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                } else {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), {
-                        uid: res.user.uid,
-                        email: email,
-                        nick: email.split('@')[0],
-                        role: 'User',
-                        ava: `https://api.dicebear.com/7.x/bottts/svg?seed=${res.user.uid}`,
-                        watched: 0,
-                        created: new Date().toISOString()
-                    });
-                }
-                closeModal('m-auth');
-            } catch (e) { alert("Ошибка: " + e.message); }
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            const authArea = document.getElementById('auth-section');
-            if (user) {
-                state.user = user;
-                state.isAuth = true;
-                const pSnap = await getDoc(doc(db, "users", user.uid));
-                if (pSnap.exists()) {
-                    state.profile = pSnap.data();
-                    state.role = state.profile.role;
-                    if (state.role === 'Admin') document.getElementById('admin-nav').classList.remove('hidden');
-                }
-                authArea.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div onclick="navigate('profile')" style="cursor:pointer; text-align:right;">
-                            <div style="font-size:11px; font-weight:900; color:#fff;">${state.profile?.nick || 'User'}</div>
-                            <div style="font-size:9px; color:var(--accent); font-weight:900;">${state.role}</div>
-                        </div>
-                        <img src="${state.profile?.ava}" onclick="navigate('profile')" style="width:35px; height:35px; border-radius:8px; border:1px solid var(--accent); cursor:pointer;">
-                        <i class="fas fa-sign-out-alt" onclick="auth.signOut()" style="margin-left:10px; cursor:pointer; color:#444;"></i>
-                    </div>
-                `;
-            } else {
-                state.user = null; state.isAuth = false; state.role = 'User';
-                document.getElementById('admin-nav').classList.add('hidden');
-                authArea.innerHTML = `<button class="auth-btn" onclick="openModal('m-auth')">Вход</button>`;
+    window.handleAuth = async () => {
+        const e = document.getElementById('auth-email').value;
+        const p = document.getElementById('auth-pass').value;
+        try {
+            if (state.authMode === 'login') await signInWithEmailAndPassword(auth, e, p);
+            else {
+                const res = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, "users", res.user.uid), { uid: res.user.uid, nick: e.split('@')[0], role: 'User', ava: 'https://api.dicebear.com/7.x/bottts/svg?seed='+res.user.uid });
             }
+            closeModal('m-auth');
+        } catch (err) { alert(err.message); }
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+        const area = document.getElementById('auth-section');
+        if (user) {
+            state.user = user; state.isAuth = true;
+            const pSnap = await getDoc(doc(db, "users", user.uid));
+            state.profile = pSnap.data();
+            state.role = state.profile?.role || 'User';
+            if (state.role === 'Admin') document.getElementById('admin-nav').classList.remove('hidden');
+            area.innerHTML = `<div style="display:flex; gap:10px; align-items:center;"><span onclick="navigate('profile')" style="cursor:pointer; font-size:11px; font-weight:800;">${state.profile.nick}</span><button class="auth-btn" style="background:#222;" onclick="auth.signOut()">X</button></div>`;
+        } else {
+            state.user = null; state.isAuth = false; document.getElementById('admin-nav').classList.add('hidden');
+            area.innerHTML = `<button class="auth-btn" onclick="openModal('m-auth')">Вход</button>`;
+        }
+    });
+
+    onSnapshot(collection(db, "releases"), (snap) => {
+        const grid = document.getElementById('releases-grid');
+        const adminList = document.getElementById('admin-releases-list');
+        grid.innerHTML = ""; adminList.innerHTML = "";
+        snap.forEach(d => {
+            const r = d.data();
+            grid.innerHTML += `<div class="card" onclick="openView('${d.id}')"><img src="${r.img}" class="card-img"><div class="card-body"><div class="card-title">${r.title}</div></div></div>`;
+            adminList.innerHTML += `<div style="padding:10px; border-bottom:1px solid #111; display:flex; justify-content:space-between;"><span>${r.title}</span><i class="fas fa-trash" onclick="deleteRelease('${d.id}')" style="color:red; cursor:pointer;"></i></div>`;
         });
+    });
 
-        // --- МОДУЛЬ: АДМИН-ПАНЕЛЬ (CONTENT MANAGEMENT) ---
-        window.initAdminPanel = function() {
-            const list = document.getElementById('admin-releases-list');
-            if (!list) return;
-            onSnapshot(query(collection(db, "releases"), orderBy("title")), (snap) => {
-                list.innerHTML = "";
-                snap.forEach(d => {
-                    const r = d.data();
-                    list.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; background:var(--bg); border-radius:10px; margin-bottom:10px; border:1px solid #111;">
-                            <div style="display:flex; gap:15px; align-items:center;">
-                                <img src="${r.img}" style="width:40px; height:40px; border-radius:5px; object-fit:cover;">
-                                <span style="font-weight:700; font-size:13px;">${r.title}</span>
-                            </div>
-                            <div style="display:flex; gap:15px;">
-                                <i class="fas fa-trash" onclick="window.deleteRelease('${d.id}')" style="color:var(--accent); cursor:pointer;"></i>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-        };
-
-        window.deleteRelease = async (id) => {
-            if(confirm("Удалить этот тайтл навсегда?")) await deleteDoc(doc(db, "releases", id));
-        };
-
-        window.submitDubRequest = async () => {
-            if (!state.isAuth) return openModal('m-auth');
-            const t = document.getElementById('dub-title').value;
-            const tx = document.getElementById('dub-text').value;
-            if (!t || !tx) return alert("Заполните все поля!");
-            
-            await addDoc(collection(db, "dub_requests"), {
-                title: t, text: tx, user: state.profile.nick, date: new Date().toISOString()
-            });
-            alert("Заявка улетела администрации!");
-            document.getElementById('dub-title').value = ""; document.getElementById('dub-text').value = "";
-        };
-
-        // Модалки
-        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
-
-        // Глобальные релизы
-        onSnapshot(collection(db, "releases"), (snap) => {
-            const grid = document.getElementById('releases-grid');
-            if (!grid) return;
-            grid.innerHTML = "";
-            snap.forEach(d => {
-                const r = d.data();
-                grid.innerHTML += `
-                    <div class="card" onclick="openView('${d.id}')">
-                        <img src="${r.img}" class="card-img">
-                        <div class="card-body">
-                            <span class="card-tag">${r.genre}</span>
-                            <h3 class="card-title">${r.title}</h3>
-                            <div class="card-meta"><span>${r.year}</span> <span>SWS DUB</span></div>
-                        </div>
-                    </div>
-                `;
-            });
+    onSnapshot(collection(db, "team"), (snap) => {
+        const list = document.getElementById('team-list');
+        list.innerHTML = "";
+        snap.forEach(d => {
+            const m = d.data();
+            list.innerHTML += `<div class="card" style="padding:20px; text-align:center;"><img src="${m.ava}" style="width:100px; border-radius:50%; margin-bottom:10px;"><h4>${m.name}</h4><p style="color:red; font-size:10px;">${m.role}</p></div>`;
         });
-        <div id="m-auth" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center;" onclick="closeModalOnDim(event, 'm-auth')">
-        <div class="modal-content" style="background:var(--card-bg); padding:50px; border-radius:30px; border:1px solid var(--border); width:100%; max-width:450px; position:relative;">
-            <div style="text-align:center; margin-bottom:30px;">
-                <h2 id="auth-title" style="font-size:28px; font-weight:950; text-transform:uppercase; color:var(--white);">Вход в SWS ID</h2>
-                <p style="font-size:10px; color:var(--accent); font-weight:900; letter-spacing:2px; margin-top:5px;">SOUND WAVE STUDIO ACCESS</p>
-            </div>
-            
-            <div style="display:flex; flex-direction:column; gap:15px;">
-                <input type="email" id="auth-email" placeholder="EMAIL ADDRESS" style="width:100%; padding:20px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#fff; font-weight:700;">
-                <input type="password" id="auth-pass" placeholder="PASSWORD" style="width:100%; padding:20px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#fff; font-weight:700;">
-                <button class="btn btn-primary" id="auth-main-btn" onclick="handleAuth()" style="width:100%; padding:20px;">ПОДТВЕРДИТЬ</button>
-                <p id="auth-switch" onclick="toggleAuthMode()" style="text-align:center; font-size:11px; color:var(--text-dim); cursor:pointer; font-weight:800; text-transform:uppercase;">Нет аккаунта? Регистрация</p>
-            </div>
-        </div>
-    </div>
+    });
 
-    <div id="m-add-release" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center;" onclick="closeModalOnDim(event, 'm-add-release')">
-        <div class="modal-content" style="background:var(--card-bg); padding:40px; border-radius:30px; border:1px solid var(--border); width:100%; max-width:700px;">
-            <h2 style="font-weight:950; text-transform:uppercase; margin-bottom:25px;">Новый проект</h2>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                <input type="text" id="rel-title" placeholder="Название" style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff;">
-                <input type="text" id="rel-genre" placeholder="Жанр (Аниме, Фильм...)" style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff;">
-                <input type="text" id="rel-year" placeholder="Год" style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff;">
-                <input type="text" id="rel-img" placeholder="URL Обложки" style="padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff;">
-                <textarea id="rel-desc" placeholder="Описание" style="grid-column:1/-1; padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff; height:100px;"></textarea>
-                <textarea id="rel-eps" placeholder="Серии (Название|Ссылка, Название|Ссылка)" style="grid-column:1/-1; padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff; height:100px;"></textarea>
-            </div>
-            <button class="btn btn-primary" onclick="saveRelease()" style="width:100%; margin-top:20px;">ОПУБЛИКОВАТЬ</button>
-        </div>
-    </div>
-
-    <section id="s-profile" class="page hidden">
-        <div class="container" id="profile-area" style="padding:100px 0;">
-            </div>
-    </section>
-
-    <section id="s-admin" class="page hidden">
-        <div class="container" style="padding:80px 0;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:50px;">
-                <h1 style="font-size:40px; font-weight:950; text-transform:uppercase;">Control <span style="color:var(--accent)">Center</span></h1>
-                <button class="btn btn-primary" onclick="openModal('m-add-release')">Добавить Релиз</button>
-            </div>
-            <div id="admin-releases-list" style="display:flex; flex-direction:column; gap:10px;">
+    window.openView = async (id) => {
+        const s = await getDoc(doc(db, "releases", id));
+        const r = s.data();
+        const content = document.getElementById('view-content');
+        navigate('view');
+        content.innerHTML = `
+            <div style="display:grid; grid-template-columns: 300px 1fr; gap:30px;">
+                <img src="${r.img}" style="width:100%; border-radius:15px;">
+                <div>
+                    <h1>${r.title}</h1><p style="margin:20px 0; color:#888;">${r.desc}</p>
+                    <div id="player" style="background:#000; aspect-ratio:16/9; margin-top:20px; display:flex; align-items:center; justify-content:center;">ВЫБЕРИТЕ СЕРИЮ</div>
+                    <div style="display:flex; gap:10px; margin-top:20px; overflow-x:auto;" id="ep-list"></div>
                 </div>
-        </div>
-    </section>
-
-    <script>
-        // Рендер Профиля (FIXED)
-        window.renderProfile = function() {
-            const area = document.getElementById('profile-area');
-            if (!state.isAuth) return navigate('home');
-            
-            area.innerHTML = `
-                <div style="background:var(--card-bg); border-radius:40px; border:1px solid var(--border); padding:60px; display:grid; grid-template-columns: 250px 1fr; gap:60px;">
-                    <div style="text-align:center;">
-                        <img src="${state.profile.ava}" style="width:200px; height:200px; border-radius:30px; border:2px solid var(--accent); margin-bottom:20px;">
-                        <h2 style="font-weight:950; text-transform:uppercase;">${state.profile.nick}</h2>
-                        <p style="color:var(--accent); font-weight:800; font-size:12px; margin-top:5px;">${state.role}</p>
-                    </div>
-                    <div>
-                        <h3 style="font-weight:950; text-transform:uppercase; margin-bottom:20px; border-bottom:1px solid #111; padding-bottom:10px;">Настройки аккаунта</h3>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                            <div>
-                                <label style="display:block; font-size:10px; font-weight:900; color:#444; margin-bottom:8px;">NICKNAME</label>
-                                <input type="text" value="${state.profile.nick}" readonly style="width:100%; padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff;">
-                            </div>
-                            <div>
-                                <label style="display:block; font-size:10px; font-weight:900; color:#444; margin-bottom:8px;">SWS ID ROLE</label>
-                                <input type="text" value="${state.role}" readonly style="width:100%; padding:15px; background:var(--bg); border:1px solid var(--border); border-radius:10px; color:#fff;">
-                            </div>
-                        </div>
-                        <div style="margin-top:40px;">
-                            <button class="btn btn-outline" onclick="auth.signOut()" style="border-color:var(--accent); color:var(--accent);">Выйти из аккаунта</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        };
-
-        // Логика сохранения релиза (ADMIN)
-        window.saveRelease = async function() {
-            const data = {
-                title: document.getElementById('rel-title').value,
-                genre: document.getElementById('rel-genre').value,
-                year: document.getElementById('rel-year').value,
-                img: document.getElementById('rel-img').value,
-                desc: document.getElementById('rel-desc').value,
-                episodes: document.getElementById('rel-eps').value
-            };
-            try {
-                await addDoc(collection(db, "releases"), data);
-                alert("Релиз добавлен!");
-                closeModal('m-add-release');
-            } catch(e) { alert(e.message); }
-        };
-
-       // Вспомогательное закрытие модалок при клике на фон
-        window.closeModalOnDim = (e, id) => { 
-            if (e.target.id === id) closeModal(id); 
-        };
-
-        // --- МОДУЛЬ: СИСТЕМА ОБСУЖДЕНИЙ (SWS COMMENTS CORE) ---
-        window.initCommentSystem = (relId) => {
-            const viewContainer = document.getElementById('view-content');
-            if (!viewContainer) return;
-
-            // Удаляем старый блок если есть, чтобы не дублировать
-            const oldComm = document.getElementById('comments-wrapper');
-            if (oldComm) oldComm.remove();
-
-            const commWrapper = document.createElement('div');
-            commWrapper.id = 'comments-wrapper';
-            commWrapper.style.cssText = "margin-top:80px; padding-top:40px; border-top:1px solid var(--border);";
-            
-            const formHTML = state.isAuth ? `
-                <div style="background:var(--card-bg); padding:35px; border-radius:25px; border:1px solid var(--border); margin-bottom:50px;">
-                    <div style="display:flex; gap:15px; margin-bottom:20px;">
-                        <img src="${state.profile.ava}" style="width:45px; height:45px; border-radius:12px; border:1px solid var(--accent);">
-                        <div style="flex:1;">
-                            <textarea id="new-comm-text" placeholder="Написать комментарий..." style="width:100%; height:100px; background:var(--bg); border:none; color:#fff; font-family:inherit; font-size:15px; resize:none; padding:10px;"></textarea>
-                        </div>
-                    </div>
-                    <div style="display:flex; justify-content:flex-end;">
-                        <button class="btn btn-primary" onclick="window.postComment('${relId}')" style="padding:12px 30px;">ОПУБЛИКОВАТЬ</button>
-                    </div>
-                </div>
-            ` : `
-                <div style="text-align:center; padding:40px; border:2px dashed #151518; border-radius:25px; margin-bottom:50px; cursor:pointer;" onclick="openModal('m-auth')">
-                    <p style="color:#444; font-weight:900; text-transform:uppercase; font-size:12px; letter-spacing:1px;">Войдите, чтобы оставить комментарий</p>
-                </div>
-            `;
-
-            commWrapper.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-                    <h2 style="font-weight:950; text-transform:uppercase; font-size:24px;">Обсуждение <span id="comm-count" style="color:var(--accent); font-family:'Fira Code';">0</span></h2>
-                </div>
-                ${formHTML}
-                <div id="comm-render-target" style="display:flex; flex-direction:column; gap:30px;"></div>
-            `;
-            viewContainer.appendChild(commWrapper);
-
-            // Слушатель комментариев
-            const q = query(collection(db, "comments"), where("relId", "==", relId), orderBy("date", "desc"));
-            onSnapshot(q, (snap) => {
-                const target = document.getElementById('comm-render-target');
-                const countLabel = document.getElementById('comm-count');
-                if (!target) return;
-                target.innerHTML = snap.empty ? `<div style="text-align:center; color:#222; font-weight:900; padding:40px;">ЗДЕСЬ ПОКА ПУСТО</div>` : "";
-                countLabel.innerText = snap.size;
-
-                snap.forEach(doc => {
-                    const c = doc.data();
-                    target.innerHTML += `
-                        <div style="display:flex; gap:20px; animation:fadeIn 0.5s ease;">
-                            <img src="${c.userAva}" style="width:55px; height:55px; border-radius:18px; object-fit:cover; border:1px solid #1a1a1e;">
-                            <div style="flex:1;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                                    <div>
-                                        <span style="font-weight:900; font-size:15px; color:var(--white);">${c.userNick}</span>
-                                        <span style="background:var(--accent); color:#fff; font-size:8px; font-weight:900; padding:2px 6px; border-radius:4px; margin-left:10px; text-transform:uppercase;">${c.userRole || 'USER'}</span>
-                                    </div>
-                                    <span style="font-size:10px; color:#333; font-weight:700;">${new Date(c.date).toLocaleString()}</span>
-                                </div>
-                                <p style="color:var(--text-dim); font-size:15px; line-height:1.6; font-weight:500;">${c.text}</p>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-        };
-
-        window.postComment = async (relId) => {
-            const txt = document.getElementById('new-comm-text');
-            if (!txt.value.trim()) return showToast("Пустой комментарий!", "error");
-
-            try {
-                await addDoc(collection(db, "comments"), {
-                    relId: relId,
-                    uid: state.user.uid,
-                    userNick: state.profile.nick,
-                    userAva: state.profile.ava,
-                    userRole: state.role,
-                    text: txt.value.trim(),
-                    date: new Date().toISOString()
-                });
-                txt.value = "";
-                showToast("Успешно!", "success");
-            } catch (e) { showToast("Ошибка БД", "error"); }
-        };
-
-        // --- МОДУЛЬ: УПРАВЛЕНИЕ КОМАНДОЙ (ADMIN TEAM) ---
-        window.saveTeamMember = async () => {
-            const name = document.getElementById('tm-name').value.trim();
-            const role = document.getElementById('tm-role').value.trim();
-            const ava = document.getElementById('tm-ava').value.trim();
-
-            if (!name || !role) return showToast("Заполните имя и роль", "error");
-
-            try {
-                await addDoc(collection(db, "team"), {
-                    name, role, 
-                    ava: ava || `https://api.dicebear.com/7.x/micah/svg?seed=${name}`,
-                    date: new Date().toISOString()
-                });
-                showToast("Участник добавлен!", "success");
-                closeModal('m-add-team');
-                document.getElementById('tm-name').value = "";
-                document.getElementById('tm-role').value = "";
-                document.getElementById('tm-ava').value = "";
-            } catch (e) { showToast("Ошибка записи", "error"); }
-        };
-
-        // --- ГЛОБАЛЬНАЯ ИНИЦИАЛИЗАЦИЯ ---
-        window.addEventListener('load', () => {
-            // Плавный вход
-            document.body.style.opacity = '1';
-            
-            // Если в URL есть ID релиза, открываем его
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('id')) openView(urlParams.get('id'));
+            </div>`;
+        const epList = document.getElementById('ep-list');
+        r.episodes?.split(',').forEach(ep => {
+            const [name, url] = ep.split('|');
+            const btn = document.createElement('button');
+            btn.className = "auth-btn"; btn.innerText = name;
+            btn.onclick = () => document.getElementById('player').innerHTML = `<iframe src="${url.trim()}" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>`;
+            epList.appendChild(btn);
         });
+    };
 
-    </script>
+    window.saveRelease = async () => {
+        await addDoc(collection(db, "releases"), { title: document.getElementById('rel-title').value, genre: document.getElementById('rel-genre').value, year: document.getElementById('rel-year').value, img: document.getElementById('rel-img').value, desc: document.getElementById('rel-desc').value, episodes: document.getElementById('rel-eps').value });
+        closeModal('m-add-release');
+    };
 
-    <div id="m-add-team" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; align-items:center; justify-content:center;" onclick="closeModalOnDim(event, 'm-add-team')">
-        <div class="modal-content" style="background:var(--card-bg); padding:45px; border-radius:35px; border:1px solid var(--border); width:100%; max-width:450px; position:relative;">
-            <div style="text-align:center; margin-bottom:30px;">
-                <h2 style="font-weight:950; text-transform:uppercase; font-size:22px;">Новый <span style="color:var(--accent);">Юнит</span></h2>
-                <p style="font-size:9px; font-weight:900; color:#333; letter-spacing:2px; margin-top:5px;">ADD TEAM MEMBER TO DATABASE</p>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:15px;">
-                <input type="text" id="tm-name" placeholder="НИКНЕЙМ" style="width:100%; padding:18px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#fff; font-weight:700;">
-                <input type="text" id="tm-role" placeholder="РОЛЬ (Напр: Дабер)" style="width:100%; padding:18px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#fff; font-weight:700;">
-                <input type="text" id="tm-ava" placeholder="URL АВАТАРА (SVG/PNG)" style="width:100%; padding:18px; background:var(--bg); border:1px solid var(--border); border-radius:12px; color:#fff; font-weight:700;">
-                <button class="btn btn-primary" onclick="saveTeamMember()" style="width:100%; padding:20px; margin-top:10px;">ЗАНЕСТИ В БАЗУ</button>
-            </div>
-        </div>
-    </div>
+    window.saveTeamMember = async () => {
+        await addDoc(collection(db, "team"), { name: document.getElementById('tm-name').value, role: document.getElementById('tm-role').value, ava: document.getElementById('tm-ava').value });
+        closeModal('m-add-team');
+    };
 
+    window.deleteRelease = async (id) => { if(confirm('Удалить?')) await deleteDoc(doc(db, "releases", id)); };
+
+    window.renderProfile = () => {
+        document.getElementById('profile-area').innerHTML = `<div style="text-align:center;"><img src="${state.profile.ava}" style="width:150px; border-radius:20px;"><h2 style="margin-top:20px;">${state.profile.nick}</h2><p>${state.role}</p></div>`;
+    };
+
+    window.submitDubRequest = async () => {
+        if(!state.isAuth) return openModal('m-auth');
+        await addDoc(collection(db, "dub_requests"), { title: document.getElementById('dub-title').value, text: document.getElementById('dub-text').value, user: state.profile.nick });
+        alert('Отправлено!');
+    };
+</script>
 </body>
 </html>
