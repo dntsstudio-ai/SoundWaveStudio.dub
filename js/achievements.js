@@ -61,7 +61,7 @@ window.deleteAchievement = async function(db, auth, userData) {
 };
 
 // ── Выдача достижений (Admin) ──
-window.giveAch = async function(db, userData) {
+export async function giveAch(db, userData) {
     const email = document.getElementById('ga-uid').value.trim();
     const snap  = await getDocs(query(collection(db,'users'), where('email','==',email)));
     if (snap.empty) return showToast('Пользователь не найден!', 'error');
