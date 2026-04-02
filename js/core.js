@@ -1,9 +1,5 @@
-// js/core.js
-export const esc = (s) =>
-    s ? s.toString()
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;') : '';
+export const esc = (s) => 
+    s ? s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
 
 export const ROLE_LABELS = {
     admin: { label: 'АДМИНИСТРАТОР', cls: 'role-admin', icon: 'fa-shield-alt' },
@@ -13,12 +9,12 @@ export const ROLE_LABELS = {
 
 export function getRoleBadgeHTML(role) {
     const r = ROLE_LABELS[role] || ROLE_LABELS.user;
-    return `<span class=\"role-badge ${r.cls}\"><i class=\"fas ${r.icon}\"></i> ${r.label}</span>`;
+    return `<span class="role-badge ${r.cls}"><i class="fas ${r.icon}"></i> ${r.label}</span>`;
 }
 
 export function showToast(msg, type = 'success') {
     const container = document.getElementById('toast-container');
-    if(!container) return;
+    if (!container) return;
     const t = document.createElement('div');
     t.className = `toast ${type}`;
     t.innerHTML = msg;
