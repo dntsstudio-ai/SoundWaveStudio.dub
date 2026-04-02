@@ -6,6 +6,8 @@
 //             EmailJS Public Key — безопасен для фронтенда.
 // ============================================================
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+
 export const FIREBASE_CONFIG = {
     apiKey:            "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
     authDomain:        "my-dub-site.firebaseapp.com",
