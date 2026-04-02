@@ -75,6 +75,7 @@ export async function giveAch(db, userData) {
         hidden: false,
         giver:  userData.nickname
     });
+    window.giveAch = giveAch;
     await updateDoc(uRef, { achievements: achs });
     showToast('Достижение выдано!'); closeModals();
 };
