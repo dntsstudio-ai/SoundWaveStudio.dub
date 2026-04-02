@@ -123,3 +123,32 @@ window.navigate = function(page, pushState = true) {
         if (isDub) renderDubinProjects(db, isAdmin);
     }
 };
+
+// --- ПРИВЯЗКА ФУНКЦИЙ К ГЛОБАЛЬНОМУ ОКНУ (WINDOW) ---
+// Чтобы кнопки в HTML снова заработали
+
+// Базовые функции
+window.navigate = navigate;
+window.showToast = showToast;
+window.closeModals = closeModals;
+
+// Релизы и фильтрация
+window.filterData = () => filterData(isAdmin);
+window.openView = (id) => openView(db, id, auth, userData, isAdmin);
+window.openRelModal = (id) => openRelModal(db, id);
+
+// Пользователи и комментарии
+window.openUserProfile = (uid) => openUserProfile(db, auth, userData, uid);
+window.sendComment = () => sendComment(db, auth, curProj, userData);
+window.assignRole = () => assignRole(db);
+window.openRoleModal = openRoleModal;
+
+// Команда
+window.openTeamPage = (id) => openTeamPage(db, id, isAdmin, userData);
+
+// Достижения
+window.renderAchProfile = renderAchProfile;
+window.giveAch = () => giveAch(db, userData);
+
+// Если есть другие функции, которые вызываются из HTML (onclick), 
+// их нужно добавить сюда по такому же принципу.
