@@ -1,0 +1,239 @@
+// ============================================================
+//  js/dubin.js — DUB-in: архив проектов озвучки
+// ============================================================
+
+import {
+    collection, getDocs, getDoc, doc, addDoc,
+    updateDoc, deleteDoc, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { addDoc as _addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+import { esc, showToast, closeModals } from './core.js';
+import { EMAILJS_CONFIG } from '../config/config.js';
+
+// ── Инициализация панели DUB-in ──
+export function initDubinPanel(isAdmin, isDub) {
+    const filesPanel   = document.getElementById('dubin-files-panel');
+    const suggestPanel = document.getElementById('dubin-suggest-panel');
+    const addProjBtn   = document.getElementById('dubin-adm-add-project');
+    const joinCta      = document.getElementById('join-cta-block');
+    const sugNameBlock = document.getElementById('sug-name-block');
+
+    if (isDub) {
+        filesPanel.style.display   = 'block';
+        suggestPanel.style.display = 'none';
+    } else {
+        filesPanel.style.display   = 'none';
+        suggestPanel.style.display = 'block';
+        joinCta.style.display      = 'block';
+        sugNameBlock.style.display = 'block';
+    }
+    if (addProjBtn) addProjBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+}
+
+// ── Отрисовка проектов ──
+export async function renderDubinProjects(db, isAdmin) {
+    const snap = await getDocs(query(collection(db,'dubinProjects'), orderBy('createdAt','desc')));
+    const projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('dubin-projects-list').innerHTML = projects.map(p => `
+        <div class="dubin-folder">
+            <div class="dubin-folder-header" onclick="toggleDubinFolder('${p.id}')">
+                <div class="dubin-folder-icon"><i class="fas fa-folder"></i></div>
+                <div style="flex:1;">
+                    <div style="font-weight:800; font-size:15px;">${esc(p.name)}</div>
+                    <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">
+                        <span class="tag" style="background:${statusColor(p.status)};">${esc(p.status||'В работе')}</span>
+                        <span class="year-tag">${esc(p.genre)}</span>
+                    </div>
+                    ${p.notes ? `<p style="font-size:12px; color:var(--text-dim); margin-top:4px;">${esc(p.notes)}</p>` : ''}
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    ${isAdmin ? `
+                        <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openDubinProjectModal('${p.id}')">Ред</button>
+                        <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); deleteDubinProject('${p.id}')">Удал</button>
+                    ` : ''}
+                    <i class="fas fa-chevron-down" style="color:var(--text-dim); font-size:12px;"></i>
+                </div>
+            </div>
+            <div class="dubin-folder-body" id="folder-${p.id}">
+                ${renderDubSubfolders(p)}
+                <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-purple btn-sm" onclick="openUploadVoice('${p.id}')"><i class="fas fa-upload"></i> Загрузить озвучку (mp3/flac)</button>
+                    </div>
+                    ${p.voiceFiles && p.voiceFiles.length > 0
+                        ? renderVoiceFiles(p.voiceFiles, p.id, isAdmin)
+                        : '<p style="font-size:12px; color:var(--text-dim); margin-top:10px;">Озвучка ещё не загружена</p>'}
+                </div>
+            </div>
+        </div>`).join('');
+}
+window.renderDubinProjects = renderDubinProjects;
+
+function statusColor(status) {
+    if (status === 'Завершён') return '#22c55e';
+    if (status === 'На паузе') return '#f59e0b';
+    return 'var(--dub)';
+}
+
+function renderDubSubfolders(p) {
+    const folders = [
+        { key: 'raw',  label: '📹 RAW-ка',    icon: 'fa-film',              desc: 'Исходная видео-дорожка',      color: '#ef4444' },
+        { key: 'hard', label: '📝 Hardsubs',   icon: 'fa-closed-captioning', desc: 'Видео с вшитыми субтитрами', color: '#f59e0b' },
+        { key: 'soft', label: '🗒 Softsubs',   icon: 'fa-file-alt',          desc: 'Файлы субтитров (.ass)',      color: '#3897f0' },
+    ];
+    return `<div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px;">
+        ${folders.map(f => {
+            const link = p[f.key];
+            return `<div class="dubin-subfolder">
+                <div class="dubin-subfolder-title" style="color:${f.color};"><i class="fas ${f.icon}"></i> ${f.label}</div>
+                <p style="font-size:11px; color:var(--text-dim); margin-bottom:10px;">${f.desc}</p>
+                ${link
+                    ? `<a href="${esc(link)}" target="_blank" class="btn btn-sm" style="background:${f.color}; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="fas fa-external-link-alt"></i> Открыть в Drive</a>`
+                    : `<span style="font-size:11px; color:var(--text-dim);">Папка не настроена</span>`}
+            </div>`;
+        }).join('')}
+    </div>`;
+}
+
+function renderVoiceFiles(files, projId, isAdmin) {
+    return `<div style="margin-top:12px;">
+        <p style="font-size:11px; font-weight:800; color:var(--dub); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;"><i class="fas fa-microphone-alt"></i> Загруженная озвучка</p>
+        ${files.map((f,i) => `
+        <div class="dubin-file-row">
+            <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+                <i class="fas fa-${f.format==='flac'?'music':'volume-up'}" style="color:var(--dub); font-size:16px; flex-shrink:0;"></i>
+                <div style="min-width:0;">
+                    <div style="font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(f.name)}</div>
+                    <div style="font-size:10px; color:var(--text-dim);">${f.format?.toUpperCase()} • ${esc(f.author)} • ${new Date(f.date).toLocaleDateString()}</div>
+                    ${f.comment ? `<div style="font-size:10px; color:var(--text-dim); font-style:italic;">${esc(f.comment)}</div>` : ''}
+                </div>
+            </div>
+            <div style="display:flex; gap:6px; flex-shrink:0;">
+                <a href="${esc(f.link)}" target="_blank" class="btn btn-sm btn-purple" style="text-decoration:none;"><i class="fas fa-download"></i></a>
+                ${isAdmin ? `<button class="btn-sm" style="background:#ef4444;" onclick="deleteVoiceFile('${projId}',${i})"><i class="fas fa-trash"></i></button>` : ''}
+            </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+window.toggleDubinFolder = function(id) {
+    const body = document.getElementById('folder-' + id);
+    if (body) body.classList.toggle('open');
+};
+
+// ── CRUD Проектов ──
+window.openDubinProjectModal = async function(db, id = '') {
+    document.getElementById('dubin-proj-id').value = id;
+    const fields = ['name','genre','status','raw','hard','soft','voice','img','notes'];
+    if (id) {
+        const snap = await getDoc(doc(db,'dubinProjects',id));
+        const p = snap.data();
+        fields.forEach(f => document.getElementById('dp-'+f).value = p[f]||'');
+    } else {
+        fields.forEach(f => document.getElementById('dp-'+f).value = '');
+    }
+    document.getElementById('m-dubin-project').style.display = 'flex';
+};
+
+window.saveDubinProject = async function(db) {
+    const id   = document.getElementById('dubin-proj-id').value;
+    const data = {
+        name:   document.getElementById('dp-name').value,
+        genre:  document.getElementById('dp-genre').value,
+        status: document.getElementById('dp-status').value,
+        raw:    document.getElementById('dp-raw').value,
+        hard:   document.getElementById('dp-hard').value,
+        soft:   document.getElementById('dp-soft').value,
+        voice:  document.getElementById('dp-voice').value,
+        img:    document.getElementById('dp-img').value,
+        notes:  document.getElementById('dp-notes').value,
+    };
+    if (!data.name) return showToast('Введите название проекта!', 'error');
+    if (!id) { data.createdAt = Date.now(); await addDoc(collection(db,'dubinProjects'), data); }
+    else await updateDoc(doc(db,'dubinProjects',id), data);
+    closeModals(); await renderDubinProjects(db, true); showToast('Проект сохранён!');
+};
+
+window.deleteDubinProject = async function(db, id) {
+    if (!confirm('Удалить этот проект из DUB-in?')) return;
+    await deleteDoc(doc(db,'dubinProjects',id));
+    await renderDubinProjects(db, true); showToast('Проект удалён');
+};
+
+// ── Загрузка файла озвучки ──
+window.openUploadVoice = function(projId) {
+    document.getElementById('uv-proj-id').value = projId;
+    ['uv-name','uv-link','uv-comment'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('m-upload-voice').style.display = 'flex';
+};
+
+window.submitVoiceFile = async function(db, auth, userData) {
+    const projId  = document.getElementById('uv-proj-id').value;
+    const name    = document.getElementById('uv-name').value.trim();
+    const link    = document.getElementById('uv-link').value.trim();
+    const format  = document.getElementById('uv-format').value;
+    const comment = document.getElementById('uv-comment').value.trim();
+    if (!link) return showToast('Введите ссылку на файл!', 'error');
+    const snap = await getDoc(doc(db,'dubinProjects',projId));
+    if (!snap.exists()) return showToast('Проект не найден!', 'error');
+    const voiceFiles = snap.data().voiceFiles || [];
+    voiceFiles.push({
+        name: name||link.split('/').pop()||'Без названия',
+        link, format, comment,
+        author: userData?.nickname||'Аноним',
+        authorUid: auth.currentUser?.uid||'',
+        date: Date.now()
+    });
+    await updateDoc(doc(db,'dubinProjects',projId), { voiceFiles });
+    closeModals(); await renderDubinProjects(db, false); showToast('Файл добавлен!', 'success');
+};
+
+window.deleteVoiceFile = async function(db, projId, idx) {
+    if (!confirm('Удалить этот файл?')) return;
+    const snap = await getDoc(doc(db,'dubinProjects',projId));
+    const voiceFiles = snap.data().voiceFiles || [];
+    voiceFiles.splice(idx, 1);
+    await updateDoc(doc(db,'dubinProjects',projId), { voiceFiles });
+    await renderDubinProjects(db, true); showToast('Файл удалён');
+};
+
+// ── Форма предложения озвучки ──
+window.sendSuggestion = async function(db, auth, userData) {
+    const title  = document.getElementById('sug-title').value.trim();
+    const type   = document.getElementById('sug-type').value;
+    const link   = document.getElementById('sug-link').value.trim();
+    const reason = document.getElementById('sug-reason').value.trim();
+    if (!title || !type || !reason) return showToast('Заполните обязательные поля!', 'error');
+
+    let senderName  = userData?.nickname || document.getElementById('sug-name')?.value?.trim() || 'Аноним';
+    let senderEmail = userData?.email    || document.getElementById('sug-email')?.value?.trim() || '';
+
+    await addDoc(collection(db,'suggestions'), {
+        title, type, link, reason, senderName, senderEmail,
+        uid: auth.currentUser?.uid || null, date: Date.now(), status: 'new'
+    });
+
+    try {
+        if (window.emailjs) {
+            await emailjs.send(
+                EMAILJS_CONFIG.serviceId,
+                EMAILJS_CONFIG.templateSuggest,
+                {
+                    to_email:   'soundwavestudiosws@gmail.com',
+                    from_name:  senderName,
+                    from_email: senderEmail || 'нет',
+                    title, media_type: type,
+                    link: link || 'не указана',
+                    reason,
+                    date: new Date().toLocaleString('ru')
+                },
+                EMAILJS_CONFIG.publicKey
+            );
+        }
+    } catch(e) { console.warn('EmailJS недоступен:', e); }
+
+    showToast('Предложение отправлено! Спасибо 🎉', 'success');
+    ['sug-title','sug-link','sug-reason'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('sug-type').value = '';
+};
