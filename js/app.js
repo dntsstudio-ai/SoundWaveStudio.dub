@@ -13,7 +13,7 @@ import { initAuthListeners, applyUserUI, resetUserUI } from './auth.js';
 import { loadReleases, filterData, openView, rateProj, openRelModal, saveRel, deleteRel } from './releases.js';
 import { loadTeam, openTeamPage, openTeamModal, saveTeam, delTeam } from './team.js';
 import { loadComments, sendComment, delComm } from './comments.js';
-import { openUserProfile, openUserProfileByName, showMySubscribers, assignRole, openRoleModal } from './users.js';
+import { openUserProfile, openUserProfileByName, showMySubscribers, openRoleModal } from './users.js';
 import { renderAchProfile, giveAch } from './achievements.js';
 import { initDubinPanel, renderDubinProjects } from './dubin.js';
 
