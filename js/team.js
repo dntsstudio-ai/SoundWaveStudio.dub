@@ -61,21 +61,6 @@ export async function loadTeam(db, isAdmin, userData) {
     if (isAdmin) document.body.classList.add('admin-mode');
     else document.body.classList.remove('admin-mode');
 }
-window.loadTeam = loadTeam;
-
-// ── Открытие модала редактирования участника ──
-export async function openTeamModal(db, id = '') {
-    document.getElementById('ed-team-id').value = id;
-    if (id) {
-        const snap = await getDoc(doc(db,'team',id));
-        const d = snap.data();
-        ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = d[f]||'');
-    } else {
-        ['name','role','img','cat'].forEach(f => document.getElementById(`ad-m-${f}`).value = '');
-    }
-    document.getElementById('m-team').style.display = 'flex';
-}
-window.openTeamModal = openTeamModal;
 
 export async function saveTeam(db) {
     const id   = document.getElementById('ed-team-id').value;
@@ -89,14 +74,6 @@ export async function saveTeam(db) {
     else await updateDoc(doc(db,'team',id), data);
     closeModals(); loadTeam(db, true, null); showToast('Участник сохранён!');
 }
-window.saveTeam = saveTeam;
-
-export async function delTeam(db, id) {
-    if (!confirm('Удалить участника?')) return;
-    await deleteDoc(doc(db,'team',id));
-    loadTeam(db, true, null); showToast('Удалён');
-}
-window.delTeam = delTeam;
 
 // ── Страница участника ──
 export async function openTeamPage(db, id, isAdmin, userData) {
@@ -122,71 +99,3 @@ export async function openTeamPage(db, id, isAdmin, userData) {
             </div>
         </div>`;
 }
-window.openTeamPage = openTeamPage;
-
-// ── Редактирование страницы участника (Admin) ──
-window.openTPModal = function() {
-    document.getElementById('tp-bio').value    = curTM.bio||'';
-    document.getElementById('tp-social').value = curTM.social||'';
-    document.getElementById('m-tp-edit').style.display = 'flex';
-};
-
-window.saveTP = async function(db) {
-    await updateDoc(doc(db,'team',curTM.id), {
-        bio:    document.getElementById('tp-bio').value,
-        social: document.getElementById('tp-social').value
-    });
-    closeModals(); openTeamPage(db, curTM.id, true, null); showToast('Страница обновлена');
-};
-
-window.deleteTP = async function(db) {
-    if (!confirm('Удалить страницу участника?')) return;
-    await updateDoc(doc(db,'team',curTM.id), { bio: '', social: '' });
-    showToast('Страница удалена'); navigate('team');
-};
-
-// ── Редактирование собственной карточки (для Dub-пользователя) ──
-window.openMyTPEdit = function(userData) {
-    if (!curTM) return;
-    const perms = userData.cardPerms || {};
-    document.getElementById('my-tp-name-block').style.display = perms.canEditName ? 'block' : 'none';
-    document.getElementById('my-tp-img-block').style.display  = perms.canEditImg  ? 'block' : 'none';
-    document.getElementById('my-tp-name').value   = curTM.name   || '';
-    document.getElementById('my-tp-img').value    = curTM.img    || '';
-    document.getElementById('my-tp-bio').value    = curTM.bio    || '';
-    document.getElementById('my-tp-social').value = curTM.social || '';
-    document.getElementById('m-my-tp-edit').style.display = 'flex';
-};
-
-window.saveMyTP = async function(db, userData) {
-    if (!curTM || !userData) return;
-    const perms = userData.cardPerms || {};
-    const updates = {
-        bio:    document.getElementById('my-tp-bio').value,
-        social: document.getElementById('my-tp-social').value
-    };
-    if (perms.canEditName) updates.name = document.getElementById('my-tp-name').value;
-    if (perms.canEditImg)  updates.img  = document.getElementById('my-tp-img').value;
-    await updateDoc(doc(db,'team',curTM.id), updates);
-    closeModals(); openTeamPage(db, curTM.id, false, userData); showToast('Страница обновлена!');
-};
-
-// ── Выдача доступа к карточке (Admin) ──
-window.openAccessModal = function() {
-    document.getElementById('access-email').value = '';
-    document.getElementById('m-access').style.display = 'flex';
-};
-
-window.grantCardAccess = async function(db) {
-    const email = document.getElementById('access-email').value.trim();
-    const canEditName = document.getElementById('acc-name').checked;
-    const canEditImg  = document.getElementById('acc-img').checked;
-    if (!email || !curTM) return showToast('Укажите email!', 'error');
-    const snap = await getDocs(query(collection(db,'users'), where('email','==',email)));
-    if (snap.empty) return showToast('Пользователь не найден!', 'error');
-    await updateDoc(doc(db,'users',snap.docs[0].id), {
-        linkedCardId: curTM.id,
-        cardPerms: { canEditName, canEditImg }
-    });
-    showToast('Доступ выдан!'); closeModals();
-};
