@@ -15,40 +15,9 @@ export let allRel  = [];
 export let curProj = null;
 
 // ── Загрузка всех релизов ──
-export async function loadReleases(db) {
-    const snap = await getDocs(query(collection(db,'releases'), orderBy('timestamp','desc')));
-    allRel = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    filterData();
 }
-window.loadReleases = loadReleases;
+--//
 
-// ── Фильтрация и отображение ──
-export function filterData(isAdmin) {
-    let res = [...allRel];
-    const q = document.getElementById('main-search').value.toLowerCase();
-    const g = document.getElementById('filter-genre').value;
-    const s = document.getElementById('filter-sort').value;
-    if (q) res = res.filter(r => r.title?.toLowerCase().includes(q));
-    if (g !== 'all') res = res.filter(r => r.genre === g);
-    if (s === 'pop') res.sort((a,b) => (b.views||0) - (a.views||0));
-    else if (s === 'random') res.sort(() => 0.5 - Math.random());
-    else res.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
-
-    document.getElementById('main-grid').innerHTML = res.map(r => `
-        <div class="card" onclick="openView('${r.id}')">
-            ${isAdmin ? `<div class="adm-tools">
-                <button class="btn-sm" style="background:#3897f0;" onclick="event.stopPropagation(); openRelModal('${r.id}')">Ред</button>
-                <button class="btn-sm" style="background:#ef4444;" onclick="event.stopPropagation(); deleteRel('${r.id}')">Удал</button>
-            </div>` : ''}
-            <img src="${esc(r.img)}" loading="lazy" onerror="this.src='${PLACEHOLDER_IMG}'">
-            <div class="card-info">
-                <div><span class="tag">${esc(r.genre)}</span><span class="year-tag">${esc(r.year)}</span></div>
-                <div class="card-title">${esc(r.title)}</div>
-                <div style="font-size:10px; color:var(--text-dim); margin-top:5px;"><i class="fas fa-eye"></i> ${r.views||0}</div>
-            </div>
-        </div>`).join('');
-}
-window.filterData = filterData;
 
 // ── Открытие карточки релиза ──
 export async function openView(db, auth, id, userData, isAdmin) {
@@ -79,33 +48,6 @@ export async function openView(db, auth, id, userData, isAdmin) {
     updateLikesUI(auth, userData);
     renderEps(db, isAdmin);
     loadComments(db, auth, curProj, userData, isAdmin);
-}
-window.openView = openView;
-
-// ── Лайки / Дизлайки ──
-export async function rateProj(db, auth, curProj, userData, type) {
-    if (!userData) return showToast('Авторизуйтесь для оценки', 'error');
-    const uid = auth.currentUser.uid;
-    let likes = [...(curProj.likes||[])], dislikes = [...(curProj.dislikes||[])];
-    if (type === 'like') {
-        if (likes.includes(uid)) likes = likes.filter(x=>x!==uid);
-        else { likes.push(uid); dislikes = dislikes.filter(x=>x!==uid); }
-    } else {
-        if (dislikes.includes(uid)) dislikes = dislikes.filter(x=>x!==uid);
-        else { dislikes.push(uid); likes = likes.filter(x=>x!==uid); }
-    }
-    curProj.likes = likes; curProj.dislikes = dislikes;
-    await updateDoc(doc(db,'releases',curProj.id), { likes, dislikes });
-    updateLikesUI(auth, userData);
-}
-window.rateProj = rateProj;
-
-function updateLikesUI(auth, userData) {
-    const uid = userData ? auth.currentUser.uid : null;
-    document.getElementById('v-like-cnt').innerText    = (curProj.likes||[]).length;
-    document.getElementById('v-dislike-cnt').innerText = (curProj.dislikes||[]).length;
-    document.getElementById('btn-like').classList.toggle('active',    !!(uid && (curProj.likes||[]).includes(uid)));
-    document.getElementById('btn-dislike').classList.toggle('active', !!(uid && (curProj.dislikes||[]).includes(uid)));
 }
 
 // ── Эпизоды ──
@@ -220,16 +162,6 @@ export async function openPrivacy(db, isAdmin) {
     document.getElementById('priv-adm-btns').style.display = isAdmin ? 'block' : 'none';
     document.getElementById('m-privacy').style.display = 'flex';
 }
-window.openPrivacy = openPrivacy;
-
-window.editPriv = function() {
-    const txt = document.getElementById('priv-text').innerText;
-    document.getElementById('priv-text').style.display   = 'none';
-    document.getElementById('priv-edit').style.display   = 'block';
-    document.getElementById('priv-edit').value           = txt;
-    document.getElementById('priv-btn-edit').style.display = 'none';
-    document.getElementById('priv-btn-save').style.display = 'block';
-};
 
 window.savePriv = async function(db) {
     const txt = document.getElementById('priv-edit').value;
