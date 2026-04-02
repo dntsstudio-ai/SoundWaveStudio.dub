@@ -20,3 +20,30 @@ export async function openUserProfileByName(db, auth, userData, name) {
     const snap = await getDocs(q);
     if(!snap.empty) openUserProfile(db, auth, userData, snap.docs[0].id);
 }
+
+// ... (начало файла без изменений) ...
+
+// ── Управление ролями (только Admin) ──
+// Добавляем export здесь:
+export function openRoleModal() {
+    document.getElementById('m-role').style.display = 'flex';
+}
+
+// И здесь:
+export async function assignRole(db) {
+    const email = document.getElementById('role-email').value.trim();
+    const role  = document.getElementById('role-select').value;
+    if (!email) return showToast('Введите email!', 'error');
+    
+    const snap = await getDocs(query(collection(db,'users'), where('email','==',email)));
+    if (snap.empty) return showToast('Пользователь не найден!', 'error');
+    
+    const uRef = doc(db,'users', snap.docs[0].id);
+    await updateDoc(uRef, { role: role });
+    showToast(`Роль для ${email} изменена на ${role}`);
+    closeModals();
+}
+
+// Эти строки можно оставить для подстраховки, но export обязателен
+window.openRoleModal = openRoleModal;
+window.assignRole = assignRole;
