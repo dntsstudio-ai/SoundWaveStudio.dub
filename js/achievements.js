@@ -1,16 +1,21 @@
-import { doc, updateDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { doc, getDocs, updateDoc, collection, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { esc, showToast, closeModals } from './core.js';
 
 let viewAchIdx = -1;
 
 export function renderAchProfile(userData) {
-    if (!userData) return;
-    const achs = userData.achievements || [];
+    if (!userData || !userData.achievements) return;
     const container = document.getElementById('u-ach');
     if (!container) return;
-    container.innerHTML = achs.filter(a => !a.hidden).map((a, i) =>
-        `<div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:22px; cursor:pointer; border:1px solid var(--border);" title="${esc(a.name)}" onclick="viewAch(${i})">${a.img}</div>`
-    ).join('') || '<p style="font-size:12px; color:var(--text-dim);">Пока нет достижений.</p>';
+    
+    const html = userData.achievements
+        .filter(a => !a.hidden)
+        .map((a, i) => {
+            return `<div style="background:var(--input-bg); padding:10px; border-radius:10px; font-size:22px; cursor:pointer; border:1px solid var(--border);" 
+                    title="${esc(a.name)}" onclick="viewAch(${i})">${a.img}</div>`;
+        }).join('');
+    
+    container.innerHTML = html || '<p style="font-size:12px; color:var(--text-dim);">Пока нет достижений.</p>';
 }
 
 export function viewAch(userData, idx) {
@@ -25,22 +30,25 @@ export function viewAch(userData, idx) {
 }
 
 export function openAchInventory(userData) {
-    const achs = userData.achievements || [];
-    document.getElementById('ach-inv-list').innerHTML = achs.map((a, i) => `
-        <div style="background:var(--input-bg); padding:12px; border-radius:12px; display:flex; align-items:center; gap:15px; border:1px solid var(--border);">
+    const container = document.getElementById('ach-inv-list');
+    if (!container) return;
+    const html = (userData.achievements || []).map((a, i) => {
+        return `<div style="background:var(--input-bg); padding:12px; border-radius:12px; display:flex; align-items:center; gap:15px; border:1px solid var(--border);">
             <div style="font-size:30px;">${a.img}</div>
             <div style="flex:1;">
                 <div style="font-weight:bold;">${esc(a.name)}</div>
                 <div style="font-size:11px; color:var(--text-dim);">${esc(a.desc)}</div>
             </div>
             <button class="btn-sm" onclick="viewAch(${i})">Инфо</button>
-        </div>
-    `).join('') || '<p>Инвентарь пуст</p>';
+        </div>`;
+    }).join('');
+    container.innerHTML = html || '<p>Инвентарь пуст</p>';
     document.getElementById('m-ach-inv').style.display = 'flex';
 }
 
 export async function giveAch(db) {
     const email = document.getElementById('ga-uid').value.trim();
+    if(!email) return showToast('Введите email!', 'error');
     const snap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
     if (snap.empty) return showToast('Пользователь не найден!', 'error');
     
@@ -55,4 +63,5 @@ export async function giveAch(db) {
     });
     await updateDoc(uRef, { achievements: achs });
     showToast('Достижение выдано!');
+    closeModals();
 }
