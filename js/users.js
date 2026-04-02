@@ -69,9 +69,9 @@ export async function showMySubscribers(db, auth) {
                 <b style="cursor:pointer; color:var(--accent);" onclick="closeModals(); openUserProfile('${subId}')">${esc(sd.data().nickname)}</b>
             </div>`;
     }
+    window.showMySubscribers = showMySubscribers;
     document.getElementById('m-subs').style.display = 'flex';
 }
-window.showMySubscribers = showMySubscribers;
 
 // ── Управление ролями (только Admin) ──
 export function openRoleModal() {
@@ -83,9 +83,13 @@ export async function assignRole(db) {
     const email = document.getElementById('role-email').value.trim();
     const role  = document.getElementById('role-select').value;
     if (!email) return showToast('Введите email!', 'error');
+    
+    // Импортируемые из firebase функции должны быть доступны в этом контексте
     const snap = await getDocs(query(collection(db,'users'), where('email','==',email)));
     if (snap.empty) return showToast('Пользователь не найден!', 'error');
+    
     await updateDoc(doc(db,'users',snap.docs[0].id), { role });
-    showToast(`Роль "${role}" выдана!`); closeModals();
+    showToast(`Роль "${role}" выдана!`); 
+    closeModals();
 }
 window.assignRole = assignRole;
