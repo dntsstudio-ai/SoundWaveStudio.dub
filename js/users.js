@@ -36,13 +36,6 @@ export async function openUserProfile(db, auth, userData, uid) {
     ).join('');
     document.getElementById('m-user-profile').style.display = 'flex';
 }
-window.openUserProfile = openUserProfile;
-
-export async function openUserProfileByName(db, auth, userData, nick) {
-    const snap = await getDocs(query(collection(db,'users'), where('nickname','==',nick)));
-    if (!snap.empty) openUserProfile(db, auth, userData, snap.docs[0].id);
-}
-window.openUserProfileByName = openUserProfileByName;
 
 // ── Подписка / Отписка ──
 export async function subscribeToUser(db, auth, targetUid, isSubbed) {
@@ -52,24 +45,6 @@ export async function subscribeToUser(db, auth, targetUid, isSubbed) {
     showToast(isSubbed ? 'Вы отписались' : 'Вы подписались!');
     openUserProfile(db, auth, null, targetUid);
 }
-window.subscribeToUser = subscribeToUser;
-
-// ── Список подписчиков ──
-export async function showMySubscribers(db, auth) {
-    const uDoc = await getDoc(doc(db,'users',auth.currentUser.uid));
-    const subs = uDoc.data().subscribersList||[];
-    if (subs.length === 0) return showToast('Пока нет подписчиков');
-    const list = document.getElementById('subs-list');
-    list.innerHTML = '';
-    for (let subId of subs) {
-        const sd = await getDoc(doc(db,'users',subId));
-        if (sd.exists()) list.innerHTML += `
-            <div style="padding:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
-                <img src="${sd.data().avatar||'https://api.dicebear.com/7.x/identicon/svg'}" style="width:35px;height:35px;border-radius:50%; object-fit:cover;">
-                <b style="cursor:pointer; color:var(--accent);" onclick="closeModals(); openUserProfile('${subId}')">${esc(sd.data().nickname)}</b>
-            </div>`;
-    }
-    window.showMySubscribers = showMySubscribers;
     document.getElementById('m-subs').style.display = 'flex';
 }
 
@@ -77,19 +52,3 @@ export async function showMySubscribers(db, auth) {
 export function openRoleModal() {
     document.getElementById('m-role').style.display = 'flex';
 }
-window.openRoleModal = openRoleModal;
-
-export async function assignRole(db) {
-    const email = document.getElementById('role-email').value.trim();
-    const role  = document.getElementById('role-select').value;
-    if (!email) return showToast('Введите email!', 'error');
-    
-    // Импортируемые из firebase функции должны быть доступны в этом контексте
-    const snap = await getDocs(query(collection(db,'users'), where('email','==',email)));
-    if (snap.empty) return showToast('Пользователь не найден!', 'error');
-    
-    await updateDoc(doc(db,'users',snap.docs[0].id), { role });
-    showToast(`Роль "${role}" выдана!`); 
-    closeModals();
-}
-window.assignRole = assignRole;
