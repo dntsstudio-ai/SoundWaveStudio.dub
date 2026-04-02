@@ -1,17 +1,12 @@
-// js/releases.js
-import {
-    collection, getDocs, getDoc, doc, setDoc, addDoc,
-    updateDoc, deleteDoc, query, orderBy, increment
-} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-import { esc, showToast, closeModals, navigate } from './core.js';
-import { PLACEHOLDER_IMG } from '../config/config.js';
+import { collection, getDocs, getDoc, doc, updateDoc, query, orderBy, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { esc, showToast, navigate } from './core.js';
 import { loadComments } from './comments.js';
 
-export let allRel  = [];
-export let curProj = null;
+const PLACEHOLDER_IMG = 'https://via.placeholder.com/300x450?text=SWS';
+export let allRel = [];
 
 export async function loadReleases(db) {
-    const snap = await getDocs(query(collection(db,'releases'), orderBy('timestamp','desc')));
+    const snap = await getDocs(query(collection(db, 'releases'), orderBy('timestamp', 'desc')));
     allRel = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     filterData();
 }
@@ -21,14 +16,14 @@ export function filterData() {
     const q = document.getElementById('main-search')?.value.toLowerCase();
     const g = document.getElementById('filter-genre')?.value;
     const s = document.getElementById('filter-sort')?.value;
-    
+
     if (q) res = res.filter(r => r.title?.toLowerCase().includes(q));
     if (g && g !== 'all') res = res.filter(r => r.genre === g);
-    if (s === 'pop') res.sort((a,b) => (b.views||0) - (a.views||0));
+    if (s === 'pop') res.sort((a, b) => (b.views || 0) - (a.views || 0));
 
-    const container = document.getElementById('releases-grid');
-    if (!container) return;
-    container.innerHTML = res.map(r => `
+    const grid = document.getElementById('releases-grid');
+    if (!grid) return;
+    grid.innerHTML = res.map(r => `
         <div class="rel-card" onclick="openView('${r.id}')">
             <img src="${r.img || PLACEHOLDER_IMG}" class="rel-img">
             <div class="rel-info">
@@ -42,15 +37,15 @@ export function filterData() {
 export async function openView(db, auth, id, isAdmin, userData) {
     const snap = await getDoc(doc(db, 'releases', id));
     if (!snap.exists()) return;
-    curProj = { id: snap.id, ...snap.data() };
-    
+    const curProj = { id: snap.id, ...snap.data() };
+
     await updateDoc(doc(db, 'releases', id), { views: increment(1) });
-    
+
     document.getElementById('v-img').src = curProj.img || PLACEHOLDER_IMG;
     document.getElementById('v-title').innerText = curProj.title;
     document.getElementById('v-desc').innerText = curProj.desc;
     document.getElementById('v-meta').innerText = `${curProj.year} • ${curProj.genre} • 👀 ${curProj.views || 0}`;
-    
+
     const epCont = document.getElementById('v-episodes');
     epCont.innerHTML = (curProj.episodes || []).map((e, i) => `
         <div class="ep-row" onclick="window.open('${e.link}', '_blank')">
@@ -63,11 +58,3 @@ export async function openView(db, auth, id, isAdmin, userData) {
     loadComments(db, auth, curProj, userData, isAdmin);
     navigate('view');
 }
-
-export async function openPrivacy(db, isAdmin) {
-    const snap = await getDoc(doc(db,'settings','privacy'));
-    document.getElementById('priv-text').innerText = snap.exists() ? snap.data().text : 'Текст не добавлен.';
-    document.getElementById('priv-adm-btns').style.display = isAdmin ? 'block' : 'none';
-    document.getElementById('m-privacy').style.display = 'flex';
-}
-// Функции rateProj, openRelModal, saveRel, deleteRel остаются без изменений логики, но без window.
