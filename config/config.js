@@ -6,8 +6,6 @@
 //             EmailJS Public Key — безопасен для фронтенда.
 // ============================================================
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-
 export const FIREBASE_CONFIG = {
     apiKey:            "AIzaSyD34TTNdG1V4SZmuQ1ULVdo3iBB3q-7pC8",
     authDomain:        "my-dub-site.firebaseapp.com",
@@ -17,16 +15,11 @@ export const FIREBASE_CONFIG = {
     appId:             "1:302896869866:web:a003a8f24d682cb3ac0293"
 };
 
-const app = initializeApp(firebaseConfig);
-
-// EmailJS — настройки для отправки писем на soundwavestudiosws@gmail.com
-// Зарегистрируйтесь на https://emailjs.com и замените значения своими
 export const EMAILJS_CONFIG = {
     serviceId:          'service_sws',
     templateSuggest:    'template_suggest',
     publicKey:          'FExFPIAtSKcFcS2yy'
 };
-
 // Ссылки на соцсети студии
 export const SOCIAL_LINKS = {
     vk:       'https://vk.ru/soundwavestudiosws',
