@@ -74,11 +74,12 @@ export async function showMySubscribers(db, auth) {
 window.showMySubscribers = showMySubscribers;
 
 // ── Управление ролями (только Admin) ──
-window.openRoleModal = function() {
+export function openRoleModal() {
     document.getElementById('m-role').style.display = 'flex';
-};
+}
+window.openRoleModal = openRoleModal;
 
-export const assignRole = async function(db) {
+export async function assignRole(db) {
     const email = document.getElementById('role-email').value.trim();
     const role  = document.getElementById('role-select').value;
     if (!email) return showToast('Введите email!', 'error');
@@ -86,4 +87,5 @@ export const assignRole = async function(db) {
     if (snap.empty) return showToast('Пользователь не найден!', 'error');
     await updateDoc(doc(db,'users',snap.docs[0].id), { role });
     showToast(`Роль "${role}" выдана!`); closeModals();
-};
+}
+window.assignRole = assignRole;
