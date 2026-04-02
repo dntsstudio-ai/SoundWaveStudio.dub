@@ -17,6 +17,8 @@ export const FIREBASE_CONFIG = {
     appId:             "1:302896869866:web:a003a8f24d682cb3ac0293"
 };
 
+const app = initializeApp(firebaseConfig);
+
 // EmailJS — настройки для отправки писем на soundwavestudiosws@gmail.com
 // Зарегистрируйтесь на https://emailjs.com и замените значения своими
 export const EMAILJS_CONFIG = {
