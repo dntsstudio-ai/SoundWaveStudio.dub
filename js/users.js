@@ -78,7 +78,7 @@ window.openRoleModal = function() {
     document.getElementById('m-role').style.display = 'flex';
 };
 
-window.assignRole = async function(db) {
+export const assignRole = async function(db) {
     const email = document.getElementById('role-email').value.trim();
     const role  = document.getElementById('role-select').value;
     if (!email) return showToast('Введите email!', 'error');
