@@ -211,6 +211,20 @@ function renderViewPage(db, auth, userData, isAdmin, startEpIdx = 0) {
     loadComments(db, auth, curProj, userData, isAdmin);
 }
 
+// ── Конвертер ссылок
+
+function getEmbedUrl(url) {
+    if (!url) return '';
+    if (url.includes('youtube.com/watch?v=')) {
+        return url.replace('watch?v=', 'embed/');
+    }
+    if (url.includes('youtu.be/')) {
+        return url.replace('youtu.be/', 'youtube.com/embed/');
+    }
+    return url;
+}
+
+
 // ── Трейлер — строим embed URL с нуля (без дублирования параметров) ──
 function buildTrailerSrc(url) {
     if (!url) return '';
