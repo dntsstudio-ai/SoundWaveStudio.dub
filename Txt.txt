@@ -1,7 +1,12 @@
-https://drive.google.com/file/d/1kEU1zwlxB3Y-iWT7wBzAUvNi8Gf7s9Qg/view?usp=drivesdk
+releases.js:114 Allow attribute will take precedence over 'allowfullscreen'.
+renderViewPage @ releases.js:114
+Framing 'https://drive.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
 
-https://drive.google.com/file/d/1YJt_dJ33hGYE43tdgFWrlP5y9XxauVJ8/view?usp=drivesdk
+Framing 'https://accounts.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
 
-https://drive.google.com/file/d/1VPJ6i9ozdP7-kywaUDKBcyGDzvntsYPF/view?usp=drivesdk
+/%D0%B542334%D0%B5:1  Failed to load resource: the server responded with a status of 404 ()
+Framing 'https://drive.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
 
-https://drive.google.com/drive/folders/1ayreZZ22jgCqqu2LJGGNU4Kh93meIhCE
+Framing 'https://accounts.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
+
+preview&autoplay=1&mute=1&loop=1&controls=0&modestbranding=1:1  Failed to load resource: the server responded with a status of 404 ()
