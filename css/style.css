@@ -1382,3 +1382,105 @@ footer a:hover { color: white; }
     .ep-grid { grid-template-columns: repeat(auto-fill,minmax(90px,1fr)); gap: 8px; }
     .sws-trailer-size { max-width: 100%; }
 }
+
+/* ============================================================
+   SWS v8: Drive-режим плеера + страница Заказать
+   ============================================================ */
+
+/* ── Drive: iframe занимает всё пространство ── */
+.swsp-iframe--drive {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    border: none; z-index: 1;
+    /* pointer-events: auto — пользователь управляет через нативный Drive */
+}
+
+/* Кнопка △ для Drive (плавает поверх, не мешает iframe) */
+.swsp-drive-menu-btn {
+    position: absolute; bottom: 14px; right: 14px; z-index: 20;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(0,0,0,0.65); border: 1px solid rgba(255,255,255,0.25);
+    color: white; font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+    backdrop-filter: blur(8px);
+}
+.swsp-drive-menu-btn:hover { background: var(--accent); border-color: transparent; transform: scale(1.1); }
+.swsp-drive-menu-btn.swsp-menu-btn--active { background: var(--accent); border-color: transparent; }
+
+/* Кнопки пропуска для Drive тоже не мешают iframe */
+.swsp-skip-btn, .swsp-next-btn {
+    pointer-events: auto !important;
+}
+
+/* ── Страница "Заказать озвучку" ── */
+.order-hero {
+    background: linear-gradient(135deg,rgba(255,46,46,0.1),rgba(168,85,247,0.08));
+    border: 1px solid rgba(255,46,46,0.2); border-radius: 20px;
+    padding: 40px 36px; margin-bottom: 32px; text-align: center;
+}
+.order-hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,46,46,0.12); border: 1px solid rgba(255,46,46,0.3);
+    border-radius: 20px; padding: 6px 16px;
+    font-size: 11px; font-weight: 800; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 18px;
+}
+.order-hero h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px; }
+.order-hero p  { color: var(--text-dim); font-size: 15px; max-width: 500px; margin: 0 auto; line-height: 1.7; }
+
+.order-type-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 28px;
+}
+@media (max-width: 600px) { .order-type-grid { grid-template-columns: 1fr; } }
+
+.order-type-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px 24px; cursor: pointer;
+    transition: var(--ts); text-align: center;
+}
+.order-type-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+.order-type-icon {
+    width: 64px; height: 64px; border-radius: 16px; border: 1px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin: 0 auto 18px;
+}
+.order-type-card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 10px; }
+.order-type-card p  { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; }
+.order-type-badge {
+    display: inline-block; padding: 5px 14px; border-radius: 20px;
+    font-size: 11px; font-weight: 800; border: 1px solid; letter-spacing: 0.5px;
+}
+
+.order-form-wrap { animation: fadeIn 0.3s ease; }
+.order-form-header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.order-form-header h2 { font-size: 1.35rem; font-weight: 900; }
+.order-form-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px;
+}
+.order-field-group { margin-bottom: 16px; }
+.order-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 0; }
+@media (max-width: 600px) { .order-field-row { grid-template-columns: 1fr; } }
+.order-label {
+    display: block; font-size: 11px; font-weight: 700; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+}
+.order-info-box {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(44,165,224,0.08); border: 1px solid rgba(44,165,224,0.25);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 20px;
+}
+.order-info-box p:first-child { margin-bottom: 4px; }
+.order-anon-block { margin-bottom: 16px; }
+
+.order-price-block {
+    background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.25);
+    border-radius: 14px; padding: 18px 20px; margin: 20px 0;
+    text-align: center;
+}
+.order-price-label { font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.order-price-value { font-size: 1.9rem; font-weight: 900; color: var(--dub); margin-bottom: 4px; }
+.order-price-hint  { font-size: 11px; color: var(--text-dim); }
+
