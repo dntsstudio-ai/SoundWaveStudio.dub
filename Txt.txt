@@ -1,34 +1,56 @@
-player.js:93 Allow attribute will take precedence over 'allowfullscreen'.
-initPlayer @ player.js:93
-Framing 'https://drive.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
+Content Security Policy (CSP)
+−25 Failed
+Content Security Policy (CSP) header not implemented
 
-Framing 'https://drive.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
+Implement one, see MDN's Content Security Policy (CSP) documentation.
 
-Framing 'https://accounts.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
+Cookies	-	
+No cookies detected
 
-Framing 'https://accounts.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
+None
 
-6Unsafe attempt to load URL <URL> from frame with URL <URL>. Domains, protocols and ports must match.
+Cross Origin Resource Sharing (CORS)
+0 Passed
+Content is not visible via cross-origin resource sharing (CORS) files or headers.
 
-(index):1 Unsafe attempt to load URL https://drive.google.com/drivesharing/clientmodel?id=12l7jNrx8UR4CqxK-a8e6TVf3s7JRezCm&foreignService=texmex&authuser=0&origin=https%3A%2F%2Fdrive.google.com from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+None
 
-(index):1 Unsafe attempt to load URL https://drive.google.com/drivesharing/clientmodel?id=12l7jNrx8UR4CqxK-a8e6TVf3s7JRezCm&foreignService=texmex&authuser=0&origin=https%3A%2F%2Fdrive.google.com from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+Redirection
+0 Passed
+Initial redirection is to HTTPS on same host, final destination is HTTPS
 
-(index):1 Unsafe attempt to load URL https://drive.google.com/drivesharing/clientmodel?id=1gijBkAUauMI1XJ_-zT_ebmDdHVT_7BTj&foreignService=texmex&authuser=0&origin=https%3A%2F%2Fdrive.google.com from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+None
 
-(index):1 Unsafe attempt to load URL https://accounts.google.com/RotateCookiesPage?og_pid=25&rot=3&origin=https%3A%2F%2Fdrive.google.com&exp_id=0 from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+Referrer Policy	-	
+Referrer-Policy header not implemented.
 
-(index):1 Unsafe attempt to load URL https://accounts.google.com/RotateCookiesPage?og_pid=25&rot=3&origin=https%3A%2F%2Fdrive.google.com&exp_id=0 from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+Set to strict-origin-when-cross-origin at a minimum.
 
-(index):1 Unsafe attempt to load URL https://accounts.google.com/RotateCookiesPage?og_pid=25&rot=3&origin=https%3A%2F%2Fdrive.google.com&exp_id=0 from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+Strict Transport Security (HSTS)
+−20 Failed
+Strict-Transport-Security header not implemented.
 
-play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
-play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
+Add HSTS. Consider rolling out with shorter periods first (as suggested on https://hstspreload.org/).
+
+Subresource Integrity
+−5 Failed
+Subresource Integrity (SRI) not implemented, but all external scripts are loaded over HTTPS.
+
+Add SRI to external scripts.
+
+X-Content-Type-Options
+−5 Failed
+X-Content-Type-Options header not implemented.
+
+Set to nosniff.
+
+X-Frame-Options
+−20 Failed
+X-Frame-Options (XFO) header not implemented.
+
+Implement frame-ancestors CSP.
+
+Cross Origin Resource Policy	-	
+Cross Origin Resource Policy (CORP) is not implemented (defaults to cross-origin).
+
+None
