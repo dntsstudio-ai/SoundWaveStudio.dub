@@ -1,29 +1,34 @@
-A form field element should have an id or name attribute
-A form field element has neither an id nor a name attribute. This might prevent the browser from correctly autofilling the form.
+player.js:93 Allow attribute will take precedence over 'allowfullscreen'.
+initPlayer @ player.js:93
+Framing 'https://drive.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
 
-To fix this issue, add a unique id or name attribute to a form field. This is not strictly needed, but still recommended even if you have an autocomplete attribute on the same element.
+Framing 'https://drive.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
 
-1 resource
-Violating node
-Learn more: The form input element
-Content Security Policy of your site blocks some resources
-Some resources are blocked because their origin is not listed in your site's Content Security Policy (CSP). Your site's CSP is allowlist-based, so resources must be listed in the allowlist in order to be accessed.
+Framing 'https://accounts.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
 
-A site's Content Security Policy is set either via an HTTP header (recommended), or via a meta HTML tag.
+Framing 'https://accounts.google.com/' violates the following Content Security Policy directive: "frame-ancestors https://drive.google.com". The request has been blocked.
 
-To fix this issue do one of the following:
+6Unsafe attempt to load URL <URL> from frame with URL <URL>. Domains, protocols and ports must match.
 
-(Recommended) If you're using an allowlist for 'script-src', consider switching from an allowlist CSP to a strict CSP, because strict CSPs are more robust against XSS. See how to set a strict CSP.
-Or carefully check that all of the blocked resources are trustworthy; if they are, include their sources in the CSP of your site. ⚠️Never add a source you don't trust to your site's CSP. If you don't trust the source, consider hosting resources on your own site instead.
-2 directives
-Resource	Status	Directive	Source location
-https://drive.google.com/	blocked	frame-ancestors	(unknown)
-https://accounts.google.com/	blocked	frame-ancestors	(unknown)
-Learn more: Content Security Policy - Source Allowlists
-No label associated with a form field
-A <label> isn't associated with a form field.
+(index):1 Unsafe attempt to load URL https://drive.google.com/drivesharing/clientmodel?id=12l7jNrx8UR4CqxK-a8e6TVf3s7JRezCm&foreignService=texmex&authuser=0&origin=https%3A%2F%2Fdrive.google.com from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
 
-To fix this issue, nest the <input> in the <label> or provide a for attribute on the <label> that matches a form field id.
+(index):1 Unsafe attempt to load URL https://drive.google.com/drivesharing/clientmodel?id=12l7jNrx8UR4CqxK-a8e6TVf3s7JRezCm&foreignService=texmex&authuser=0&origin=https%3A%2F%2Fdrive.google.com from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
 
-14 resources
-Learn more: The label elements
+(index):1 Unsafe attempt to load URL https://drive.google.com/drivesharing/clientmodel?id=1gijBkAUauMI1XJ_-zT_ebmDdHVT_7BTj&foreignService=texmex&authuser=0&origin=https%3A%2F%2Fdrive.google.com from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+
+(index):1 Unsafe attempt to load URL https://accounts.google.com/RotateCookiesPage?og_pid=25&rot=3&origin=https%3A%2F%2Fdrive.google.com&exp_id=0 from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+
+(index):1 Unsafe attempt to load URL https://accounts.google.com/RotateCookiesPage?og_pid=25&rot=3&origin=https%3A%2F%2Fdrive.google.com&exp_id=0 from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+
+(index):1 Unsafe attempt to load URL https://accounts.google.com/RotateCookiesPage?og_pid=25&rot=3&origin=https%3A%2F%2Fdrive.google.com&exp_id=0 from frame with URL chrome-error://chromewebdata/. Domains, protocols and ports must match.
+
+play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?format=json&hasfast=true&authuser=0:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
+play.google.com/log?hasfast=true&auth=SAPISIDHASH+995e671478b164afca389547b2488b53c9885270+SAPISID3PHASH+995e671478b164afca389547b2488b53c9885270&authuser=0&format=json:1  Failed to load resource: net::ERR_CONNECTION_RESET
