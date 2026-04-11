@@ -1,56 +1,57 @@
-Content Security Policy (CSP)
-−25 Failed
-Content Security Policy (CSP) header not implemented
+Кнопки на сайте не работают, ничего не работает.
 
-Implement one, see MDN's Content Security Policy (CSP) documentation.
+В консоли пишет такие ошибки:
 
-Cookies	-	
-No cookies detected
+__(index):9__ X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
 
-None
+12
 
-Cross Origin Resource Sharing (CORS)
-0 Passed
-Content is not visible via cross-origin resource sharing (CORS) files or headers.
+Tracking Prevention blocked access to storage for <URL>.
 
-None
+order.js:166 Uncaught SyntaxError: Invalid or unexpected token
 
-Redirection
-0 Passed
-Initial redirection is to HTTPS on same host, final destination is HTTPS
+__(index):65__ Uncaught ReferenceError: filterData is not defined     at HTMLInputElement.oninput (__(index):65:78__)
 
-None
+2
 
-Referrer Policy	-	
-Referrer-Policy header not implemented.
+__(index):56__ Uncaught ReferenceError: openSearch is not defined     at HTMLButtonElement.onclick (__(index):56:62__)
 
-Set to strict-origin-when-cross-origin at a minimum.
+__(index):37__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):37:78__)
 
-Strict Transport Security (HSTS)
-−20 Failed
-Strict-Transport-Security header not implemented.
+2
 
-Add HSTS. Consider rolling out with shorter periods first (as suggested on https://hstspreload.org/).
+__(index):38__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):38:81__)
 
-Subresource Integrity
-−5 Failed
-Subresource Integrity (SRI) not implemented, but all external scripts are loaded over HTTPS.
+__(index):42__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):42:70__)
 
-Add SRI to external scripts.
+__(index):38__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):38:81__)
 
-X-Content-Type-Options
-−5 Failed
-X-Content-Type-Options header not implemented.
+__(index):37__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):37:78__)
 
-Set to nosniff.
+__(index):38__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):38:81__)
 
-X-Frame-Options
-−20 Failed
-X-Frame-Options (XFO) header not implemented.
+__(index):42__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):42:70__)
 
-Implement frame-ancestors CSP.
+__(index):38__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):38:81__)
 
-Cross Origin Resource Policy	-	
-Cross Origin Resource Policy (CORP) is not implemented (defaults to cross-origin).
+__(index):37__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):37:78__)
 
-None
+__(index):38__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):38:81__)
+
+__(index):42__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):42:70__)
+
+__(index):37__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):37:78__)
+
+__(index):38__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):38:81__)
+
+__(index):42__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):42:70__)
+
+4
+
+__(index):37__ Uncaught ReferenceError: navigate is not defined     at HTMLAnchorElement.onclick (__(index):37:78__)
+
+onclick@__(index):37__
+
+
+
+Исправь пожалуйста это все. Чтобы сайт вновь работал.
