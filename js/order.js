@@ -146,25 +146,24 @@ window.submitPaidOrder = () => {
     const qualityLabel    = { low: 'Низкое (SD)', medium: 'Среднее (HD)', high: 'Высокое (FHD)', ultra: 'Ультра (4K)' };
 
     // Формируем сообщение для бота
-    const msg = [
-        '🎙 *Заказ озвучки* — Sound Wave Studio',
-        '',
-        `📌 *Название:* ${title}`,
-        `🎭 *Тип:* ${type}`,
-        genre      ? `🎨 *Жанр:* ${genre}`                         : '',
-        year       ? `📅 *Год:* ${year}`                           : '',
-        episodes   ? `📺 *Серий / частей:* ${episodes}`            : '',
-        duration   ? `⏱ *Длительность:* ${duration} мин/эп`       : '',
-        `⭐ *Популярность:* ${popularityLabel[popularity] || popularity}`,
-        `🎬 *Качество:* ${qualityLabel[quality] || quality}`,
-        link       ? `🔗 *Ссылка:* ${link}`                        : '',
-        notes      ? `📝 *Пожелания:* ${notes}`                    : '',
-        '',
-        priceEl?.textContent ? `💰 *Ориент. стоимость:* ${priceEl.textContent}` : '',
-        '',
-        '⬇️ Выберите способ оплаты и продолжите оформление заказа ниже.'
-    ].filter(Boolean).join('
-');
+const msg = [
+    '🎙 *Заказ озвучки* — Sound Wave Studio',
+    '',
+    `📌 *Название:* ${title}`,
+    `🎭 *Тип:* ${type}`,
+    genre      ? `🎨 *Жанр:* ${genre}`                         : '',
+    year       ? `📅 *Год:* ${year}`                           : '',
+    episodes   ? `📺 *Серий / частей:* ${episodes}`            : '',
+    duration   ? `⏱ *Длительность:* ${duration} мин/эп`       : '',
+    `⭐ *Популярность:* ${popularityLabel[popularity] || popularity}`,
+    `🎬 *Качество:* ${qualityLabel[quality] || quality}`,
+    link       ? `🔗 *Ссылка:* ${link}`                        : '',
+    notes      ? `📝 *Пожелания:* ${notes}`                    : '',
+    '',
+    priceEl?.textContent ? `💰 *Ориент. стоимость:* ${priceEl.textContent}` : '',
+    '',
+    '⬇️ Выберите способ оплаты и продолжите оформление заказа ниже.'
+].filter(Boolean).join('\n');   // ✅ ПРАВИЛЬНО: экранированный перенос строки
 
     // Ссылка на бота с предзаполненным текстом
     const encoded = encodeURIComponent(msg);
