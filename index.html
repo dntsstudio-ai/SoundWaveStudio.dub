@@ -333,15 +333,22 @@
     <input type="text" id="ad-ep-url"   placeholder="URL видео (Google Drive или YouTube)">
     <input type="text" id="ad-ep-thumb" placeholder="URL превью серии (необязательно)">
     <div style="background:rgba(255,46,46,0.05);border:1px solid rgba(255,46,46,0.15);border-radius:10px;padding:14px;margin-bottom:12px;">
-        <p style="font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">⏱ Тайминги заставок (в секундах)</p>
+        <p style="font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">⏱ Тайминги (формат мм:сс, например 1:30)</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <input type="number" id="ad-ep-intro-start" placeholder="Начало заставки (сек)" style="margin-bottom:0;">
-            <input type="number" id="ad-ep-intro-dur"   placeholder="Длительность (сек, по умол. 90)" style="margin-bottom:0;">
+            <div>
+                <label style="font-size:10px;color:var(--text-dim);display:block;margin-bottom:4px;">Начало заставки (интро)</label>
+                <input type="text" id="ad-ep-intro-start" placeholder="1:30" style="margin-bottom:0;" pattern="[0-9]+:[0-5][0-9]">
+            </div>
+            <div>
+                <label style="font-size:10px;color:var(--text-dim);display:block;margin-bottom:4px;">Длительность заставки (сек)</label>
+                <input type="number" id="ad-ep-intro-dur" placeholder="90" style="margin-bottom:0;" min="1">
+            </div>
         </div>
         <div style="margin-top:8px;">
-            <input type="number" id="ad-ep-outro-start" placeholder="Начало концовки / след. серия (сек)">
+            <label style="font-size:10px;color:var(--text-dim);display:block;margin-bottom:4px;">Когда предложить следующую серию (аутро)</label>
+            <input type="text" id="ad-ep-outro-start" placeholder="21:30" pattern="[0-9]+:[0-5][0-9]">
         </div>
-        <p style="font-size:11px;color:var(--text-dim);margin-top:4px;">Работает для YouTube. Для Google Drive кнопки появятся по таймеру.</p>
+        <p style="font-size:11px;color:var(--text-dim);margin-top:4px;">⚡ YouTube: перемотка через перезапуск. Drive: кнопки по таймеру.</p>
     </div>
     <button class="btn btn-blue" style="width:100%;margin-top:5px;" onclick="saveEp()">Сохранить</button>
     <button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="closeModals()">Отмена</button>
