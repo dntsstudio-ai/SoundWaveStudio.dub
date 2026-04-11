@@ -653,3 +653,443 @@ footer a:hover { color: white; }
     .ep-grid { grid-template-columns: repeat(auto-fill,minmax(90px,1fr)); gap: 8px; }
     .trailer-box { border-radius: 12px; }
 }
+
+/* ============================================================
+   SWS v6: SWS Player + анимированный поиск
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════
+   ПОИСК С КНОПКОЙ
+   ══════════════════════════════════════════════════════ */
+.search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Кнопка-иконка поиска */
+.search-open-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 18px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-dim);
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    white-space: nowrap;
+    z-index: 2;
+}
+.search-open-btn:hover {
+    color: white;
+    border-color: var(--accent);
+    background: rgba(255,46,46,0.06);
+}
+.search-open-btn i { font-size: 14px; }
+
+/* Контейнер раскрывающегося поля */
+.search-field-wrap {
+    display: flex; align-items: center; gap: 0;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-width 0.42s cubic-bezier(0.4,0,0.2,1),
+                opacity    0.3s  cubic-bezier(0.4,0,0.2,1);
+    margin-left: -1px; /* убирает двойную рамку */
+}
+.search-wrap.search-open .search-field-wrap {
+    max-width: 340px;
+    opacity: 1;
+}
+
+/* Само текстовое поле */
+.search-field-input {
+    width: 260px;
+    max-width: 100%;
+    padding: 12px 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--accent);
+    border-radius: 0;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 0;
+    outline: none;
+    border-left: none;
+    transition: none;
+}
+.search-field-input:focus {
+    border-color: var(--accent);
+    box-shadow: none;
+}
+
+/* Кнопка закрытия (×) */
+.search-close-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; min-width: 44px; height: 46px;
+    background: var(--input-bg);
+    border: 1px solid var(--accent);
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    margin-bottom: 0;
+    padding: 0;
+}
+.search-close-btn:hover { color: var(--accent); background: rgba(255,46,46,0.08); }
+
+/* Когда поиск открыт — кнопка открытия получает accent border справа */
+.search-wrap.search-open .search-open-btn {
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(255,46,46,0.06);
+}
+.search-wrap.search-open .search-open-label { display: none; }
+
+/* Мобиль */
+@media (max-width: 480px) {
+    .search-field-input { width: 140px; }
+    .search-wrap.search-open .search-field-wrap { max-width: 220px; }
+    .search-open-label { display: none; }
+    .search-open-btn { padding: 12px 14px; }
+}
+
+/* ══════════════════════════════════════════════════════
+   SWS PLAYER
+   ══════════════════════════════════════════════════════ */
+
+/* Контейнер плеера */
+.sws-player-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+/* Корень плеера */
+.sws-player {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Iframe */
+.sws-player-iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #000;
+}
+
+/* Оверлей поверх iframe */
+.sws-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.sws-overlay.sws-overlay--active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Верхняя строка с заголовком */
+.sws-top-bar {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%);
+    padding: 14px 18px 30px;
+    pointer-events: none;
+}
+.sws-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Зона клика */
+.sws-click-zone {
+    flex: 1;
+    cursor: pointer;
+}
+
+/* Нижняя панель управления */
+.sws-controls {
+    background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 100%);
+    padding: 30px 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+/* Прогрессбар */
+.sws-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 2px;
+}
+.sws-progress-bg {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    transition: height 0.2s;
+}
+.sws-progress-bg:hover { height: 6px; }
+.sws-progress-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width 0.5s linear;
+}
+.sws-progress-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    width: 12px; height: 12px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s, left 0.5s linear;
+}
+.sws-progress-bg:hover .sws-progress-thumb { opacity: 1; }
+.sws-time-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+/* Ряд кнопок */
+.sws-btn-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.sws-btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    margin-bottom: 0;
+    width: auto;
+}
+.sws-btn:hover { background: rgba(255,255,255,0.12); }
+.sws-btn span { font-size: 10px; font-weight: 700; }
+
+/* Громкость */
+.sws-volume-wrap {
+    display: flex; align-items: center; gap: 4px;
+}
+.sws-vol-slider {
+    width: 70px;
+    height: 4px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
+}
+
+/* Нотис для Drive */
+.sws-drive-note {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 2px;
+}
+
+/* Кнопки пропуска (поверх плеера) */
+.sws-skip-btn, .sws-next-btn {
+    position: absolute;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,0,0,0.82);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s;
+    pointer-events: auto;
+    margin: 0;
+    width: auto;
+}
+.sws-skip-btn { bottom: 56px; right: 14px; }
+.sws-next-btn { bottom: 56px; left: 50%; transform: translateX(-50%); }
+.sws-skip-btn:hover { background: var(--accent); border-color: transparent; }
+.sws-next-btn:hover { background: var(--accent); border-color: transparent; }
+
+/* Плейсхолдер «нет серий» */
+.no-episodes-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 200px;
+    gap: 12px;
+    color: var(--text-dim);
+}
+.no-episodes-placeholder i { font-size: 3rem; color: var(--accent); opacity: 0.35; }
+.no-episodes-placeholder h3 { font-size: 1.1rem; color: white; }
+.no-episodes-placeholder p  { font-size: 13px; }
+
+/* Трейлер */
+.trailer-section { display: flex; flex-direction: column; gap: 10px; }
+.trailer-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 800; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px;
+}
+.trailer-label i { color: var(--accent); }
+
+/* Панель серий (сворачиваемая) */
+.ep-panel-outer {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+.ep-panel-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: var(--input-bg);
+    font-size: 13px;
+    font-weight: 700;
+    user-select: none;
+    transition: background 0.2s;
+}
+.ep-panel-toggle:hover { background: rgba(255,255,255,0.04); }
+.ep-panel-chevron {
+    font-size: 12px;
+    color: var(--text-dim);
+    transition: transform 0.3s;
+}
+.ep-panel-scroll {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.ep-panel-scroll--open { max-height: 180px; overflow-x: auto; }
+
+.ep-panel-list {
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    min-width: max-content;
+}
+.ep-panel-thumb-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 8px 14px;
+    min-width: 80px;
+    cursor: pointer;
+    color: white;
+    font-size: 12px; font-weight: 600;
+    flex-shrink: 0;
+    transition: 0.2s;
+    white-space: nowrap;
+    margin-bottom: 0;
+    width: auto;
+}
+.ep-panel-thumb-btn:hover { background: rgba(255,46,46,0.18); border-color: var(--accent); }
+.ep-panel-thumb-btn.active { background: var(--accent); border-color: var(--accent); }
+.ep-panel-thumb-btn img { width: 60px; height: 38px; border-radius: 5px; object-fit: cover; }
+.ep-panel-thumb-name { font-size: 11px; font-weight: 700; }
+
+/* Карточки эпизодов */
+.ep-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(130px,1fr)); gap: 12px; }
+.ep-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: var(--ts); }
+.ep-card:hover { border-color: #666; transform: translateY(-2px); box-shadow: var(--shadow); }
+.ep-card--active { border-color: var(--accent) !important; }
+.ep-card-thumb { width: 100%; aspect-ratio: 16/9; background: var(--input-bg); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--text-dim); }
+.ep-card-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ep-card-adm { position: absolute; top: 4px; right: 4px; display: flex; gap: 3px; z-index: 10; opacity: 0; transition: opacity 0.2s; }
+.ep-card:hover .ep-card-adm { opacity: 1; }
+.ep-adm-btn { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 9px; color: white; transition: transform 0.15s; margin: 0; padding: 0; }
+.ep-adm-btn:hover { transform: scale(1.15); }
+.ep-adm-btn--edit { background: rgba(56,151,240,0.9); }
+.ep-adm-btn--del  { background: rgba(239,68,68,0.9); }
+.ep-card-name  { padding: 7px 10px 3px; font-size: 12px; font-weight: 700; }
+.ep-card-title { padding: 0 10px 7px; font-size: 10px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Списки пользователя */
+.list-section-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+.list-section-header { display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; cursor: pointer; background: var(--input-bg); font-size: 14px; font-weight: 700; transition: background 0.2s; user-select: none; }
+.list-section-header:hover { background: rgba(255,255,255,0.04); }
+.list-section-chevron { font-size: 12px; color: var(--text-dim); transition: transform 0.3s; }
+.list-section-body { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s; padding: 0 16px; }
+.list-section-body.list-section-open { max-height: 600px; padding: 14px 16px; overflow-y: auto; }
+.list-empty { font-size: 12px; color: var(--text-dim); font-style: italic; }
+.lists-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(120px,1fr)); gap: 12px; }
+.list-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; cursor: pointer; transition: var(--ts); }
+.list-card:hover { transform: translateY(-3px); border-color: #555; }
+.list-card img { width: 100%; height: 160px; object-fit: cover; }
+.list-card-title { padding: 8px 10px; font-size: 12px; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.viewed-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
+.viewed-row:last-child { border-bottom: none; }
+.viewed-row:hover { opacity: 0.75; }
+.viewed-thumb { width: 52px; height: 35px; border-radius: 5px; object-fit: cover; flex-shrink: 0; }
+.viewed-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.viewed-date  { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+/* Активный список */
+.btn-active { background: var(--accent) !important; color: white !important; border-color: var(--accent) !important; }
+
+/* Мобиль — плеер */
+@media (max-width: 600px) {
+    .sws-btn { padding: 6px 8px; font-size: 14px; }
+    .sws-vol-slider { width: 50px; }
+    .sws-skip-btn, .sws-next-btn { font-size: 11px; padding: 8px 12px; bottom: 50px; }
+    .ep-grid { grid-template-columns: repeat(auto-fill,minmax(90px,1fr)); gap: 8px; }
+}
