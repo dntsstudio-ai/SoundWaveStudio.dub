@@ -33,8 +33,24 @@
     <!-- ==================== ГЛАВНАЯ / РЕЛИЗЫ ==================== -->
     <section id="home" class="section active">
         <div class="search-bar">
-            <input type="text" id="main-search" class="search-input" oninput="filterData()"
-                   placeholder="Поиск по релизам..." autocomplete="new-password" name="sws-search-field" data-form-type="other" spellcheck="false" data-lpignore="true">
+            <!-- Поиск: кнопка-триггер + анимированное поле -->
+            <div class="search-wrap" id="search-wrap">
+                <button class="search-open-btn" id="search-open-btn"
+                        onclick="openSearch()" title="Поиск">
+                    <i class="fas fa-search"></i>
+                    <span class="search-open-label">Поиск</span>
+                </button>
+                <div class="search-field-wrap" id="search-field-wrap">
+                    <input type="text" id="main-search" class="search-field-input"
+                           placeholder="Название релиза..."
+                           oninput="filterData()"
+                           autocomplete="off" name="sws-s" data-lpignore="true"
+                           onkeydown="if(event.key==='Escape')closeSearch()">
+                    <button class="search-close-btn" onclick="closeSearch()" title="Закрыть поиск">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
             <select id="filter-genre" class="filter-select" onchange="filterData()">
                 <option value="all">Все жанры</option>
                 <option value="Аниме">Аниме</option>
