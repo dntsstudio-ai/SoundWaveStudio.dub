@@ -3,10 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Security headers via meta -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.googletagmanager.com https://cdn.emailjs.com https://smtpjs.com https://cdnjs.cloudflare.com;
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+        font-src 'self' https://cdnjs.cloudflare.com;
+        img-src 'self' data: blob: https: http:;
+        frame-src https://www.youtube.com https://drive.google.com https://youtube.com;
+        connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.emailjs.com wss://*.firebaseio.com;
+        object-src 'none';
+    ">
     <title>Sound Wave Studio — Профессиональная озвучка и дубляж</title>
     <meta name="description" content="Студия фандаба Sound Wave Studio: качественный дубляж, озвучка сериалов, фильмов, мультфильмов и аниме.">
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
@@ -24,6 +38,9 @@
         <a id="n-profile" class="nav-link"        onclick="navigate('profile')">Профиль</a>
         <a id="n-dubin"   class="nav-link dub-nav" onclick="navigate('dubin')" style="display:none;">
             <i class="fas fa-microphone-alt" style="font-size:11px;"></i> DUB-in
+        </a>
+        <a id="n-order" class="nav-link" onclick="navigate('order')">
+            <i class="fas fa-wand-magic-sparkles" style="font-size:11px;"></i> Заказать
         </a>
     </nav>
 </header>
@@ -248,6 +265,185 @@
                 <a href="https://forms.gle/YOUR_GOOGLE_FORM_ID" target="_blank" class="btn" style="text-decoration:none;font-size:14px;">
                     <i class="fas fa-user-plus"></i> Подать заявку
                 </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ==================== ЗАКАЗАТЬ ОЗВУЧКУ ==================== -->
+    <section id="order" class="section">
+        <div class="order-hero">
+            <div class="order-hero-badge">
+                <i class="fas fa-microphone-alt"></i> Sound Wave Studio
+            </div>
+            <h1>Заказать озвучку</h1>
+            <p>Хотите, чтобы мы озвучили ваш любимый проект? Выберите тип предложения.</p>
+        </div>
+
+        <!-- Выбор типа -->
+        <div class="order-type-grid" id="order-type-grid">
+            <div class="order-type-card" onclick="selectOrderType('free')">
+                <div class="order-type-icon" style="background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);">
+                    <i class="fas fa-heart" style="color:#22c55e;"></i>
+                </div>
+                <h3>Бесплатное предложение</h3>
+                <p>Предложите проект для озвучки — мы сами решим, берёмся ли за него. Без оплаты.</p>
+                <div class="order-type-badge" style="background:rgba(34,197,94,0.15);color:#22c55e;border-color:rgba(34,197,94,0.3);">
+                    Бесплатно
+                </div>
+            </div>
+            <div class="order-type-card" onclick="selectOrderType('paid')">
+                <div class="order-type-icon" style="background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.3);">
+                    <i class="fas fa-star" style="color:var(--dub);"></i>
+                </div>
+                <h3>Платный заказ</h3>
+                <p>Закажите озвучку приоритетно. Чем подробнее проект — тем точнее цена. Переходим в Telegram.</p>
+                <div class="order-type-badge" style="background:rgba(168,85,247,0.15);color:var(--dub);border-color:rgba(168,85,247,0.3);">
+                    Платно · В Telegram
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма БЕСПЛАТНОГО предложения -->
+        <div id="order-free-form" class="order-form-wrap" style="display:none;">
+            <div class="order-form-header">
+                <button class="btn btn-outline btn-sm" onclick="backToOrderType()">← Назад</button>
+                <h2><i class="fas fa-heart" style="color:#22c55e;margin-right:8px;"></i>Бесплатное предложение</h2>
+            </div>
+            <div class="order-form-card">
+                <div class="order-field-group">
+                    <label class="order-label">Название проекта *</label>
+                    <input type="text" id="ord-free-title" placeholder="Например: Атака Титанов...">
+                </div>
+                <div class="order-field-row">
+                    <div class="order-field-group">
+                        <label class="order-label">Тип контента *</label>
+                        <select id="ord-free-type">
+                            <option value="">— Выберите —</option>
+                            <option value="Аниме">Аниме</option>
+                            <option value="Сериал">Сериал</option>
+                            <option value="Фильм">Фильм</option>
+                            <option value="Мультфильм">Мультфильм</option>
+                            <option value="Другое">Другое</option>
+                        </select>
+                    </div>
+                    <div class="order-field-group">
+                        <label class="order-label">Ссылка (MAL, трейлер...)</label>
+                        <input type="text" id="ord-free-link" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="order-field-group">
+                    <label class="order-label">Почему именно этот проект? *</label>
+                    <textarea id="ord-free-reason" rows="4" placeholder="Расскажите, чем он особенный..."></textarea>
+                </div>
+                <div class="order-anon-block" id="ord-free-anon-block">
+                    <div class="order-field-row">
+                        <div class="order-field-group">
+                            <label class="order-label">Ваш никнейм / имя</label>
+                            <input type="text" id="ord-free-name" placeholder="Аноним">
+                        </div>
+                        <div class="order-field-group">
+                            <label class="order-label">Email (необязательно)</label>
+                            <input type="email" id="ord-free-email" placeholder="mail@example.com">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" style="width:100%;" onclick="submitFreeOrder()">
+                    <i class="fas fa-paper-plane"></i> Отправить предложение
+                </button>
+            </div>
+        </div>
+
+        <!-- Форма ПЛАТНОГО заказа -->
+        <div id="order-paid-form" class="order-form-wrap" style="display:none;">
+            <div class="order-form-header">
+                <button class="btn btn-outline btn-sm" onclick="backToOrderType()">← Назад</button>
+                <h2><i class="fas fa-star" style="color:var(--dub);margin-right:8px;"></i>Платный заказ</h2>
+            </div>
+            <div class="order-form-card">
+                <div class="order-info-box">
+                    <i class="fab fa-telegram-plane" style="font-size:20px;color:#2CA5E0;"></i>
+                    <div>
+                        <p style="font-weight:700;margin-bottom:2px;">Заказ оформляется через Telegram</p>
+                        <p style="font-size:12px;color:var(--text-dim);">Заполните форму — мы сгенерируем сообщение и откроем Telegram-бота. Там вы выберете способ оплаты и обсудите детали.</p>
+                    </div>
+                </div>
+
+                <!-- Поля -->
+                <div class="order-field-group">
+                    <label class="order-label">Название проекта *</label>
+                    <input type="text" id="ord-paid-title" placeholder="Полное название">
+                </div>
+                <div class="order-field-row">
+                    <div class="order-field-group">
+                        <label class="order-label">Тип контента *</label>
+                        <select id="ord-paid-type" onchange="calcOrderPrice()">
+                            <option value="">— Выберите —</option>
+                            <option value="Аниме">Аниме</option>
+                            <option value="Сериал">Сериал</option>
+                            <option value="Фильм">Фильм</option>
+                            <option value="Мультфильм">Мультфильм</option>
+                            <option value="Другое">Другое</option>
+                        </select>
+                    </div>
+                    <div class="order-field-group">
+                        <label class="order-label">Жанр</label>
+                        <input type="text" id="ord-paid-genre" placeholder="Боевик, Романтика..." oninput="calcOrderPrice()">
+                    </div>
+                </div>
+                <div class="order-field-row">
+                    <div class="order-field-group">
+                        <label class="order-label">Год выхода</label>
+                        <input type="number" id="ord-paid-year" placeholder="2020" min="1950" max="2030" oninput="calcOrderPrice()">
+                    </div>
+                    <div class="order-field-group">
+                        <label class="order-label">Количество серий / частей</label>
+                        <input type="number" id="ord-paid-episodes" placeholder="12" min="1" oninput="calcOrderPrice()">
+                    </div>
+                </div>
+                <div class="order-field-row">
+                    <div class="order-field-group">
+                        <label class="order-label">Длительность (мин)</label>
+                        <input type="number" id="ord-paid-duration" placeholder="24" min="1" oninput="calcOrderPrice()">
+                    </div>
+                    <div class="order-field-group">
+                        <label class="order-label">Популярность</label>
+                        <select id="ord-paid-popularity" onchange="calcOrderPrice()">
+                            <option value="unknown">Малоизвестный</option>
+                            <option value="medium">Средняя аудитория</option>
+                            <option value="popular">Популярный</option>
+                            <option value="top">Топ / Легенда</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="order-field-group">
+                    <label class="order-label">Качество исходника</label>
+                    <select id="ord-paid-quality" onchange="calcOrderPrice()">
+                        <option value="low">Низкое (360p–480p)</option>
+                        <option value="medium" selected>Среднее (720p)</option>
+                        <option value="high">Высокое (1080p)</option>
+                        <option value="ultra">Ультра (4K)</option>
+                    </select>
+                </div>
+                <div class="order-field-group">
+                    <label class="order-label">Ссылка на проект (MAL, трейлер...)</label>
+                    <input type="text" id="ord-paid-link" placeholder="https://...">
+                </div>
+                <div class="order-field-group">
+                    <label class="order-label">Дополнительные пожелания</label>
+                    <textarea id="ord-paid-notes" rows="3" placeholder="Особые требования, сроки, что важно..."></textarea>
+                </div>
+
+                <!-- Расчёт цены -->
+                <div class="order-price-block" id="order-price-block">
+                    <div class="order-price-label">Ориентировочная стоимость</div>
+                    <div class="order-price-value" id="order-price-value">— ₽</div>
+                    <div class="order-price-hint">Точная цена обсуждается в Telegram</div>
+                </div>
+
+                <button class="btn btn-purple" style="width:100%;" onclick="submitPaidOrder()">
+                    <i class="fab fa-telegram-plane"></i> Перейти в Telegram-бота
+                </button>
             </div>
         </div>
     </section>
