@@ -92,6 +92,24 @@ onAuthStateChanged(auth, async (user) => {
     await loadReleases(db, state.isAdmin);
     initAuthListeners(auth, db);
 
+export function initAuthListeners(auth, db) {
+    document.getElementById('btn-login').onclick = async () => {
+        const e = document.getElementById('email').value.trim();
+        const p = document.getElementById('pass').value;
+        try {
+            await signInWithEmailAndPassword(auth, e, p);
+            showToast('Вход выполнен!'); loginAttempts = 0;
+        } catch(err) {
+            loginAttempts++;
+            // Показываем блок восстановления после 3 неудачных попыток
+            if (loginAttempts >= 3) {
+                document.getElementById('reset-pass-block').style.display = 'block';
+            }
+            showToast(authErrorMsg(err.code), 'error');
+        }
+    };
+
+    
     const hashPage = window.location.hash.replace('#','') || 'home';
     if (hashPage === 'dubin' && !state.isDub) window.navigate('home', false);
     else window.navigate(hashPage, false);
@@ -101,3 +119,116 @@ window.addEventListener('popstate', () => {
     const page = window.location.hash.replace('#','') || 'home';
     window.navigate(page, false);
 });
+
+
+// ============================================================
+//  ДОПОЛНЕНИЕ К auth.js — Интеграция восстановления пароля
+// ============================================================
+
+// Добавь эти изменения в существующий файл auth.js
+
+// ── В функцию initAuthListeners добавь обработчик для ссылки восстановления ──
+export function initAuthListeners(auth, db) {
+    document.getElementById('btn-login').onclick = async () => {
+        const e = document.getElementById('email').value.trim();
+        const p = document.getElementById('pass').value;
+        try {
+            await signInWithEmailAndPassword(auth, e, p);
+            showToast('Вход выполнен!'); loginAttempts = 0;
+        } catch(err) {
+            loginAttempts++;
+            // Показываем блок восстановления после 3 неудачных попыток
+            if (loginAttempts >= 3) {
+                document.getElementById('reset-pass-block').style.display = 'block';
+            }
+            showToast(authErrorMsg(err.code), 'error');
+        }
+    };
+
+    // ... остальной код ...
+}
+
+// ── Улучшенная функция resetPassword в bindAuthActions ──
+export function bindAuthActions(auth, db, getState) {
+    
+    // ВАРИАНТ 1: Перенаправление на отдельную страницу (рекомендуется)
+    window.resetPassword = () => {
+        const e = document.getElementById('email').value.trim();
+        if (!e) {
+            // Если email не введен, просто открываем страницу
+            window.location.href = 'reset-password.html';
+        } else {
+            // Передаем email через URL параметр для автозаполнения
+            window.location.href = `reset-password.html?email=${encodeURIComponent(e)}`;
+        }
+    };
+
+    // ВАРИАНТ 2: Отправка прямо из формы входа (альтернатива)
+    /*
+    window.resetPassword = async () => {
+        const e = document.getElementById('email').value.trim();
+        if (!e) return showToast('Введите email!','error');
+        try { 
+            const actionCodeSettings = {
+                url: window.location.origin + '/index.html',
+                handleCodeInApp: false,
+            };
+            await sendPasswordResetEmail(auth, e, actionCodeSettings); 
+            showToast('Письмо для восстановления отправлено! Проверьте почту.'); 
+            document.getElementById('reset-pass-block').style.display = 'none';
+        }
+        catch(err) { 
+            showToast(authErrorMsg(err.code), 'error'); 
+        }
+    };
+    */
+
+    // Функция для перехода на страницу восстановления из настроек профиля
+    window.openResetPasswordPage = () => {
+        const currentEmail = auth.currentUser?.email || '';
+        window.location.href = `reset-password.html?email=${encodeURIComponent(currentEmail)}`;
+    };
+
+    window.changeUserEmail = async () => {
+        const newEmail = document.getElementById('ed-new-email').value.trim();
+        if (!newEmail) return;
+        try { await updateEmail(auth.currentUser, newEmail); showToast('Email изменён!'); closeModals(); }
+        catch(err) { showToast(authErrorMsg(err.code), 'error'); }
+    };
+
+    window.changeUserPass = async () => {
+        const newPass = document.getElementById('ed-new-pass').value;
+        if (!newPass||newPass.length<6) return showToast('Минимум 6 символов!','error');
+        try { await updatePassword(auth.currentUser, newPass); showToast('Пароль изменён!'); closeModals(); }
+        catch(err) { 
+            // Если требуется повторный вход
+            if (err.code === 'auth/requires-recent-login') {
+                showToast('Для смены пароля войдите заново или используйте восстановление через email', 'error');
+                // Можно предложить восстановление через email
+                setTimeout(() => {
+                    if (confirm('Хотите восстановить пароль через email?')) {
+                        window.openResetPasswordPage();
+                    }
+                }, 2000);
+            } else {
+                showToast(authErrorMsg(err.code), 'error');
+            }
+        }
+    };
+
+    window.saveProfile = async () => {
+        const { userData } = getState();
+        const nick = document.getElementById('ed-nick').value.trim();
+        const ava  = document.getElementById('ed-ava').value.trim();
+        if (!nick) return showToast('Введите никнейм!','error');
+        const snap = await getDocs(query(collection(db,'users'), where('nickname','==',nick)));
+        if (!snap.empty && nick !== userData.nickname) return showToast('Этот никнейм занят!','error');
+        await updateDoc(doc(db,'users',auth.currentUser.uid),{ nickname: nick, avatar: ava });
+        userData.nickname = nick; userData.avatar = ava;
+        document.getElementById('u-nick').innerText = nick;
+        document.getElementById('u-ava').src        = ava||'https://api.dicebear.com/7.x/identicon/svg';
+        showToast('Профиль обновлён!'); closeModals();
+    };
+}
+
+
