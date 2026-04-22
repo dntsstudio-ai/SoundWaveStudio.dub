@@ -108,11 +108,18 @@ export function resetUserUI() {
 }
 
 export function bindAuthActions(auth, db, getState) {
-    window.resetPassword = async () => {
+    window.resetPassword = () => {
         const e = document.getElementById('email').value.trim();
-        if (!e) return showToast('Введите email!','error');
-        try { await sendPasswordResetEmail(auth,e); showToast('Письмо отправлено!'); }
-        catch(err) { showToast(authErrorMsg(err.code), 'error'); }
+        if (!e) {
+            window.location.href = 'reset-password.html';
+        } else {
+            window.location.href = `reset-password.html?email=${encodeURIComponent(e)}`;
+        }
+    };
+
+    window.openResetPasswordPage = () => {
+        const currentEmail = auth.currentUser?.email || '';
+        window.location.href = `reset-password.html?email=${encodeURIComponent(currentEmail)}`;
     };
 
     window.changeUserEmail = async () => {
@@ -126,7 +133,18 @@ export function bindAuthActions(auth, db, getState) {
         const newPass = document.getElementById('ed-new-pass').value;
         if (!newPass||newPass.length<6) return showToast('Минимум 6 символов!','error');
         try { await updatePassword(auth.currentUser, newPass); showToast('Пароль изменён!'); closeModals(); }
-        catch(err) { showToast(authErrorMsg(err.code), 'error'); }
+        catch(err) { 
+            if (err.code === 'auth/requires-recent-login') {
+                showToast('Для смены пароля войдите заново или используйте восстановление через email', 'error');
+                setTimeout(() => {
+                    if (confirm('Хотите восстановить пароль через email?')) {
+                        window.openResetPasswordPage();
+                    }
+                }, 2000);
+            } else {
+                showToast(authErrorMsg(err.code), 'error');
+            }
+        }
     };
 
     window.saveProfile = async () => {
