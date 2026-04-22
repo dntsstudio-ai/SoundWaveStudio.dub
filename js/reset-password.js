@@ -11,12 +11,12 @@ import {
 // ── Firebase конфигурация (должна быть такой же, как в config.js) ──
 // ВАЖНО: Замените на свою конфигурацию из Firebase Console
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDVKjnhK6i6Y7iT-OA24ccRbLKp7EY22Ug",
+  authDomain: "my-dub-site.firebaseapp.com",
+  projectId: "my-dub-site",
+  storageBucket: "my-dub-site.firebasestorage.app",
+  messagingSenderId: "302896869866",
+  appId: "1:302896869866:web:a003a8f24d682cb3ac0293"
 };
 
 // Инициализация Firebase
